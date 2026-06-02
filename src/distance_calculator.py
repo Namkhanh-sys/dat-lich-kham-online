@@ -93,6 +93,7 @@ class DistanceCalculator:
         clinic['lat'] = float(clinic.get('lat', 0))
         clinic['lon'] = float(clinic.get('lon', 0))
         clinic['city'] = clinic.get('city', '').strip() or cls._city_from_address(clinic.get('address', ''))
+        clinic['district'] = clinic.get('district', '').strip()  # Add district field
 
         if parsed_lat is not None and parsed_lon is not None:
             clinic['distance_km'] = cls.haversine(

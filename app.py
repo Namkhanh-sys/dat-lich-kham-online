@@ -113,23 +113,19 @@ def _prepare_doctors_with_real_distance(matched_docs, user_lat, user_lon, provin
         doc['avatar'] = doc_info.get('avatar', '')
         doc['short_bio'] = doc_info.get('short_bio', '')
 
-    # Sort by: match_score desc, district priority, distance asc
+    # If district is selected, filter doctors to only those from clinics in that district
+    if district:
+        district_clinics = [c for c in clinics_list if c.get('district', '') == district]
+        district_clinic_ids = {str(c['id']).strip() for c in district_clinics}
+        filtered = [doc for doc in filtered if str(doc.get('clinic_id', '')).strip() in district_clinic_ids]
+
+    # Sort by: match_score desc, distance asc
     def sort_key(doc):
         score = -doc['match_score']  # Negative for descending
-        
-        # Priority: if clinic is in selected district, give priority 0; otherwise 1
-        clinic_address = doc.get('clinic_address', '').lower()
-        district_priority = 1
-        if district and district.lower() in clinic_address.lower():
-            district_priority = 0
-        
         distance = doc['distance_km']
-        return (score, district_priority, distance)
+        return (score, distance)
     
-    # If district is selected, return ALL doctors in that district
-    # Otherwise limit to top 5
-    max_results = len(filtered) if district else 5
-    filtered = sorted(filtered, key=sort_key)[:max_results]
+    filtered = sorted(filtered, key=sort_key)[:5] if not district else sorted(filtered, key=sort_key)
     return filtered, region_note
 
 
