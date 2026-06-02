@@ -1,141 +1,141 @@
 id,name,address,lat,lon,city,district
-c1,Bệnh viện Hoàn Kiếm Một,12 Hàng Bài Hoàn Kiếm Hà Nội,21.0278,105.8523,Hà Nội,Quận Hoàn Kiếm
-c2,Bệnh viện Ba Đình Hai,36 Điện Biên Phủ Ba Đình Hà Nội,21.0362,105.834,Hà Nội,Quận Ba Đình
-c3,Đa khoa Vũ Đức Hưng - Quận Cầu Giấy,150 Cầu Giấy Cầu Giấy Hà Nội,21.0366,105.782,Hà Nội,Quận Cầu Giấy
-c4,Cơ sở Y tế Bảo vệ Quận Hai Bà Trưng,250 Trần Khát Chân Hai Bà Trưng Hà Nội,21.0115,105.8505,Hà Nội,Quận Hai Bà Trưng
-c5,Bệnh viện Uy tín Quận 1,12 Lý Thường Kiệt Quận 1 TP.HCM,10.7769,106.6956,TP. Hồ Chí Minh,Quận 1
-c6,Trung tâm Chuyên khoa 3 Một,115 Võ Thị Sáu Quận 3 TP.HCM,10.7846,106.691,TP. Hồ Chí Minh,Quận 3
-c7,Trung tâm Y tế Trần Thanh Hải Quận Bình Thạnh,36 Nơ Trang Long Bình Thạnh TP.HCM,10.8119,106.7126,TP. Hồ Chí Minh,Quận Bình Thạnh
-c11,Trung tâm Chuyên khoa Hoàn Kiếm Ba,11 Đường Hoàn Kiếm Hà Nội,21.0278,105.8523,Hà Nội,Quận Hoàn Kiếm
-c12,Bệnh viện Dương Văn Hào Quận Ba Đình,12 Đường Ba Đình Hà Nội,21.0362,105.834,Hà Nội,Quận Ba Đình
-c13,Bệnh viện Cầu Giấy Năm,13 Đường Cầu Giấy Hà Nội,21.0366,105.782,Hà Nội,Quận Cầu Giấy
-c14,Trung tâm Y tế Nguyễn Kim Anh Quận Hai Bà Trưng,14 Đường Hai Bà Trưng Hà Nội,21.0115,105.8505,Hà Nội,Quận Hai Bà Trưng
-c15,Cơ sở Y tế Thanh Xuân Hai,15 Đường Thanh Xuân Hà Nội,21.0035,105.8484,Hà Nội,Quận Thanh Xuân
-c16,Bệnh viện Phan Thị Liên Quận Đống Đa,16 Đường Đống Đa Hà Nội,21.02,105.85,Hà Nội,Quận Đống Đa
-c17,Đa khoa An tâm Quận Tây Hồ,17 Đường Tây Hồ Hà Nội,21.075,105.825,Hà Nội,Quận Tây Hồ
-c18,Cơ sở Y tế Cao cấp Quận Long Biên,18 Đường Long Biên Hà Nội,21.075,105.885,Hà Nội,Quận Long Biên
-c19,Trung tâm Chuyên khoa 1 Một,19 Đường Quận 1 TP. Hồ Chí Minh,10.7769,106.6956,TP. Hồ Chí Minh,Quận 1
-c20,Cơ sở Y tế Chuyên sâu Quận 3,20 Đường Quận 3 TP. Hồ Chí Minh,10.7846,106.691,TP. Hồ Chí Minh,Quận 3
-c21,Trung tâm Y tế 5 Ba,21 Đường Quận 5 TP. Hồ Chí Minh,10.76,106.673,TP. Hồ Chí Minh,Quận 5
-c22,Phòng khám Đa khoa Bảo vệ Quận 7,22 Đường Quận 7 TP. Hồ Chí Minh,10.735,106.72,TP. Hồ Chí Minh,Quận 7
-c23,Phòng khám Đa khoa Chất lượng Quận Bình Thạnh,23 Đường Bình Thạnh TP. Hồ Chí Minh,10.8119,106.7126,TP. Hồ Chí Minh,Quận Bình Thạnh
-c24,Trung tâm Y tế Phạm Minh Tuấn Quận 11,24 Đường Quận 11 TP. Hồ Chí Minh,10.83,106.66,TP. Hồ Chí Minh,Quận 11
-c25,Đa khoa Trần Thanh Hải - Quận Phú Nhuận,25 Đường Phú Nhuận TP. Hồ Chí Minh,10.795,106.735,TP. Hồ Chí Minh,Quận Phú Nhuận
-c29,Bệnh viện Trịnh Thị Mai Quận Hoàng Mai,29 Đường Hoàng Mai Hà Nội,21.0,105.9,Hà Nội,Quận Hoàng Mai
-c30,Bệnh viện Phan Thị Liên Quận Hà Đông,30 Đường Hà Đông Hà Nội,20.98,105.81,Hà Nội,Quận Hà Đông
-c31,Trung tâm Y tế Vũ Đức Hưng Quận Bắc Từ Liêm,31 Đường Bắc Từ Liêm Hà Nội,21.08,105.8,Hà Nội,Quận Bắc Từ Liêm
-c32,Phòng mạch Nam Từ Liêm Một,32 Đường Nam Từ Liêm Hà Nội,21.0,105.79,Hà Nội,Quận Nam Từ Liêm
-c33,Bệnh viện Trần Thanh Hải Quận 4,33 Đường Quận 4 TP. Hồ Chí Minh,10.75,106.71,TP. Hồ Chí Minh,Quận 4
-c34,Trung tâm Y tế Phan Thị Liên Quận 6,34 Đường Quận 6 TP. Hồ Chí Minh,10.74,106.65,TP. Hồ Chí Minh,Quận 6
-c35,Trung tâm Y tế Trần Thanh Hải Quận 8,35 Đường Quận 8 TP. Hồ Chí Minh,10.68,106.67,TP. Hồ Chí Minh,Quận 8
-c36,Trung tâm Y tế Vũ Đức Hưng Quận 10,36 Đường Quận 10 TP. Hồ Chí Minh,10.755,106.655,TP. Hồ Chí Minh,Quận 10
-c37,Phòng khám Lê Thị Hương - Quận 12,37 Đường Quận 12 TP. Hồ Chí Minh,10.87,106.64,TP. Hồ Chí Minh,Quận 12
-c38,Cơ sở Y tế Phan Thị Liên - Quận Gò Vấp,38 Đường Gò Vấp TP. Hồ Chí Minh,10.83,106.68,TP. Hồ Chí Minh,Quận Gò Vấp
-c39,Phòng khám Đa khoa Tân Bình Ba,39 Đường Tân Bình TP. Hồ Chí Minh,10.8,106.65,TP. Hồ Chí Minh,Quận Tân Bình
-c40,Trung tâm Chuyên khoa Vũ Đức Hưng - Quận Bình Tân,40 Đường Bình Tân TP. Hồ Chí Minh,10.76,106.59,TP. Hồ Chí Minh,Quận Bình Tân
-c41,Cơ sở Y tế Dương Văn Hào - Quận Tân Phú,41 Đường Tân Phú TP. Hồ Chí Minh,10.82,106.61,TP. Hồ Chí Minh,Quận Tân Phú
-c42,Phòng khám Hoàng Văn Long - Quận 1,83 Đường Quận 1 TP. Hồ Chí Minh,10.7779,106.6966,TP. Hồ Chí Minh,Quận 1
-c43,Phòng khám Đa khoa Lê Thị Hương - Quận 1,84 Đường Quận 1 TP. Hồ Chí Minh,10.7789,106.6976,TP. Hồ Chí Minh,Quận 1
-c44,Phòng khám Đa khoa Phạm Minh Tuấn - Quận 1,85 Đường Quận 1 TP. Hồ Chí Minh,10.7799,106.6986,TP. Hồ Chí Minh,Quận 1
-c45,Đa khoa Phạm Minh Tuấn - Quận 10,86 Đường Quận 10 TP. Hồ Chí Minh,10.756,106.656,TP. Hồ Chí Minh,Quận 10
-c46,Đa khoa Hà Thị Thuỷ - Quận 10,87 Đường Quận 10 TP. Hồ Chí Minh,10.757,106.657,TP. Hồ Chí Minh,Quận 10
-c47,Phòng khám Chăm sóc Quận 10,88 Đường Quận 10 TP. Hồ Chí Minh,10.758,106.658,TP. Hồ Chí Minh,Quận 10
-c48,Trung tâm Chuyên khoa Lương Quốc Anh - Quận 10,89 Đường Quận 10 TP. Hồ Chí Minh,10.759,106.659,TP. Hồ Chí Minh,Quận 10
-c49,Phòng khám Đa khoa Nguyễn Kim Anh - Quận 11,90 Đường Quận 11 TP. Hồ Chí Minh,10.831,106.661,TP. Hồ Chí Minh,Quận 11
-c50,Trung tâm Y tế Phan Thị Liên Quận 11,91 Đường Quận 11 TP. Hồ Chí Minh,10.832,106.662,TP. Hồ Chí Minh,Quận 11
-c51,Cơ sở Y tế Hàng đầu Quận 11,92 Đường Quận 11 TP. Hồ Chí Minh,10.833,106.663,TP. Hồ Chí Minh,Quận 11
-c52,Phòng khám Hoàng Văn Long - Quận 11,93 Đường Quận 11 TP. Hồ Chí Minh,10.834,106.664,TP. Hồ Chí Minh,Quận 11
-c53,Trung tâm Y tế Phạm Minh Tuấn - Quận 12,94 Đường Quận 12 TP. Hồ Chí Minh,10.871,106.641,TP. Hồ Chí Minh,Quận 12
-c54,Bệnh viện Trịnh Thị Mai - Quận 12,95 Đường Quận 12 TP. Hồ Chí Minh,10.872,106.642,TP. Hồ Chí Minh,Quận 12
-c55,Bệnh viện Chu Minh Tâm Quận 12,96 Đường Quận 12 TP. Hồ Chí Minh,10.873,106.643,TP. Hồ Chí Minh,Quận 12
-c56,Trung tâm Y tế 12 Năm,97 Đường Quận 12 TP. Hồ Chí Minh,10.874,106.644,TP. Hồ Chí Minh,Quận 12
-c57,Bệnh viện Hoàng Văn Long Quận 3,98 Đường Quận 3 TP. Hồ Chí Minh,10.7856,106.692,TP. Hồ Chí Minh,Quận 3
-c58,Phòng khám 3 Hai,99 Đường Quận 3 TP. Hồ Chí Minh,10.7866,106.693,TP. Hồ Chí Minh,Quận 3
-c59,Phòng khám Cao cấp Quận 3,100 Đường Quận 3 TP. Hồ Chí Minh,10.7876,106.694,TP. Hồ Chí Minh,Quận 3
-c60,Đa khoa 4 Bốn,101 Đường Quận 4 TP. Hồ Chí Minh,10.751,106.711,TP. Hồ Chí Minh,Quận 4
-c61,Bệnh viện Chăm sóc Quận 4,102 Đường Quận 4 TP. Hồ Chí Minh,10.752,106.712,TP. Hồ Chí Minh,Quận 4
-c62,Trung tâm Chuyên khoa 4 Một,103 Đường Quận 4 TP. Hồ Chí Minh,10.753,106.713,TP. Hồ Chí Minh,Quận 4
-c63,Bệnh viện Phạm Minh Tuấn Quận 4,104 Đường Quận 4 TP. Hồ Chí Minh,10.754,106.714,TP. Hồ Chí Minh,Quận 4
-c64,Phòng khám 5 Ba,105 Đường Quận 5 TP. Hồ Chí Minh,10.761,106.674,TP. Hồ Chí Minh,Quận 5
-c65,Bệnh viện Lương Quốc Anh Quận 5,106 Đường Quận 5 TP. Hồ Chí Minh,10.762,106.675,TP. Hồ Chí Minh,Quận 5
-c66,Bệnh viện Phan Thị Liên Quận 5,107 Đường Quận 5 TP. Hồ Chí Minh,10.763,106.676,TP. Hồ Chí Minh,Quận 5
-c67,Trung tâm Chuyên khoa Tạ Thị Phương - Quận 5,108 Đường Quận 5 TP. Hồ Chí Minh,10.764,106.677,TP. Hồ Chí Minh,Quận 5
-c68,Trung tâm Y tế Phan Thị Liên Quận 6,109 Đường Quận 6 TP. Hồ Chí Minh,10.741,106.651,TP. Hồ Chí Minh,Quận 6
-c69,Trung tâm Y tế 6 Ba,110 Đường Quận 6 TP. Hồ Chí Minh,10.742,106.652,TP. Hồ Chí Minh,Quận 6
-c70,Trung tâm Chuyên khoa 6 Bốn,111 Đường Quận 6 TP. Hồ Chí Minh,10.743,106.653,TP. Hồ Chí Minh,Quận 6
-c71,Phòng khám Tâm huyết Quận 6,112 Đường Quận 6 TP. Hồ Chí Minh,10.744,106.654,TP. Hồ Chí Minh,Quận 6
-c72,Trung tâm Y tế Chu Minh Tâm Quận 7,113 Đường Quận 7 TP. Hồ Chí Minh,10.736,106.721,TP. Hồ Chí Minh,Quận 7
-c73,Phòng mạch Uy tín Quận 7,114 Đường Quận 7 TP. Hồ Chí Minh,10.737,106.722,TP. Hồ Chí Minh,Quận 7
-c74,Trung tâm Y tế Chất lượng Quận 7,115 Đường Quận 7 TP. Hồ Chí Minh,10.738,106.723,TP. Hồ Chí Minh,Quận 7
-c75,Đa khoa Uy tín Quận 7,116 Đường Quận 7 TP. Hồ Chí Minh,10.739,106.724,TP. Hồ Chí Minh,Quận 7
-c76,Bệnh viện Bảo vệ Quận 8,117 Đường Quận 8 TP. Hồ Chí Minh,10.681,106.671,TP. Hồ Chí Minh,Quận 8
-c77,Cơ sở Y tế Vũ Đức Hưng - Quận 8,118 Đường Quận 8 TP. Hồ Chí Minh,10.682,106.672,TP. Hồ Chí Minh,Quận 8
-c78,Phòng mạch Uy tín Quận 8,119 Đường Quận 8 TP. Hồ Chí Minh,10.683,106.673,TP. Hồ Chí Minh,Quận 8
-c79,Trung tâm Y tế Tâm huyết Quận 8,120 Đường Quận 8 TP. Hồ Chí Minh,10.684,106.674,TP. Hồ Chí Minh,Quận 8
-c80,Phòng khám Ba Đình Bốn,121 Đường Quận Ba Đình Hà Nội,21.0372,105.835,Hà Nội,Quận Ba Đình
-c81,Phòng mạch Ba Đình Năm,122 Đường Quận Ba Đình Hà Nội,21.0382,105.836,Hà Nội,Quận Ba Đình
-c82,Đa khoa Ba Đình Một,123 Đường Quận Ba Đình Hà Nội,21.0392,105.837,Hà Nội,Quận Ba Đình
-c83,Trung tâm Y tế Trịnh Thị Mai Quận Bình Thạnh,124 Đường Quận Bình Thạnh TP. Hồ Chí Minh,10.8129,106.7136,TP. Hồ Chí Minh,Quận Bình Thạnh
-c84,Phòng khám Đa khoa Bình Thạnh Ba,125 Đường Quận Bình Thạnh TP. Hồ Chí Minh,10.8139,106.7146,TP. Hồ Chí Minh,Quận Bình Thạnh
-c85,Trung tâm Y tế Bình Thạnh Bốn,126 Đường Quận Bình Thạnh TP. Hồ Chí Minh,10.8149,106.7156,TP. Hồ Chí Minh,Quận Bình Thạnh
-c86,Bệnh viện Bình Tân Năm,127 Đường Quận Bình Tân TP. Hồ Chí Minh,10.761,106.591,TP. Hồ Chí Minh,Quận Bình Tân
-c87,Phòng mạch Tâm huyết Quận Bình Tân,128 Đường Quận Bình Tân TP. Hồ Chí Minh,10.762,106.592,TP. Hồ Chí Minh,Quận Bình Tân
-c88,Phòng mạch Ngô Thị Nhậm - Quận Bình Tân,129 Đường Quận Bình Tân TP. Hồ Chí Minh,10.763,106.593,TP. Hồ Chí Minh,Quận Bình Tân
-c89,Trung tâm Chuyên khoa Lê Thị Hương - Quận Bình Tân,130 Đường Quận Bình Tân TP. Hồ Chí Minh,10.764,106.594,TP. Hồ Chí Minh,Quận Bình Tân
-c90,Cơ sở Y tế Hà Thị Thuỷ - Quận Bắc Từ Liêm,131 Đường Quận Bắc Từ Liêm Hà Nội,21.081,105.801,Hà Nội,Quận Bắc Từ Liêm
-c91,Cơ sở Y tế Bắc Từ Liêm Năm,132 Đường Quận Bắc Từ Liêm Hà Nội,21.082,105.802,Hà Nội,Quận Bắc Từ Liêm
-c92,Trung tâm Y tế Đặng Văn Chiến - Quận Bắc Từ Liêm,133 Đường Quận Bắc Từ Liêm Hà Nội,21.083,105.803,Hà Nội,Quận Bắc Từ Liêm
-c93,Trung tâm Y tế Dương Văn Hào - Quận Bắc Từ Liêm,134 Đường Quận Bắc Từ Liêm Hà Nội,21.084,105.804,Hà Nội,Quận Bắc Từ Liêm
-c94,Phòng khám Bùi Thị Quyên - Quận Cầu Giấy,135 Đường Quận Cầu Giấy Hà Nội,21.0376,105.783,Hà Nội,Quận Cầu Giấy
-c95,Trung tâm Y tế Hoàng Văn Long Quận Cầu Giấy,136 Đường Quận Cầu Giấy Hà Nội,21.0386,105.784,Hà Nội,Quận Cầu Giấy
-c96,Trung tâm Y tế Trịnh Thị Mai Quận Cầu Giấy,137 Đường Quận Cầu Giấy Hà Nội,21.0396,105.785,Hà Nội,Quận Cầu Giấy
-c97,Trung tâm Y tế Hà Thị Thuỷ Quận Gò Vấp,138 Đường Quận Gò Vấp TP. Hồ Chí Minh,10.831,106.681,TP. Hồ Chí Minh,Quận Gò Vấp
-c98,Trung tâm Y tế Hà Thị Thuỷ Quận Gò Vấp,139 Đường Quận Gò Vấp TP. Hồ Chí Minh,10.832,106.682,TP. Hồ Chí Minh,Quận Gò Vấp
-c99,Bệnh viện Dương Văn Hào Quận Gò Vấp,140 Đường Quận Gò Vấp TP. Hồ Chí Minh,10.833,106.683,TP. Hồ Chí Minh,Quận Gò Vấp
-c100,Bệnh viện Lê Thị Hương - Quận Gò Vấp,141 Đường Quận Gò Vấp TP. Hồ Chí Minh,10.834,106.684,TP. Hồ Chí Minh,Quận Gò Vấp
-c101,Trung tâm Chuyên khoa Hai Bà Trưng Năm,142 Đường Quận Hai Bà Trưng Hà Nội,21.012500000000003,105.8515,Hà Nội,Quận Hai Bà Trưng
-c102,Bệnh viện Lê Thị Hương Quận Hai Bà Trưng,143 Đường Quận Hai Bà Trưng Hà Nội,21.0135,105.8525,Hà Nội,Quận Hai Bà Trưng
-c103,Bệnh viện Dương Văn Hào Quận Hai Bà Trưng,144 Đường Quận Hai Bà Trưng Hà Nội,21.0145,105.8535,Hà Nội,Quận Hai Bà Trưng
-c104,Bệnh viện Nguyễn Kim Anh Quận Hoàn Kiếm,145 Đường Quận Hoàn Kiếm Hà Nội,21.0288,105.8533,Hà Nội,Quận Hoàn Kiếm
-c105,Trung tâm Chuyên khoa Hoàng Văn Long - Quận Hoàn Kiếm,146 Đường Quận Hoàn Kiếm Hà Nội,21.0298,105.8543,Hà Nội,Quận Hoàn Kiếm
-c106,Trung tâm Y tế Bảo vệ Quận Hoàn Kiếm,147 Đường Quận Hoàn Kiếm Hà Nội,21.0308,105.8553,Hà Nội,Quận Hoàn Kiếm
-c107,Bệnh viện Hoàng Mai Một,148 Đường Quận Hoàng Mai Hà Nội,21.001,105.901,Hà Nội,Quận Hoàng Mai
-c108,Đa khoa Bảo vệ Quận Hoàng Mai,149 Đường Quận Hoàng Mai Hà Nội,21.002,105.902,Hà Nội,Quận Hoàng Mai
-c109,Bệnh viện Dương Văn Hào Quận Hoàng Mai,150 Đường Quận Hoàng Mai Hà Nội,21.003,105.903,Hà Nội,Quận Hoàng Mai
-c110,Trung tâm Y tế Phạm Minh Tuấn Quận Hoàng Mai,151 Đường Quận Hoàng Mai Hà Nội,21.004,105.904,Hà Nội,Quận Hoàng Mai
-c111,Cơ sở Y tế Hà Đông Năm,152 Đường Quận Hà Đông Hà Nội,20.981,105.811,Hà Nội,Quận Hà Đông
-c112,Trung tâm Y tế Lương Quốc Anh Quận Hà Đông,153 Đường Quận Hà Đông Hà Nội,20.982,105.812,Hà Nội,Quận Hà Đông
-c113,Phòng khám Trần Thanh Hải - Quận Hà Đông,154 Đường Quận Hà Đông Hà Nội,20.983,105.813,Hà Nội,Quận Hà Đông
-c114,Phòng mạch Hà Đông Ba,155 Đường Quận Hà Đông Hà Nội,20.984,105.814,Hà Nội,Quận Hà Đông
-c115,Phòng khám Đa khoa Vũ Đức Hưng - Quận Long Biên,156 Đường Quận Long Biên Hà Nội,21.076,105.886,Hà Nội,Quận Long Biên
-c116,Trung tâm Chuyên khoa Long Biên Năm,157 Đường Quận Long Biên Hà Nội,21.077,105.887,Hà Nội,Quận Long Biên
-c117,Bệnh viện Bảo vệ Quận Long Biên,158 Đường Quận Long Biên Hà Nội,21.078,105.888,Hà Nội,Quận Long Biên
-c118,Bệnh viện Bùi Thị Quyên Quận Long Biên,159 Đường Quận Long Biên Hà Nội,21.079,105.889,Hà Nội,Quận Long Biên
-c119,Bệnh viện Chu Minh Tâm Quận Nam Từ Liêm,160 Đường Quận Nam Từ Liêm Hà Nội,21.001,105.791,Hà Nội,Quận Nam Từ Liêm
-c120,Trung tâm Y tế Dương Văn Hào Quận Nam Từ Liêm,161 Đường Quận Nam Từ Liêm Hà Nội,21.002,105.792,Hà Nội,Quận Nam Từ Liêm
-c121,Trung tâm Y tế Phan Thị Liên Quận Nam Từ Liêm,162 Đường Quận Nam Từ Liêm Hà Nội,21.003,105.793,Hà Nội,Quận Nam Từ Liêm
-c122,Cơ sở Y tế Nam Từ Liêm Một,163 Đường Quận Nam Từ Liêm Hà Nội,21.004,105.794,Hà Nội,Quận Nam Từ Liêm
-c123,Phòng khám Đa khoa Tin cậy Quận Phú Nhuận,164 Đường Quận Phú Nhuận TP. Hồ Chí Minh,10.796,106.736,TP. Hồ Chí Minh,Quận Phú Nhuận
-c124,Bệnh viện Chu Minh Tâm Quận Phú Nhuận,165 Đường Quận Phú Nhuận TP. Hồ Chí Minh,10.797,106.737,TP. Hồ Chí Minh,Quận Phú Nhuận
-c125,Cơ sở Y tế Cao cấp Quận Phú Nhuận,166 Đường Quận Phú Nhuận TP. Hồ Chí Minh,10.798,106.738,TP. Hồ Chí Minh,Quận Phú Nhuận
-c126,Trung tâm Y tế Phú Nhuận Năm,167 Đường Quận Phú Nhuận TP. Hồ Chí Minh,10.799,106.739,TP. Hồ Chí Minh,Quận Phú Nhuận
-c127,Trung tâm Y tế Đặng Văn Chiến Quận Thanh Xuân,168 Đường Quận Thanh Xuân Hà Nội,21.0045,105.8494,Hà Nội,Quận Thanh Xuân
-c128,Phòng khám Phan Thị Liên - Quận Thanh Xuân,169 Đường Quận Thanh Xuân Hà Nội,21.0055,105.8504,Hà Nội,Quận Thanh Xuân
-c129,Phòng khám Tạ Thị Phương - Quận Thanh Xuân,170 Đường Quận Thanh Xuân Hà Nội,21.0065,105.8514,Hà Nội,Quận Thanh Xuân
-c130,Bệnh viện Lương Quốc Anh Quận Thanh Xuân,171 Đường Quận Thanh Xuân Hà Nội,21.0075,105.8524,Hà Nội,Quận Thanh Xuân
-c131,Trung tâm Y tế Trần Thanh Hải - Quận Tân Bình,172 Đường Quận Tân Bình TP. Hồ Chí Minh,10.801,106.651,TP. Hồ Chí Minh,Quận Tân Bình
-c132,Trung tâm Y tế Tân Bình Một,173 Đường Quận Tân Bình TP. Hồ Chí Minh,10.802,106.652,TP. Hồ Chí Minh,Quận Tân Bình
-c133,Trung tâm Y tế Lương Quốc Anh - Quận Tân Bình,174 Đường Quận Tân Bình TP. Hồ Chí Minh,10.803,106.653,TP. Hồ Chí Minh,Quận Tân Bình
-c134,Phòng khám Chuyên sâu Quận Tân Bình,175 Đường Quận Tân Bình TP. Hồ Chí Minh,10.804,106.654,TP. Hồ Chí Minh,Quận Tân Bình
-c135,Trung tâm Y tế Chu Minh Tâm Quận Tân Phú,176 Đường Quận Tân Phú TP. Hồ Chí Minh,10.821,106.611,TP. Hồ Chí Minh,Quận Tân Phú
-c136,Đa khoa Tân Phú Năm,177 Đường Quận Tân Phú TP. Hồ Chí Minh,10.822,106.612,TP. Hồ Chí Minh,Quận Tân Phú
-c137,Trung tâm Chuyên khoa Hàng đầu Quận Tân Phú,178 Đường Quận Tân Phú TP. Hồ Chí Minh,10.823,106.613,TP. Hồ Chí Minh,Quận Tân Phú
-c138,Cơ sở Y tế Tân Phú Hai,179 Đường Quận Tân Phú TP. Hồ Chí Minh,10.824,106.614,TP. Hồ Chí Minh,Quận Tân Phú
-c139,Trung tâm Y tế Trần Thanh Hải Quận Tây Hồ,180 Đường Quận Tây Hồ Hà Nội,21.076,105.826,Hà Nội,Quận Tây Hồ
-c140,Bệnh viện Tạ Thị Phương Quận Tây Hồ,181 Đường Quận Tây Hồ Hà Nội,21.077,105.827,Hà Nội,Quận Tây Hồ
-c141,Cơ sở Y tế Chất lượng Quận Tây Hồ,182 Đường Quận Tây Hồ Hà Nội,21.078,105.828,Hà Nội,Quận Tây Hồ
-c142,Đa khoa Cao cấp Quận Tây Hồ,183 Đường Quận Tây Hồ Hà Nội,21.079,105.829,Hà Nội,Quận Tây Hồ
-c143,Trung tâm Y tế Tin cậy Quận Đống Đa,184 Đường Quận Đống Đa Hà Nội,21.021,105.851,Hà Nội,Quận Đống Đa
-c144,Phòng mạch Chuyên sâu Quận Đống Đa,185 Đường Quận Đống Đa Hà Nội,21.022,105.852,Hà Nội,Quận Đống Đa
-c145,Phòng mạch Đống Đa Bốn,186 Đường Quận Đống Đa Hà Nội,21.023,105.853,Hà Nội,Quận Đống Đa
-c146,Trung tâm Chuyên khoa Đống Đa Năm,187 Đường Quận Đống Đa Hà Nội,21.024,105.854,Hà Nội,Quận Đống Đa
+c1,Bệnh viện Hoàn Kiếm Một,11 Phố Tràng Tiền Lô 1,21.0278,105.8523,Hà Nội,Quận Hoàn Kiếm
+c2,Bệnh viện Ba Đình Hai,16 Phố Hàng Bún (Khu A),21.0362,105.834,Hà Nội,Quận Ba Đình
+c3,Đa khoa Vũ Đức Hưng - Quận Cầu Giấy,"44 Phố Xã Đàn, Hà Nội",21.0366,105.782,Hà Nội,Quận Cầu Giấy
+c4,Cơ sở Y tế Bảo vệ Quận Hai Bà Trưng,21 Phố Ngô Thì Nhậm (Tòa nhà D),21.0115,105.8505,Hà Nội,Quận Hai Bà Trưng
+c5,Bệnh viện Uy tín Quận 1,16 Phố Nguyễn Hữu Cảnh Khu B,10.7769,106.6956,TP. Hồ Chí Minh,Quận 1
+c6,Trung tâm Chuyên khoa 3 Một,"66 Phố Võ Thị Sáu, TP. Hồ Chí Minh",10.7846,106.691,TP. Hồ Chí Minh,Quận 3
+c7,Trung tâm Y tế Trần Thanh Hải Quận Bình Thạnh,51 Phố Thảo Điền,10.8119,106.7126,TP. Hồ Chí Minh,Quận Bình Thạnh
+c11,Trung tâm Chuyên khoa Hoàn Kiếm Ba,"56 Phố Hàng Mã, TP. Hồ Chí Minh",21.0278,105.8523,Hà Nội,Quận Hoàn Kiếm
+c12,Bệnh viện Dương Văn Hào Quận Ba Đình,"51 Phố Hàng Bún, Hà Nội",21.0362,105.834,Hà Nội,Quận Ba Đình
+c13,Bệnh viện Cầu Giấy Năm,11 Phố Duy Tân Lô 1,21.0366,105.782,Hà Nội,Quận Cầu Giấy
+c14,Trung tâm Y tế Nguyễn Kim Anh Quận Hai Bà Trưng,51 Phố Sơn Tây Lô 1,21.0115,105.8505,Hà Nội,Quận Hai Bà Trưng
+c15,Cơ sở Y tế Thanh Xuân Hai,86 Phố Giáp Bát,21.0035,105.8484,Hà Nội,Quận Thanh Xuân
+c16,Bệnh viện Phan Thị Liên Quận Đống Đa,76 Phố Giang Võ Khu B,21.02,105.85,Hà Nội,Quận Đống Đa
+c17,Đa khoa An tâm Quận Tây Hồ,51 Phố Nghi Tàm Khu B,21.075,105.825,Hà Nội,Quận Tây Hồ
+c18,Cơ sở Y tế Cao cấp Quận Long Biên,2 Phố Vũ Trọng Phụng Khu B,21.075,105.885,Hà Nội,Quận Long Biên
+c19,Trung tâm Chuyên khoa 1 Một,86 Phố Cao Bá Nhạ Lô 1,10.7769,106.6956,TP. Hồ Chí Minh,Quận 1
+c20,Cơ sở Y tế Chuyên sâu Quận 3,41 Phố Phan Bội Châu (Tòa nhà D),10.7846,106.691,TP. Hồ Chí Minh,Quận 3
+c21,Trung tâm Y tế 5 Ba,"37 Phố Tân Kỳ Tân Quý, Hà Nội",10.76,106.673,TP. Hồ Chí Minh,Quận 5
+c22,Phòng khám Đa khoa Bảo vệ Quận 7,26 Phố Phạm Thế Hiển (Tòa nhà D),10.735,106.72,TP. Hồ Chí Minh,Quận 7
+c23,Phòng khám Đa khoa Chất lượng Quận Bình Thạnh,"65 Phố Lê Nho, Hà Nội",10.8119,106.7126,TP. Hồ Chí Minh,Quận Bình Thạnh
+c24,Trung tâm Y tế Phạm Minh Tuấn Quận 11,26 Phố Đinh Bộ Lĩnh Khu B,10.83,106.66,TP. Hồ Chí Minh,Quận 11
+c25,Đa khoa Trần Thanh Hải - Quận Phú Nhuận,86 Phố Hồng Hà Khu B,10.795,106.735,TP. Hồ Chí Minh,Quận Phú Nhuận
+c29,Bệnh viện Trịnh Thị Mai Quận Hoàng Mai,"21 Phố Hoàng Quốc Việt, TP. Hồ Chí Minh",21.0,105.9,Hà Nội,Quận Hoàng Mai
+c30,Bệnh viện Phan Thị Liên Quận Hà Đông,71 Phố Hà Đông,20.98,105.81,Hà Nội,Quận Hà Đông
+c31,Trung tâm Y tế Vũ Đức Hưng Quận Bắc Từ Liêm,"41 Phố Thăng Long, Hà Nội",21.08,105.8,Hà Nội,Quận Bắc Từ Liêm
+c32,Phòng mạch Nam Từ Liêm Một,"41 Phố Trần Đại Nghĩa, TP. Hồ Chí Minh",21.0,105.79,Hà Nội,Quận Nam Từ Liêm
+c33,Bệnh viện Trần Thanh Hải Quận 4,"36 Phố Bạch Đằng, Hà Nội",10.75,106.71,TP. Hồ Chí Minh,Quận 4
+c34,Trung tâm Y tế Phan Thị Liên Quận 6,51 Phố Bà Hom Lô 1,10.74,106.65,TP. Hồ Chí Minh,Quận 6
+c35,Trung tâm Y tế Trần Thanh Hải Quận 8,21 Phố Võ Thị Sáu,10.68,106.67,TP. Hồ Chí Minh,Quận 8
+c36,Trung tâm Y tế Vũ Đức Hưng Quận 10,6 Phố Nguyễn Kiếm (Tòa nhà D),10.755,106.655,TP. Hồ Chí Minh,Quận 10
+c37,Phòng khám Lê Thị Hương - Quận 12,11 Phố Tây Thạnh (Tòa nhà D),10.87,106.64,TP. Hồ Chí Minh,Quận 12
+c38,Cơ sở Y tế Phan Thị Liên - Quận Gò Vấp,30 Phố Quốc Lộ 1A,10.83,106.68,TP. Hồ Chí Minh,Quận Gò Vấp
+c39,Phòng khám Đa khoa Tân Bình Ba,"44 Phố Hoàng Văn Thụ, TP. Hồ Chí Minh",10.8,106.65,TP. Hồ Chí Minh,Quận Tân Bình
+c40,Trung tâm Chuyên khoa Vũ Đức Hưng - Quận Bình Tân,36 Phố Tân Kỳ Tân Quý Lô 1,10.76,106.59,TP. Hồ Chí Minh,Quận Bình Tân
+c41,Cơ sở Y tế Dương Văn Hào - Quận Tân Phú,76 Phố Hoàng Hoa Thám Lô 1,10.82,106.61,TP. Hồ Chí Minh,Quận Tân Phú
+c42,Phòng khám Hoàng Văn Long - Quận 1,31 Phố Lê Lợi,10.7779,106.6966,TP. Hồ Chí Minh,Quận 1
+c43,Phòng khám Đa khoa Lê Thị Hương - Quận 1,1 Phố Nguyễn Hữu Cảnh,10.7789,106.6976,TP. Hồ Chí Minh,Quận 1
+c44,Phòng khám Đa khoa Phạm Minh Tuấn - Quận 1,37 Phố Nguyễn Hữu Cảnh Khu B,10.7799,106.6986,TP. Hồ Chí Minh,Quận 1
+c45,Đa khoa Phạm Minh Tuấn - Quận 10,44 Phố Quang Trung Lô 1,10.756,106.656,TP. Hồ Chí Minh,Quận 10
+c46,Đa khoa Hà Thị Thuỷ - Quận 10,51 Phố Phạm Ngũ Lão (Khu A),10.757,106.657,TP. Hồ Chí Minh,Quận 10
+c47,Phòng khám Chăm sóc Quận 10,79 Phố Đinh Bộ Lĩnh,10.758,106.658,TP. Hồ Chí Minh,Quận 10
+c48,Trung tâm Chuyên khoa Lương Quốc Anh - Quận 10,30 Phố Tổ Hiến,10.759,106.659,TP. Hồ Chí Minh,Quận 10
+c49,Phòng khám Đa khoa Nguyễn Kim Anh - Quận 11,72 Phố Nguyễn Thị Thập,10.831,106.661,TP. Hồ Chí Minh,Quận 11
+c50,Trung tâm Y tế Phan Thị Liên Quận 11,"36 Phố Cộng Hòa, TP. Hồ Chí Minh",10.832,106.662,TP. Hồ Chí Minh,Quận 11
+c51,Cơ sở Y tế Hàng đầu Quận 11,21 Phố Nguyễn Kiếm,10.833,106.663,TP. Hồ Chí Minh,Quận 11
+c52,Phòng khám Hoàng Văn Long - Quận 11,36 Phố Đinh Bộ Lĩnh,10.834,106.664,TP. Hồ Chí Minh,Quận 11
+c53,Trung tâm Y tế Phạm Minh Tuấn - Quận 12,46 Phố Trường Chinh Lô 1,10.871,106.641,TP. Hồ Chí Minh,Quận 12
+c54,Bệnh viện Trịnh Thị Mai - Quận 12,23 Phố Trường Chinh,10.872,106.642,TP. Hồ Chí Minh,Quận 12
+c55,Bệnh viện Chu Minh Tâm Quận 12,66 Phố Lê Văn Việt (Khu A),10.873,106.643,TP. Hồ Chí Minh,Quận 12
+c56,Trung tâm Y tế 12 Năm,76 Phố Hoàng Minh Giám,10.874,106.644,TP. Hồ Chí Minh,Quận 12
+c57,Bệnh viện Hoàng Văn Long Quận 3,61 Phố Phan Bội Châu (Tòa nhà D),10.7856,106.692,TP. Hồ Chí Minh,Quận 3
+c58,Phòng khám 3 Hai,71 Phố Bạch Đằng,10.7866,106.693,TP. Hồ Chí Minh,Quận 3
+c59,Phòng khám Cao cấp Quận 3,11 Phố Võ Thị Sáu Lô 1,10.7876,106.694,TP. Hồ Chí Minh,Quận 3
+c60,Đa khoa 4 Bốn,"11 Phố Hoàng Hoa Thám, TP. Hồ Chí Minh",10.751,106.711,TP. Hồ Chí Minh,Quận 4
+c61,Bệnh viện Chăm sóc Quận 4,61 Phố Ký Con (Tòa nhà D),10.752,106.712,TP. Hồ Chí Minh,Quận 4
+c62,Trung tâm Chuyên khoa 4 Một,81 Phố Ký Con Lô 1,10.753,106.713,TP. Hồ Chí Minh,Quận 4
+c63,Bệnh viện Phạm Minh Tuấn Quận 4,"1 Phố Ký Con, Hà Nội",10.754,106.714,TP. Hồ Chí Minh,Quận 4
+c64,Phòng khám 5 Ba,51 Phố An Dương Vương Lô 1,10.761,106.674,TP. Hồ Chí Minh,Quận 5
+c65,Bệnh viện Lương Quốc Anh Quận 5,"2 Phố Bùi Hữu Nghĩa, Hà Nội",10.762,106.675,TP. Hồ Chí Minh,Quận 5
+c66,Bệnh viện Phan Thị Liên Quận 5,86 Phố An Dương Vương Khu B,10.763,106.676,TP. Hồ Chí Minh,Quận 5
+c67,Trung tâm Chuyên khoa Tạ Thị Phương - Quận 5,37 Phố Cạn Thị Tính,10.764,106.677,TP. Hồ Chí Minh,Quận 5
+c68,Trung tâm Y tế Phan Thị Liên Quận 6,79 Phố Nguyễn Trãi (Khu A),10.741,106.651,TP. Hồ Chí Minh,Quận 6
+c69,Trung tâm Y tế 6 Ba,61 Phố Hoàng Hoa Thám (Khu A),10.742,106.652,TP. Hồ Chí Minh,Quận 6
+c70,Trung tâm Chuyên khoa 6 Bốn,46 Phố Tần Kỳ Tân Quý Lô 1,10.743,106.653,TP. Hồ Chí Minh,Quận 6
+c71,Phòng khám Tâm huyết Quận 6,72 Phố Trần Văn Ơn (Khu A),10.744,106.654,TP. Hồ Chí Minh,Quận 6
+c72,Trung tâm Y tế Chu Minh Tâm Quận 7,44 Phố Nguyễn Lân Lô 1,10.736,106.721,TP. Hồ Chí Minh,Quận 7
+c73,Phòng mạch Uy tín Quận 7,65 Phố Phạm Thế Hiển,10.737,106.722,TP. Hồ Chí Minh,Quận 7
+c74,Trung tâm Y tế Chất lượng Quận 7,21 Phố Nguyễn Lân (Khu A),10.738,106.723,TP. Hồ Chí Minh,Quận 7
+c75,Đa khoa Uy tín Quận 7,86 Phố Bến Vân Đồn (Khu A),10.739,106.724,TP. Hồ Chí Minh,Quận 7
+c76,Bệnh viện Bảo vệ Quận 8,9 Phố Trần Hưng Đạo Lô 1,10.681,106.671,TP. Hồ Chí Minh,Quận 8
+c77,Cơ sở Y tế Vũ Đức Hưng - Quận 8,"23 Phố Trần Hưng Đạo, TP. Hồ Chí Minh",10.682,106.672,TP. Hồ Chí Minh,Quận 8
+c78,Phòng mạch Uy tín Quận 8,"61 Phố Võ Thị Sáu, Hà Nội",10.683,106.673,TP. Hồ Chí Minh,Quận 8
+c79,Trung tâm Y tế Tâm huyết Quận 8,36 Phố Hóc Môn (Tòa nhà D),10.684,106.674,TP. Hồ Chí Minh,Quận 8
+c80,Phòng khám Ba Đình Bốn,26 Phố Quán Sứ,21.0372,105.835,Hà Nội,Quận Ba Đình
+c81,Phòng mạch Ba Đình Năm,66 Phố Hàng Bún Lô 1,21.0382,105.836,Hà Nội,Quận Ba Đình
+c82,Đa khoa Ba Đình Một,"86 Phố Lý Thường Kiệt, TP. Hồ Chí Minh",21.0392,105.837,Hà Nội,Quận Ba Đình
+c83,Trung tâm Y tế Trịnh Thị Mai Quận Bình Thạnh,61 Phố Định Công Lô 1,10.8129,106.7136,TP. Hồ Chí Minh,Quận Bình Thạnh
+c84,Phòng khám Đa khoa Bình Thạnh Ba,"41 Phố Lê Nho, TP. Hồ Chí Minh",10.8139,106.7146,TP. Hồ Chí Minh,Quận Bình Thạnh
+c85,Trung tâm Y tế Bình Thạnh Bốn,26 Phố Trường Sa (Khu A),10.8149,106.7156,TP. Hồ Chí Minh,Quận Bình Thạnh
+c86,Bệnh viện Bình Tân Năm,93 Phố Bà Hom Lô 1,10.761,106.591,TP. Hồ Chí Minh,Quận Bình Tân
+c87,Phòng mạch Tâm huyết Quận Bình Tân,37 Phố Nguyễn Xí Lô 1,10.762,106.592,TP. Hồ Chí Minh,Quận Bình Tân
+c88,Phòng mạch Ngô Thị Nhậm - Quận Bình Tân,16 Phố Tân Hòa (Khu A),10.763,106.593,TP. Hồ Chí Minh,Quận Bình Tân
+c89,Trung tâm Chuyên khoa Lê Thị Hương - Quận Bình Tân,51 Phố Hương Lộ 11,10.764,106.594,TP. Hồ Chí Minh,Quận Bình Tân
+c90,Cơ sở Y tế Hà Thị Thuỷ - Quận Bắc Từ Liêm,9 Phố Thăng Long (Tòa nhà D),21.081,105.801,Hà Nội,Quận Bắc Từ Liêm
+c91,Cơ sở Y tế Bắc Từ Liêm Năm,56 Phố Tây Tựu Khu B,21.082,105.802,Hà Nội,Quận Bắc Từ Liêm
+c92,Trung tâm Y tế Đặng Văn Chiến - Quận Bắc Từ Liêm,"46 Phố Mễ Trì, TP. Hồ Chí Minh",21.083,105.803,Hà Nội,Quận Bắc Từ Liêm
+c93,Trung tâm Y tế Dương Văn Hào - Quận Bắc Từ Liêm,26 Phố Trần Hữu Tước,21.084,105.804,Hà Nội,Quận Bắc Từ Liêm
+c94,Phòng khám Bùi Thị Quyên - Quận Cầu Giấy,36 Phố Phạm Tuấn Tài,21.0376,105.783,Hà Nội,Quận Cầu Giấy
+c95,Trung tâm Y tế Hoàng Văn Long Quận Cầu Giấy,86 Phố Thái Thịnh,21.0386,105.784,Hà Nội,Quận Cầu Giấy
+c96,Trung tâm Y tế Trịnh Thị Mai Quận Cầu Giấy,1 Phố Trần Thái Tông,21.0396,105.785,Hà Nội,Quận Cầu Giấy
+c97,Trung tâm Y tế Hà Thị Thuỷ Quận Gò Vấp,91 Phố Đặng Thị Mười (Tòa nhà D),10.831,106.681,TP. Hồ Chí Minh,Quận Gò Vấp
+c98,Trung tâm Y tế Hà Thị Thuỷ Quận Gò Vấp,81 Phố Đặng Thị Mười (Khu A),10.832,106.682,TP. Hồ Chí Minh,Quận Gò Vấp
+c99,Bệnh viện Dương Văn Hào Quận Gò Vấp,36 Phố Kha Vạn Cân (Khu A),10.833,106.683,TP. Hồ Chí Minh,Quận Gò Vấp
+c100,Bệnh viện Lê Thị Hương - Quận Gò Vấp,66 Phố Kha Vạn Cân Khu B,10.834,106.684,TP. Hồ Chí Minh,Quận Gò Vấp
+c101,Trung tâm Chuyên khoa Hai Bà Trưng Năm,"96 Phố Trần Khát Chân, Hà Nội",21.012500000000003,105.8515,Hà Nội,Quận Hai Bà Trưng
+c102,Bệnh viện Lê Thị Hương Quận Hai Bà Trưng,65 Phố Máy Tơ (Khu A),21.0135,105.8525,Hà Nội,Quận Hai Bà Trưng
+c103,Bệnh viện Dương Văn Hào Quận Hai Bà Trưng,9 Phố Sơn Tây,21.0145,105.8535,Hà Nội,Quận Hai Bà Trưng
+c104,Bệnh viện Nguyễn Kim Anh Quận Hoàn Kiếm,"93 Phố Tràng Tiền, TP. Hồ Chí Minh",21.0288,105.8533,Hà Nội,Quận Hoàn Kiếm
+c105,Trung tâm Chuyên khoa Hoàng Văn Long - Quận Hoàn Kiếm,"2 Phố Hàng Bông, Hà Nội",21.0298,105.8543,Hà Nội,Quận Hoàn Kiếm
+c106,Trung tâm Y tế Bảo vệ Quận Hoàn Kiếm,"51 Phố Cửa Hàng, TP. Hồ Chí Minh",21.0308,105.8553,Hà Nội,Quận Hoàn Kiếm
+c107,Bệnh viện Hoàng Mai Một,31 Phố Phương Mai (Tòa nhà D),21.001,105.901,Hà Nội,Quận Hoàng Mai
+c108,Đa khoa Bảo vệ Quận Hoàng Mai,86 Phố Lê Văn Hưu,21.002,105.902,Hà Nội,Quận Hoàng Mai
+c109,Bệnh viện Dương Văn Hào Quận Hoàng Mai,"9 Phố Hoàng Quốc Việt, Hà Nội",21.003,105.903,Hà Nội,Quận Hoàng Mai
+c110,Trung tâm Y tế Phạm Minh Tuấn Quận Hoàng Mai,"51 Phố Lê Văn Hưu, TP. Hồ Chí Minh",21.004,105.904,Hà Nội,Quận Hoàng Mai
+c111,Cơ sở Y tế Hà Đông Năm,91 Phố Kim Mã (Tòa nhà D),20.981,105.811,Hà Nội,Quận Hà Đông
+c112,Trung tâm Y tế Lương Quốc Anh Quận Hà Đông,36 Phố Khuất Duy Tiến,20.982,105.812,Hà Nội,Quận Hà Đông
+c113,Phòng khám Trần Thanh Hải - Quận Hà Đông,"79 Phố Khuất Duy Tiến, TP. Hồ Chí Minh",20.983,105.813,Hà Nội,Quận Hà Đông
+c114,Phòng mạch Hà Đông Ba,65 Phố Hà Đông Lô 1,20.984,105.814,Hà Nội,Quận Hà Đông
+c115,Phòng khám Đa khoa Vũ Đức Hưng - Quận Long Biên,58 Phố Vũ Tông Phan Khu B,21.076,105.886,Hà Nội,Quận Long Biên
+c116,Trung tâm Chuyên khoa Long Biên Năm,"86 Phố Nguyễn Văn Cừ, TP. Hồ Chí Minh",21.077,105.887,Hà Nội,Quận Long Biên
+c117,Bệnh viện Bảo vệ Quận Long Biên,37 Phố Nguyễn Văn Cừ (Tòa nhà D),21.078,105.888,Hà Nội,Quận Long Biên
+c118,Bệnh viện Bùi Thị Quyên Quận Long Biên,"79 Phố Cổ Liên, TP. Hồ Chí Minh",21.079,105.889,Hà Nội,Quận Long Biên
+c119,Bệnh viện Chu Minh Tâm Quận Nam Từ Liêm,"16 Phố Trần Đại Nghĩa, TP. Hồ Chí Minh",21.001,105.791,Hà Nội,Quận Nam Từ Liêm
+c120,Trung tâm Y tế Dương Văn Hào Quận Nam Từ Liêm,2 Phố Trần Đại Nghĩa Khu B,21.002,105.792,Hà Nội,Quận Nam Từ Liêm
+c121,Trung tâm Y tế Phan Thị Liên Quận Nam Từ Liêm,76 Phố Mỹ Đình (Tòa nhà D),21.003,105.793,Hà Nội,Quận Nam Từ Liêm
+c122,Cơ sở Y tế Nam Từ Liêm Một,86 Phố Trần Đại Nghĩa (Tòa nhà D),21.004,105.794,Hà Nội,Quận Nam Từ Liêm
+c123,Phòng khám Đa khoa Tin cậy Quận Phú Nhuận,46 Phố Nguyễn Tuân Lô 1,10.796,106.736,TP. Hồ Chí Minh,Quận Phú Nhuận
+c124,Bệnh viện Chu Minh Tâm Quận Phú Nhuận,71 Phố Hồng Hà (Tòa nhà D),10.797,106.737,TP. Hồ Chí Minh,Quận Phú Nhuận
+c125,Cơ sở Y tế Cao cấp Quận Phú Nhuận,36 Phố Trường Chinh (Khu A),10.798,106.738,TP. Hồ Chí Minh,Quận Phú Nhuận
+c126,Trung tâm Y tế Phú Nhuận Năm,"86 Phố Nguyễn Tuân, Hà Nội",10.799,106.739,TP. Hồ Chí Minh,Quận Phú Nhuận
+c127,Trung tâm Y tế Đặng Văn Chiến Quận Thanh Xuân,72 Phố Ngô Thì Nhậm Khu B,21.0045,105.8494,Hà Nội,Quận Thanh Xuân
+c128,Phòng khám Phan Thị Liên - Quận Thanh Xuân,6 Phố Phương Liệt (Khu A),21.0055,105.8504,Hà Nội,Quận Thanh Xuân
+c129,Phòng khám Tạ Thị Phương - Quận Thanh Xuân,86 Phố Trường Chinh Lô 1,21.0065,105.8514,Hà Nội,Quận Thanh Xuân
+c130,Bệnh viện Lương Quốc Anh Quận Thanh Xuân,86 Phố Giáp Bát Khu B,21.0075,105.8524,Hà Nội,Quận Thanh Xuân
+c131,Trung tâm Y tế Trần Thanh Hải - Quận Tân Bình,"93 Phố Lê Lợi, TP. Hồ Chí Minh",10.801,106.651,TP. Hồ Chí Minh,Quận Tân Bình
+c132,Trung tâm Y tế Tân Bình Một,11 Phố Võ Thị Sáu (Tòa nhà D),10.802,106.652,TP. Hồ Chí Minh,Quận Tân Bình
+c133,Trung tâm Y tế Lương Quốc Anh - Quận Tân Bình,44 Phố Nguyễn Hữu Cảnh (Tòa nhà D),10.803,106.653,TP. Hồ Chí Minh,Quận Tân Bình
+c134,Phòng khám Chuyên sâu Quận Tân Bình,"44 Phố Trần Hưng Đạo, Hà Nội",10.804,106.654,TP. Hồ Chí Minh,Quận Tân Bình
+c135,Trung tâm Y tế Chu Minh Tâm Quận Tân Phú,86 Phố Ánh Dương (Tòa nhà D),10.821,106.611,TP. Hồ Chí Minh,Quận Tân Phú
+c136,Đa khoa Tân Phú Năm,51 Phố Định Công Khu B,10.822,106.612,TP. Hồ Chí Minh,Quận Tân Phú
+c137,Trung tâm Chuyên khoa Hàng đầu Quận Tân Phú,56 Phố Lý Chính Thắng (Khu A),10.823,106.613,TP. Hồ Chí Minh,Quận Tân Phú
+c138,Cơ sở Y tế Tân Phú Hai,56 Phố Hùng Vương Khu B,10.824,106.614,TP. Hồ Chí Minh,Quận Tân Phú
+c139,Trung tâm Y tế Trần Thanh Hải Quận Tây Hồ,1 Phố Nghi Tàm Khu B,21.076,105.826,Hà Nội,Quận Tây Hồ
+c140,Bệnh viện Tạ Thị Phương Quận Tây Hồ,"11 Phố Nghi Tàm, Hà Nội",21.077,105.827,Hà Nội,Quận Tây Hồ
+c141,Cơ sở Y tế Chất lượng Quận Tây Hồ,86 Phố Tây Hồ (Khu A),21.078,105.828,Hà Nội,Quận Tây Hồ
+c142,Đa khoa Cao cấp Quận Tây Hồ,76 Phố Nghi Tàm (Tòa nhà D),21.079,105.829,Hà Nội,Quận Tây Hồ
+c143,Trung tâm Y tế Tin cậy Quận Đống Đa,58 Phố Trần Hung Đạo (Khu A),21.021,105.851,Hà Nội,Quận Đống Đa
+c144,Phòng mạch Chuyên sâu Quận Đống Đa,36 Phố Giang Võ,21.022,105.852,Hà Nội,Quận Đống Đa
+c145,Phòng mạch Đống Đa Bốn,6 Phố Chùa Bộc,21.023,105.853,Hà Nội,Quận Đống Đa
+c146,Trung tâm Chuyên khoa Đống Đa Năm,26 Phố Giang Võ (Khu A),21.024,105.854,Hà Nội,Quận Đống Đa
