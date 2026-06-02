@@ -280,48 +280,14 @@ def disease_detail(disease_id):
 
     location_label = _build_location_label(province, district, ward)
     
-    # Prepare available districts and wards for filter dropdown
+    # Get available districts from actual clinics in clinics.csv (not from hardcoded LOCATION_HIERARCHY)
+    clinics = CSVHelper.get_clinics()
     available_districts = []
-    available_wards = []
-    
-    LOCATION_HIERARCHY = {
-        'Hà Nội': {
-            'Quận Ba Đình': { 'lat': 21.0450, 'lon': 105.8350 },
-            'Quận Hoàn Kiếm': { 'lat': 21.0283, 'lon': 105.8542 },
-            'Quận Đống Đa': { 'lat': 21.0200, 'lon': 105.8500 },
-            'Quận Hai Bà Trưng': { 'lat': 21.0100, 'lon': 105.8450 },
-            'Quận Tây Hồ': { 'lat': 21.0700, 'lon': 105.8200 },
-            'Quận Cầu Giấy': { 'lat': 21.0350, 'lon': 105.7900 },
-            'Quận Thanh Xuân': { 'lat': 21.0100, 'lon': 105.8700 },
-            'Quận Hoàng Mai': { 'lat': 21.0000, 'lon': 105.9000 },
-            'Quận Long Biên': { 'lat': 21.0600, 'lon': 105.9000 },
-            'Quận Bắc Từ Liêm': { 'lat': 21.0800, 'lon': 105.8000 },
-            'Quận Nam Từ Liêm': { 'lat': 21.0000, 'lon': 105.7900 },
-            'Quận Hà Đông': { 'lat': 20.9800, 'lon': 105.8100 }
-        },
-        'TP. Hồ Chí Minh': {
-            'Quận 1': { 'lat': 10.7700, 'lon': 106.7000 },
-            'Quận 3': { 'lat': 10.7850, 'lon': 106.6750 },
-            'Quận 4': { 'lat': 10.7500, 'lon': 106.7100 },
-            'Quận 5': { 'lat': 10.7600, 'lon': 106.6600 },
-            'Quận 6': { 'lat': 10.7400, 'lon': 106.6500 },
-            'Quận 7': { 'lat': 10.7300, 'lon': 106.7200 },
-            'Quận 8': { 'lat': 10.6800, 'lon': 106.6700 },
-            'Quận 10': { 'lat': 10.7550, 'lon': 106.6550 },
-            'Quận 11': { 'lat': 10.7700, 'lon': 106.6300 },
-            'Quận 12': { 'lat': 10.8700, 'lon': 106.6400 },
-            'Quận Phú Nhuận': { 'lat': 10.8000, 'lon': 106.7000 },
-            'Quận Bình Thạnh': { 'lat': 10.8100, 'lon': 106.7400 },
-            'Quận Gò Vấp': { 'lat': 10.8300, 'lon': 106.6800 },
-            'Quận Tân Bình': { 'lat': 10.8000, 'lon': 106.6500 },
-            'Quận Bình Tân': { 'lat': 10.7600, 'lon': 106.5900 },
-            'Quận Tân Phú': { 'lat': 10.8200, 'lon': 106.6100 }
-        }
-    }
-    
-    available_districts = []
-    if province in LOCATION_HIERARCHY:
-        available_districts = list(LOCATION_HIERARCHY[province].keys())
+    if province:
+        available_districts = sorted(list(set(
+            clinics[(clinics['city'] == province)]['district'].tolist()
+        )))
+    available_districts = [d for d in available_districts if d.strip()]  # Remove empty/whitespace
 
     # Determine if location is from GPS/IP (accurate) vs manual selection
     is_gps_location = location_source in ('gps', 'ip', 'debug')
