@@ -1,11 +1,29 @@
 id,name,address,lat,lon,city
 c1,Phòng khám Đa khoa Hoàn Kiếm,12 Hàng Bài Hoàn Kiếm Hà Nội,21.0278,105.8523,Hà Nội
-c2,Phòng khám Đa khoa Ba Đình,36 Điện Biên Phủ Ba Đình Hà Nội,21.0362,105.8340,Hà Nội
-c3,Phòng khám Đa khoa Cầu Giấy,150 Cầu Giấy Cầu Giấy Hà Nội,21.0366,105.7820,Hà Nội
+c2,Phòng khám Đa khoa Ba Đình,36 Điện Biên Phủ Ba Đình Hà Nội,21.0362,105.834,Hà Nội
+c3,Phòng khám Đa khoa Cầu Giấy,150 Cầu Giấy Cầu Giấy Hà Nội,21.0366,105.782,Hà Nội
 c4,Phòng khám Đa khoa Hai Bà Trưng,250 Trần Khát Chân Hai Bà Trưng Hà Nội,21.0115,105.8505,Hà Nội
 c5,Bệnh viện Đa khoa Quận 1,12 Lý Thường Kiệt Quận 1 TP.HCM,10.7769,106.6956,TP. Hồ Chí Minh
-c6,Phòng khám Đa khoa Quận 3,115 Võ Thị Sáu Quận 3 TP.HCM,10.7846,106.6910,TP. Hồ Chí Minh
+c6,Phòng khám Đa khoa Quận 3,115 Võ Thị Sáu Quận 3 TP.HCM,10.7846,106.691,TP. Hồ Chí Minh
 c7,Bệnh viện Đa khoa Bình Thạnh,36 Nơ Trang Long Bình Thạnh TP.HCM,10.8119,106.7126,TP. Hồ Chí Minh
 c8,Phòng khám Đa khoa Đà Nẵng,55 Phan Châu Trinh Hải Châu Đà Nẵng,16.0544,108.2022,Đà Nẵng
 c9,Bệnh viện C Đà Nẵng,122 Hải Phòng Hải Châu Đà Nẵng,16.0678,108.2205,Đà Nẵng
 c10,Phòng khám Đa khoa Cần Thơ,23 Nguyễn An Ninh Ninh Kiều Cần Thơ,10.0452,105.7469,Cần Thơ
+c11,Phòng khám Đa khoa Hoàn Kiếm,11 Đường Hoàn Kiếm Hà Nội,21.0278,105.8523,Hà Nội
+c12,Phòng khám Đa khoa Ba Đình,12 Đường Ba Đình Hà Nội,21.0362,105.834,Hà Nội
+c13,Phòng khám Đa khoa Cầu Giấy,13 Đường Cầu Giấy Hà Nội,21.0366,105.782,Hà Nội
+c14,Phòng khám Đa khoa Hai Bà Trưng,14 Đường Hai Bà Trưng Hà Nội,21.0115,105.8505,Hà Nội
+c15,Phòng khám Đa khoa Thanh Xuân,15 Đường Thanh Xuân Hà Nội,21.0035,105.8484,Hà Nội
+c16,Phòng khám Đa khoa Đống Đa,16 Đường Đống Đa Hà Nội,21.02,105.85,Hà Nội
+c17,Phòng khám Đa khoa Tây Hồ,17 Đường Tây Hồ Hà Nội,21.075,105.825,Hà Nội
+c18,Phòng khám Đa khoa Long Biên,18 Đường Long Biên Hà Nội,21.075,105.885,Hà Nội
+c19,Phòng khám Đa khoa Quận 1,19 Đường Quận 1 TP. Hồ Chí Minh,10.7769,106.6956,TP. Hồ Chí Minh
+c20,Phòng khám Đa khoa Quận 3,20 Đường Quận 3 TP. Hồ Chí Minh,10.7846,106.691,TP. Hồ Chí Minh
+c21,Phòng khám Đa khoa Quận 5,21 Đường Quận 5 TP. Hồ Chí Minh,10.76,106.673,TP. Hồ Chí Minh
+c22,Phòng khám Đa khoa Quận 7,22 Đường Quận 7 TP. Hồ Chí Minh,10.735,106.72,TP. Hồ Chí Minh
+c23,Phòng khám Đa khoa Bình Thạnh,23 Đường Bình Thạnh TP. Hồ Chí Minh,10.8119,106.7126,TP. Hồ Chí Minh
+c24,Phòng khám Đa khoa Quận 11,24 Đường Quận 11 TP. Hồ Chí Minh,10.83,106.66,TP. Hồ Chí Minh
+c25,Phòng khám Đa khoa Phú Nhuận,25 Đường Phú Nhuận TP. Hồ Chí Minh,10.795,106.735,TP. Hồ Chí Minh
+c26,Phòng khám Đa khoa Hải Châu,26 Đường Hải Châu Đà Nẵng,16.06,108.205,Đà Nẵng
+c27,Phòng khám Đa khoa Thanh Khê,27 Đường Thanh Khê Đà Nẵng,16.075,108.175,Đà Nẵng
+c28,Phòng khám Đa khoa Sơn Trà,28 Đường Sơn Trà Đà Nẵng,16.09,108.23,Đà Nẵng
