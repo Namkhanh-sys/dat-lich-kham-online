@@ -7,26 +7,18 @@ class CSVHelper:
 
     @classmethod
     def read_csv(cls, file_path):
-        """Read a CSV file and return a pandas DataFrame, with caching based on file modification time. If file doesn't exist, return empty DataFrame."""
+        """Read a CSV file and return a pandas DataFrame (no caching - always fresh). If file doesn't exist, return empty DataFrame."""
         if not os.path.exists(file_path):
             # Create directories if they don't exist
             os.makedirs(os.path.dirname(file_path), exist_ok=True)
             return pd.DataFrame()
         try:
-            mtime = os.path.getmtime(file_path)
-            # Check cache
-            if file_path in cls._cache:
-                cached_mtime, cached_df = cls._cache[file_path]
-                if cached_mtime == mtime:
-                    return cached_df.copy() # Return a copy to prevent accidental mutation of the cache
-
+            # Always read fresh from disk - no caching
             df = pd.read_csv(file_path, dtype=str)
             # Strip whitespace from all string columns to prevent key mismatches
             for col in df.select_dtypes(include='object').columns:
                 df[col] = df[col].str.strip()
             
-            # Update cache
-            cls._cache[file_path] = (mtime, df)
             return df.copy()
         except Exception as e:
             print(f"Error reading {file_path}: {e}")
