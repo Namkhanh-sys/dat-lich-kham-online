@@ -493,67 +493,106 @@ def doctor_detail(doctor_id):
 
 @app.route('/book/<doctor_id>', methods=['GET', 'POST'])
 def book_appointment(doctor_id):
-    if not is_logged_in():
-        flash("Vui lòng đăng nhập trước khi thực hiện đặt lịch khám.", "warning")
-        return redirect(url_for('login', next=request.url))
-
-    # Load doctor details
-    df_docs = CSVHelper.get_doctors()
-    doc_row = df_docs[df_docs['id'] == doctor_id]
-    if doc_row.empty:
-        flash("Không tìm thấy thông tin bác sĩ.", "error")
-        return redirect(url_for('index'))
-        
-    doctor = doc_row.iloc[0].to_dict()
-
-    # Location params
-    province = request.values.get('province', '').strip()
-    district = request.values.get('district', '').strip()
-    ward = request.values.get('ward', '').strip()
-    location_label = f"{ward}, {district}, {province}".strip(', ') if (ward or district or province) else ''
-    
-    # Load clinic details to compute distance
-    lat = request.values.get('lat', '21.0285').strip()
-    lon = request.values.get('lon', '105.8542').strip()
     try:
-        user_lat = float(lat)
-        user_lon = float(lon)
-    except ValueError:
-        user_lat = 21.0285
-        user_lon = 105.8542
-    
-    today_str = dt.date.today().strftime('%Y-%m-%d')
+        if not is_logged_in():
+            flash("Vui lòng đăng nhập trước khi thực hiện đặt lịch khám.", "warning")
+            return redirect(url_for('login', next=request.url))
+
+        print(f"[BOOKING] Loading booking page for doctor {doctor_id}, method={request.method}")
         
-    clinic_id = str(doctor.get('clinic_id', '')).strip()
-    clinic = DistanceCalculator.get_clinic_details(clinic_id, user_lat, user_lon, province, district, ward)
-    doctor['clinic_name'] = clinic['name']
-    doctor['clinic_address'] = clinic['address']
-    doctor['distance_km'] = clinic['distance_km']
+        # Load doctor details
+        df_docs = CSVHelper.get_doctors()
+        doc_row = df_docs[df_docs['id'] == doctor_id]
+        if doc_row.empty:
+            print(f"[BOOKING] Doctor {doctor_id} not found")
+            flash("Không tìm thấy thông tin bác sĩ.", "error")
+            return redirect(url_for('index'))
+            
+        doctor = doc_row.iloc[0].to_dict()
+        print(f"[BOOKING] Found doctor: {doctor.get('name')} (clinic: {doctor.get('clinic_id')})")
+
+        # Location params
+        province = request.values.get('province', '').strip()
+        district = request.values.get('district', '').strip()
+        ward = request.values.get('ward', '').strip()
+        location_label = f"{ward}, {district}, {province}".strip(', ') if (ward or district or province) else ''
+        
+        # Load clinic details to compute distance
+        lat = request.values.get('lat', '21.0285').strip()
+        lon = request.values.get('lon', '105.8542').strip()
+        try:
+            user_lat = float(lat)
+            user_lon = float(lon)
+        except ValueError:
+            user_lat = 21.0285
+            user_lon = 105.8542
+        
+        today_str = dt.date.today().strftime('%Y-%m-%d')
+            
+        clinic_id = str(doctor.get('clinic_id', '')).strip()
+        print(f"[BOOKING] Loading clinic {clinic_id}")
+        clinic = DistanceCalculator.get_clinic_details(clinic_id, user_lat, user_lon, province, district, ward)
+        print(f"[BOOKING] Clinic loaded: {clinic.get('name')}")
+        
+        doctor['clinic_name'] = clinic['name']
+        doctor['clinic_address'] = clinic['address']
+        doctor['distance_km'] = clinic['distance_km']
 
     if request.method == 'POST':
-        appt_date = request.form.get('date', '').strip()
-        appt_time = request.form.get('time', '').strip()
-        
-        # Check collision and create booking
-        success, result = BookingManager.create_booking(session['user_id'], doctor_id, appt_date, appt_time)
-        if success:
-            # Send booking confirmation email
-            EmailService.send_booking_confirmation(
-                user_email=session['user_email'],
-                user_name=session['user_name'],
-                doctor_name=doctor['name'],
-                date_str=appt_date,
-                time_str=appt_time,
-                clinic_name=doctor['clinic_name'],
-                address=doctor['clinic_address']
-            )
-            flash("Đặt lịch khám thành công!", "success")
-            return redirect(url_for('confirmation', appointment_id=result['id']))
-        else:
-            collision_error = result
-            alternatives = None
-            if "bác sĩ đã có lịch hẹn" in result.lower():
-                alternatives = BookingManager.suggest_alternative_slots(doctor_id, appt_date)
+        try:
+            appt_date = request.form.get('date', '').strip()
+            appt_time = request.form.get('time', '').strip()
+            
+            print(f"[BOOKING] POST request: user={session['user_id']}, doctor={doctor_id}, date={appt_date}, time={appt_time}")
+            
+            # Check collision and create booking
+            success, result = BookingManager.create_booking(session['user_id'], doctor_id, appt_date, appt_time)
+            print(f"[BOOKING] create_booking returned: success={success}, result={result}")
+            
+            if success:
+                try:
+                    # Send booking confirmation email
+                    print(f"[BOOKING] Sending email to {session.get('user_email', 'unknown')}")
+                    EmailService.send_booking_confirmation(
+                        user_email=session['user_email'],
+                        user_name=session['user_name'],
+                        doctor_name=doctor['name'],
+                        date_str=appt_date,
+                        time_str=appt_time,
+                        clinic_name=doctor['clinic_name'],
+                        address=doctor['clinic_address']
+                    )
+                    print(f"[BOOKING] Email sent successfully")
+                except Exception as email_err:
+                    print(f"[BOOKING] Email error (non-blocking): {email_err}")
+                
+                flash("Đặt lịch khám thành công!", "success")
+                return redirect(url_for('confirmation', appointment_id=result['id']))
+            else:
+                collision_error = result
+                alternatives = None
+                if "bác sĩ đã có lịch hẹn" in result.lower():
+                    alternatives = BookingManager.suggest_alternative_slots(doctor_id, appt_date)
+                return render_template(
+                    'booking.html',
+                    doctor=doctor,
+                    user_lat=user_lat,
+                    user_lon=user_lon,
+                    province=province,
+                    district=district,
+                    ward=ward,
+                    location_label=location_label,
+                    today_str=today_str,
+                    selected_date=appt_date,
+                    selected_time=appt_time,
+                    collision_error=collision_error,
+                    alternatives=alternatives
+                )
+        except Exception as e:
+            import traceback
+            error_msg = f"[BOOKING_ERROR] {str(e)}\n{traceback.format_exc()}"
+            print(error_msg)
+            flash(f"Lỗi hệ thống: {str(e)}", "error")
             return render_template(
                 'booking.html',
                 doctor=doctor,
@@ -564,27 +603,42 @@ def book_appointment(doctor_id):
                 ward=ward,
                 location_label=location_label,
                 today_str=today_str,
-                selected_date=appt_date,
-                selected_time=appt_time,
-                collision_error=collision_error,
-                alternatives=alternatives
+                selected_date=None,
+                selected_time=None,
+                collision_error=f"Lỗi hệ thống: {str(e)}",
+                alternatives=None
             )
 
-    return render_template(
-        'booking.html',
-        doctor=doctor,
-        user_lat=user_lat,
-        user_lon=user_lon,
-        province=province,
-        district=district,
-        ward=ward,
-        location_label=location_label,
-        today_str=today_str,
-        selected_date=None,
-        selected_time=None,
-        collision_error=None,
-        alternatives=None
-    )
+    except Exception as e:
+        import traceback
+        error_msg = f"[BOOKING_GET_ERROR] {str(e)}\n{traceback.format_exc()}"
+        print(error_msg)
+        flash(f"Lỗi khi tải trang: {str(e)}", "error")
+        return redirect(url_for('index'))
+
+    try:
+        print(f"[BOOKING] Rendering GET page for doctor {doctor_id}")
+        return render_template(
+            'booking.html',
+            doctor=doctor,
+            user_lat=user_lat,
+            user_lon=user_lon,
+            province=province,
+            district=district,
+            ward=ward,
+            location_label=location_label,
+            today_str=today_str,
+            selected_date=None,
+            selected_time=None,
+            collision_error=None,
+            alternatives=None
+        )
+    except Exception as e:
+        import traceback
+        error_msg = f"[BOOKING_RENDER_ERROR] {str(e)}\n{traceback.format_exc()}"
+        print(error_msg)
+        flash(f"Lỗi khi hiển thị trang: {str(e)}", "error")
+        return redirect(url_for('index'))
 
 @app.route('/confirmation/<appointment_id>')
 def confirmation(appointment_id):

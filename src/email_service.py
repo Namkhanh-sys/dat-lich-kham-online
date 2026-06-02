@@ -44,6 +44,7 @@ class EmailService:
             return True, "Email logged to mock system."
 
         try:
+            print(f"[EmailService] Attempting SMTP send to {to_email}")
             msg = MIMEMultipart()
             msg['From'] = Config.SMTP_EMAIL
             msg['To'] = to_email
@@ -51,16 +52,21 @@ class EmailService:
             
             msg.attach(MIMEText(body, 'plain', 'utf-8'))
             
-            # Connect to SMTP server
-            server = smtplib.SMTP(Config.SMTP_SERVER, Config.SMTP_PORT)
+            # Connect to SMTP server with timeout
+            print(f"[EmailService] Connecting to {Config.SMTP_SERVER}:{Config.SMTP_PORT}")
+            server = smtplib.SMTP(Config.SMTP_SERVER, Config.SMTP_PORT, timeout=10)
+            print(f"[EmailService] Connected, starting TLS")
             server.starttls()
+            print(f"[EmailService] Logging in...")
             server.login(Config.SMTP_EMAIL, Config.SMTP_PASSWORD)
+            print(f"[EmailService] Sending email...")
             server.sendmail(Config.SMTP_EMAIL, to_email, msg.as_string())
             server.quit()
+            print(f"[EmailService] Email sent successfully")
             
             return True, "Email sent successfully via SMTP."
         except Exception as e:
-            error_msg = f"SMTP error (fallback to mock): {str(e)}"
+            error_msg = f"[EmailService] SMTP error (fallback to mock): {str(e)}"
             print(error_msg)
             return True, error_msg
 

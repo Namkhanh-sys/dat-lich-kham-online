@@ -65,26 +65,37 @@ class BookingManager:
     @classmethod
     def create_booking(cls, user_id, doctor_id, date_str, time_str):
         """Create a new booking if no collision. Returns (success, message_or_appointment_dict)."""
+        print(f"[BookingManager.create_booking] START: user={user_id}, doctor={doctor_id}, date={date_str}, time={time_str}")
+        
         # Validate date and time format
         try:
             appt_date = datetime.strptime(date_str, "%Y-%m-%d").date()
             if appt_date < datetime.today().date():
+                print(f"[BookingManager.create_booking] Date is in the past")
                 return False, "Không thể đặt lịch cho ngày đã qua."
             # BUG FIX #1: Also reject time slots that have already passed on today's date
             if appt_date == datetime.today().date() and time_str <= datetime.now().strftime('%H:%M'):
+                print(f"[BookingManager.create_booking] Time has already passed today")
                 return False, "Không thể đặt lịch cho khung giờ đã qua trong ngày hôm nay."
             if time_str not in cls.STANDARD_SLOTS:
+                print(f"[BookingManager.create_booking] Invalid time slot: {time_str}")
                 return False, "Khung giờ khám không hợp lệ."
-        except ValueError:
+        except ValueError as e:
+            print(f"[BookingManager.create_booking] Date format error: {e}")
             return False, "Định dạng ngày khám không hợp lệ (hãy dùng YYYY-MM-DD)."
 
         # Check collision
+        print(f"[BookingManager.create_booking] Checking collision...")
         if cls.check_collision(doctor_id, date_str, time_str):
             alternatives = cls.suggest_alternative_slots(doctor_id, date_str)
             alt_str = ", ".join(alternatives)
+            print(f"[BookingManager.create_booking] Collision detected, suggesting alternatives")
             return False, f"Bác sĩ đã có lịch hẹn vào giờ này. Vui lòng chọn giờ khác. Gợi ý giờ trống: {alt_str}."
 
+        print(f"[BookingManager.create_booking] No collision, creating appointment...")
         df_appointments = CSVHelper.get_appointments()
+        print(f"[BookingManager.create_booking] Loaded appointments, shape: {df_appointments.shape}")
+        
         appointment_id = f"a_{uuid.uuid4().hex[:8]}"
         
         new_appointment = {
@@ -95,14 +106,23 @@ class BookingManager:
             'time': time_str,
             'status': 'Đã xác nhận'
         }
+        print(f"[BookingManager.create_booking] Created appointment dict: {new_appointment}")
 
         if df_appointments.empty:
+            print(f"[BookingManager.create_booking] Appointments empty, creating new dataframe")
             df_appointments = pd.DataFrame([new_appointment])
         else:
+            print(f"[BookingManager.create_booking] Concatenating with existing appointments")
             df_appointments = pd.concat([df_appointments, pd.DataFrame([new_appointment])], ignore_index=True)
-
+        
+        print(f"[BookingManager.create_booking] New appointments shape: {df_appointments.shape}")
+        print(f"[BookingManager.create_booking] Saving to CSV...")
+        
         if CSVHelper.save_appointments(df_appointments):
+            print(f"[BookingManager.create_booking] SUCCESS: Appointment saved with id={appointment_id}")
             return True, new_appointment
+        
+        print(f"[BookingManager.create_booking] FAILED: Could not save appointment")
         return False, "Lỗi hệ thống khi lưu lịch hẹn."
 
     @classmethod

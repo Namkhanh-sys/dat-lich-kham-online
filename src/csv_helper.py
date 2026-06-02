@@ -11,29 +11,39 @@ class CSVHelper:
         if not os.path.exists(file_path):
             # Create directories if they don't exist
             os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            print(f"[CSVHelper.read_csv] File not found, creating: {file_path}")
             return pd.DataFrame()
         try:
             # Always read fresh from disk - no caching
+            print(f"[CSVHelper.read_csv] Reading {file_path}")
             df = pd.read_csv(file_path, dtype=str)
+            print(f"[CSVHelper.read_csv] Read {len(df)} rows from {file_path}")
+            
             # Strip whitespace from all string columns to prevent key mismatches
             for col in df.select_dtypes(include='object').columns:
                 df[col] = df[col].str.strip()
             
             return df.copy()
         except Exception as e:
-            print(f"Error reading {file_path}: {e}")
+            import traceback
+            error_msg = f"[CSVHelper.read_csv] Error reading {file_path}: {e}\n{traceback.format_exc()}"
+            print(error_msg)
             return pd.DataFrame()
 
     @staticmethod
     def write_csv(df, file_path):
         """Write a pandas DataFrame to a CSV file."""
         try:
+            print(f"[CSVHelper.write_csv] Writing to {file_path}, shape: {df.shape}")
             os.makedirs(os.path.dirname(file_path), exist_ok=True)
             df.to_csv(file_path, index=False)
             CSVHelper._cache.pop(file_path, None)
+            print(f"[CSVHelper.write_csv] Successfully wrote {len(df)} rows")
             return True
         except Exception as e:
-            print(f"Error writing to {file_path}: {e}")
+            import traceback
+            error_msg = f"[CSVHelper.write_csv] Error writing to {file_path}: {e}\n{traceback.format_exc()}"
+            print(error_msg)
             return False
 
     @classmethod
