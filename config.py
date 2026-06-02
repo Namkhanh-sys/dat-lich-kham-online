@@ -20,8 +20,8 @@ class Config:
     APPOINTMENTS_CSV = os.path.join(DATA_DIR, 'appointments.csv')
     USERS_CSV = os.path.join(DATA_DIR, 'users.csv')
     
-    # Email configuration - SendGrid
-    SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY', '')
+    # Email configuration - File-based logging
+    # Booking confirmations are logged to: data/email_notifications.log
     EMAIL_FROM = 'noreply@medbooking.local'
     EMAIL_FROM_NAME = 'MedBooking - Đặt Lịch Khám Online'
     SUPPORT_EMAIL = 'support@medbooking.local'
