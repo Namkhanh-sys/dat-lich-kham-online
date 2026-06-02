@@ -20,10 +20,11 @@ class Config:
     APPOINTMENTS_CSV = os.path.join(DATA_DIR, 'appointments.csv')
     USERS_CSV = os.path.join(DATA_DIR, 'users.csv')
     
-    # Email configuration - Resend
-    # Read from environment variable for security, with fallback for testing
-    RESEND_API_KEY = os.environ.get('RESEND_API_KEY') or os.environ.get('RESEND_API_KEY_TEST')
-    EMAIL_FROM = os.environ.get('EMAIL_FROM', 'onboarding@resend.dev')  # Resend default domain
+    # Email configuration - EmailJS
+    EMAILJS_SERVICE_ID = os.environ.get('EMAILJS_SERVICE_ID', 'service_qdlw3em')
+    EMAILJS_PUBLIC_KEY = os.environ.get('EMAILJS_PUBLIC_KEY', '3AknfTh_9nfeelswy')
+    EMAILJS_TEMPLATE_ID = os.environ.get('EMAILJS_TEMPLATE_ID', 'template_1mv18ta')
+    EMAILJS_API_URL = 'https://api.emailjs.com/api/v1.0/email/send'
     EMAIL_FROM_NAME = os.environ.get('EMAIL_FROM_NAME', 'MedBooking - Đặt Lịch Khám Online')
     SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL', 'support@medbooking.local')
     
