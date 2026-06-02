@@ -1,0 +1,32 @@
+[
+  {
+    "place_id": 416439570,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "node",
+    "osm_id": 5725274622,
+    "lat": "20.9803574",
+    "lon": "105.7756187",
+    "class": "place",
+    "type": "neighbourhood",
+    "place_rank": 24,
+    "importance": 0.0800728305485618,
+    "addresstype": "neighbourhood",
+    "name": "Vạn Phúc",
+    "display_name": "Vạn Phúc, Phường Hà Đông, Thành phố Hà Nội, 12100, Việt Nam",
+    "address": {
+      "neighbourhood": "Vạn Phúc",
+      "suburb": "Phường Hà Đông",
+      "city": "Thành phố Hà Nội",
+      "ISO3166-2-lvl4": "VN-HN",
+      "postcode": "12100",
+      "country": "Việt Nam",
+      "country_code": "vn"
+    },
+    "boundingbox": [
+      "20.9703574",
+      "20.9903574",
+      "105.7656187",
+      "105.7856187"
+    ]
+  }
+]

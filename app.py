@@ -126,7 +126,10 @@ def _prepare_doctors_with_real_distance(matched_docs, user_lat, user_lon, provin
         distance = doc['distance_km']
         return (score, district_priority, distance)
     
-    filtered = sorted(filtered, key=sort_key)[:5]
+    # If district is selected, return ALL doctors in that district
+    # Otherwise limit to top 5
+    max_results = len(filtered) if district else 5
+    filtered = sorted(filtered, key=sort_key)[:max_results]
     return filtered, region_note
 
 
