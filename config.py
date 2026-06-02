@@ -21,11 +21,11 @@ class Config:
     USERS_CSV = os.path.join(DATA_DIR, 'users.csv')
     
     # Email configuration - Resend
-    # Hardcoded for testing (remove after confirming email works)
-    RESEND_API_KEY = 're_bKPiAejP_ETtgcBJcXKjwAHymMHynL6QQ'
-    EMAIL_FROM = 'onboarding@resend.dev'  # Resend default domain
-    EMAIL_FROM_NAME = 'MedBooking - Đặt Lịch Khám Online'
-    SUPPORT_EMAIL = 'support@medbooking.local'
+    # Read from environment variable for security, with fallback for testing
+    RESEND_API_KEY = os.environ.get('RESEND_API_KEY') or os.environ.get('RESEND_API_KEY_TEST')
+    EMAIL_FROM = os.environ.get('EMAIL_FROM', 'onboarding@resend.dev')  # Resend default domain
+    EMAIL_FROM_NAME = os.environ.get('EMAIL_FROM_NAME', 'MedBooking - Đặt Lịch Khám Online')
+    SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL', 'support@medbooking.local')
     
     # Session options
     SESSION_COOKIE_NAME = 'medical_booking_session'

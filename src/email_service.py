@@ -3,10 +3,11 @@ from datetime import datetime
 from config import Config
 
 try:
-    from resend import Resend
+    from resend import Emails
     HAS_RESEND = True
 except ImportError:
     HAS_RESEND = False
+    Emails = None  # Ensure Emails is defined
 
 class EmailService:
     LOG_FILE = os.path.join(Config.DATA_DIR, 'email_notifications.log')
@@ -46,11 +47,11 @@ class EmailService:
         try:
             print(f"[EmailService] Sending via Resend to {to_email}")
             
-            # Initialize Resend client
-            client = Resend(api_key=Config.RESEND_API_KEY)
+            # Initialize Resend client with API key
+            client = Emails(api_key=Config.RESEND_API_KEY)
             
             # Send email via Resend API
-            response = client.emails.send({
+            response = client.send({
                 "from": Config.EMAIL_FROM,
                 "to": to_email,
                 "subject": subject,
@@ -64,6 +65,8 @@ class EmailService:
         except Exception as e:
             error_msg = f"[EmailService] Resend error: {str(e)}"
             print(error_msg)
+            import traceback
+            traceback.print_exc()
             return False, error_msg
 
     @classmethod
