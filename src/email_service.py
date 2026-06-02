@@ -2,6 +2,12 @@ import os
 from datetime import datetime
 from config import Config
 
+try:
+    from resend import Resend
+    HAS_RESEND = True
+except ImportError:
+    HAS_RESEND = False
+
 class EmailService:
     LOG_FILE = os.path.join(Config.DATA_DIR, 'email_notifications.log')
 
@@ -25,17 +31,40 @@ class EmailService:
     @classmethod
     def send_email(cls, to_email, subject, body):
         """
-        Log booking confirmation to file (instant & reliable).
-        Email details are logged and displayed on confirmation page.
+        Send an email via Resend API.
+        Falls back to file logging if API key not configured.
         """
-        # Log the email to file for audit trail
+        # Always log to file for audit trail
         cls._log_mock_email(to_email, subject, body)
         
-        msg_log = f"[EmailService] Confirmation logged -> {to_email}: {subject}"
-        print(msg_log)
-        print(f"[EmailService] File location: {cls.LOG_FILE}")
+        # If Resend API key not configured, use file logging only
+        if not Config.RESEND_API_KEY or not HAS_RESEND:
+            msg_log = f"[EmailService] Email logged (no Resend key configured) -> {to_email}: {subject}"
+            print(msg_log)
+            return True, "Confirmation saved to system."
         
-        return True, "Confirmation saved to system."
+        try:
+            print(f"[EmailService] Sending via Resend to {to_email}")
+            
+            # Initialize Resend client
+            client = Resend(api_key=Config.RESEND_API_KEY)
+            
+            # Send email via Resend API
+            response = client.emails.send({
+                "from": Config.EMAIL_FROM,
+                "to": to_email,
+                "subject": subject,
+                "html": body.replace('\n', '<br>'),  # Convert newlines to <br> for HTML
+                "reply_to": Config.SUPPORT_EMAIL,
+            })
+            
+            print(f"[EmailService] Email sent successfully via Resend, id={response.get('id')}")
+            return True, "Email sent successfully!"
+            
+        except Exception as e:
+            error_msg = f"[EmailService] Resend error: {str(e)}"
+            print(error_msg)
+            return False, error_msg
 
     @classmethod
     def send_booking_confirmation(cls, user_email, user_name, doctor_name, date_str, time_str, clinic_name, address):

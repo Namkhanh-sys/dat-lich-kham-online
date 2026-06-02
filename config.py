@@ -20,9 +20,9 @@ class Config:
     APPOINTMENTS_CSV = os.path.join(DATA_DIR, 'appointments.csv')
     USERS_CSV = os.path.join(DATA_DIR, 'users.csv')
     
-    # Email configuration - File-based logging
-    # Booking confirmations are logged to: data/email_notifications.log
-    EMAIL_FROM = 'noreply@medbooking.local'
+    # Email configuration - Resend
+    RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
+    EMAIL_FROM = 'onboarding@resend.dev'  # Resend default domain
     EMAIL_FROM_NAME = 'MedBooking - Đặt Lịch Khám Online'
     SUPPORT_EMAIL = 'support@medbooking.local'
     
