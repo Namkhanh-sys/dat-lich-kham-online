@@ -35,8 +35,11 @@ certs/
 
 # Data
 *.csv
-*.json
 data/
 
 # Logs
 *.log
+
+# Allow important JSON files
+!data/diseases.json
+!doctors_info.json

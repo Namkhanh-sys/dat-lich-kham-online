@@ -81,12 +81,19 @@ class CSVHelper:
         import json
         file_path = os.path.join(Config.DATA_DIR, 'diseases.json')
         if not os.path.exists(file_path):
+            print(f"[WARNING] Diseases file not found: {file_path}")
+            print(f"[DEBUG] DATA_DIR: {Config.DATA_DIR}")
+            print(f"[DEBUG] DATA_DIR exists: {os.path.exists(Config.DATA_DIR)}")
+            if os.path.exists(Config.DATA_DIR):
+                print(f"[DEBUG] Files in DATA_DIR: {os.listdir(Config.DATA_DIR)}")
             return []
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
-                return json.load(f)
+                diseases = json.load(f)
+                print(f"[INFO] Loaded {len(diseases)} diseases from {file_path}")
+                return diseases
         except Exception as e:
-            print(f"Error reading {file_path}: {e}")
+            print(f"[ERROR] Error reading {file_path}: {e}")
             return []
 
     @staticmethod

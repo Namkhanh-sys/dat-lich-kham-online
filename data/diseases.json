@@ -1,0 +1,50 @@
+[
+    {
+        "id": "benh-xuong-khop",
+        "name": "Bệnh xương khớp",
+        "description": "Các bệnh lý về xương khớp như thoát vị đĩa đệm, thoái hóa khớp, viêm khớp, loãng xương thường gây đau nhức, hạn chế vận động và ảnh hưởng lớn đến chất lượng cuộc sống. Cần được thăm khám sớm để có phác đồ điều trị phục hồi chức năng kịp thời.",
+        "keywords": "xương khớp, thoát vị đĩa đệm, thoái hóa khớp, viêm khớp, đau lưng, đau khớp, cơ xương khớp"
+    },
+    {
+        "id": "benh-tim-mach",
+        "name": "Bệnh tim mạch",
+        "description": "Bệnh tim mạch bao gồm cao huyết áp, rối loạn nhịp tim, xơ vữa động mạch, nhồi máu cơ tim. Đây là những bệnh lý tiềm ẩn nhiều rủi ro, đòi hỏi sự theo dõi định kỳ và tư vấn chuyên sâu từ các bác sĩ chuyên khoa tim mạch.",
+        "keywords": "tim mạch, cao huyết áp, rối loạn nhịp tim, xơ vữa động mạch, đau ngực, khó thở, hồi hộp, nhịp tim nhanh"
+    },
+    {
+        "id": "benh-duong-ho-hap",
+        "name": "Bệnh đường hô hấp",
+        "description": "Bao gồm viêm xoang, viêm phế quản, hen suyễn, viêm phổi... Các bệnh này thường trở nặng khi thời tiết thay đổi, gây khó thở, ho kéo dài. Việc khám chuyên khoa Hô hấp hoặc Tai mũi họng là cần thiết để tránh biến chứng.",
+        "keywords": "hô hấp, tai mũi họng, viêm xoang, viêm phế quản, hen suyễn, ho, đau họng, sổ mũi, nghẹt mũi"
+    },
+    {
+        "id": "benh-tieu-hoa",
+        "name": "Bệnh tiêu hóa",
+        "description": "Các vấn đề như đau dạ dày, viêm đại tràng, trào ngược dạ dày thực quản thường xuất phát từ thói quen ăn uống và sinh hoạt. Điều trị nội khoa kết hợp điều chỉnh lối sống sẽ mang lại hiệu quả cao.",
+        "keywords": "tiêu hóa, dạ dày, đại tràng, trào ngược, đau bụng, buồn nôn, tiêu chảy, đầy hơi, khó tiêu, táo bón"
+    },
+    {
+        "id": "benh-ly-gan-mat",
+        "name": "Bệnh lý gan mật",
+        "description": "Gan nhiễm mỡ, viêm gan, sỏi mật là những bệnh lý phổ biến có thể diễn tiến âm thầm. Khám định kỳ và tầm soát các chỉ số men gan, siêu âm gan mật giúp phát hiện sớm các nguy cơ xơ gan, ung thư gan.",
+        "keywords": "gan mật, gan nhiễm mỡ, viêm gan, sỏi mật, vàng da, men gan cao"
+    },
+    {
+        "id": "benh-noi-tiet-chuyen-hoa",
+        "name": "Bệnh nội tiết & Chuyển hóa",
+        "description": "Tiểu đường, bệnh tuyến giáp (cường giáp, suy giáp), rối loạn mỡ máu hay Gout đều là các rối loạn chuyển hóa cần theo dõi chỉ số máu thường xuyên để điều chỉnh đơn thuốc và chế độ dinh dưỡng phù hợp.",
+        "keywords": "nội tiết, chuyển hóa, tiểu đường, cường giáp, suy giáp, gout, mỡ máu"
+    },
+    {
+        "id": "benh-ve-da-lieu",
+        "name": "Bệnh về da liễu",
+        "description": "Viêm da cơ địa, mề đay, mụn trứng cá, vảy nến không chỉ gây khó chịu mà còn ảnh hưởng lớn đến thẩm mỹ và sự tự tin. Bác sĩ Da liễu sẽ tư vấn phác đồ dùng thuốc bôi hoặc uống phù hợp với từng cơ địa.",
+        "keywords": "da liễu, viêm da cơ địa, mề đay, mụn trứng cá, ngứa da, nổi mẩn đỏ, dị ứng"
+    },
+    {
+        "id": "benh-ly-than-kinh",
+        "name": "Bệnh lý thần kinh",
+        "description": "Đau nửa đầu, mất ngủ kéo dài, suy nhược thần kinh, rối loạn tiền đình có thể là dấu hiệu của căng thẳng hoặc tổn thương thực thể. Khám chuyên khoa Nội thần kinh sẽ giúp tìm ra nguyên nhân và cách khắc phục.",
+        "keywords": "thần kinh, đau nửa đầu, mất ngủ, suy nhược, tiền đình, chóng mặt, đau đầu, nội khoa"
+    }
+]

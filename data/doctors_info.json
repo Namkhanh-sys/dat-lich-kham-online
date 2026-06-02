@@ -1,0 +1,241 @@
+{
+    "d1": {
+        "avatar": "https://ui-avatars.com/api/?name=Nguyen+Van+A&background=c8102e&color=fff&size=200",
+        "short_bio": "BSCK II - Chuyên khoa Tai Mũi Họng\nTrưởng khoa TMH - BV Bạch Mai",
+        "intro": "là chuyên gia đầu ngành về Tai Mũi Họng với hơn 20 năm kinh nghiệm điều trị viêm xoang, hen suyễn và các bệnh đường hô hấp trên.",
+        "education": [
+            "1995: Tốt nghiệp Bác sĩ đa khoa - Đại học Y Hà Nội",
+            "2002: BSCK I chuyên khoa Tai Mũi Họng",
+            "2010: BSCK II, tu nghiệp phẫu thuật nội soi tại Pháp"
+        ],
+        "experience": [
+            "1996 - 2010: Bác sĩ điều trị tại Bệnh viện Bạch Mai",
+            "2010 - nay: Trưởng khoa Tai Mũi Họng, Phòng khám Đa khoa Hoàn Kiếm"
+        ],
+        "expertise": [
+            "Khám và điều trị viêm xoang, viêm mũi dị ứng mạn tính",
+            "Phẫu thuật nội soi Tai Mũi Họng (FESS)",
+            "Điều trị hen suyễn, viêm phế quản, COPD"
+        ]
+    },
+    "d2": {
+        "avatar": "https://ui-avatars.com/api/?name=Tran+Thi+B&background=c8102e&color=fff&size=200",
+        "short_bio": "BSCK II - Chuyên khoa Nội tổng hợp\nPhó Giám đốc Phòng khám Hoàn Kiếm",
+        "intro": "có hơn 18 năm kinh nghiệm trong thăm khám và điều trị các bệnh lý nội khoa, tư vấn chăm sóc sức khoẻ toàn diện.",
+        "education": [
+            "1998: Bác sĩ đa khoa - Đại học Y Hà Nội",
+            "2005: BSCK I Nội khoa",
+            "2013: BSCK II Nội khoa, học bổng tu nghiệp Singapore"
+        ],
+        "experience": [
+            "1999 - 2015: BV Bạch Mai, Khoa Nội Tổng hợp",
+            "2015 - nay: Phó Giám đốc chuyên môn, Phòng khám ĐK Hoàn Kiếm"
+        ],
+        "expertise": [
+            "Điều trị các bệnh mạn tính: mất ngủ, đau đầu, suy nhược thần kinh",
+            "Thăm khám sức khoẻ định kỳ và tư vấn phòng bệnh",
+            "Xử trí các bệnh nhiễm khuẩn hô hấp, cúm, sốt virus"
+        ]
+    },
+    "d3": {
+        "avatar": "https://ui-avatars.com/api/?name=Pham+Van+C&background=c8102e&color=fff&size=200",
+        "short_bio": "Tiến sĩ - Chuyên khoa Tiêu hóa\nNguyên PGĐ Trung tâm Nội soi BV E",
+        "intro": "là tiến sĩ y khoa chuyên về nội soi và can thiệp tiêu hoá, đã thực hiện trên 15.000 ca nội soi dạ dày - đại tràng an toàn.",
+        "education": [
+            "Tốt nghiệp Đại học Y loại xuất sắc",
+            "Tiến sĩ Y khoa chuyên ngành Tiêu hóa - Đại học Y Hà Nội",
+            "Tu nghiệp nội soi can thiệp tại Nhật Bản"
+        ],
+        "experience": [
+            "15 năm công tác tại Trung tâm Tiêu hóa Bệnh viện E",
+            "Trưởng đơn vị Nội soi, Phòng khám ĐK Ba Đình"
+        ],
+        "expertise": [
+            "Nội soi chẩn đoán và can thiệp dạ dày - đại tràng",
+            "Điều trị H.pylori, viêm loét, polyp đại tràng",
+            "Điều trị trào ngược dạ dày-thực quản (GERD)"
+        ]
+    },
+    "d4": {
+        "avatar": "https://ui-avatars.com/api/?name=Le+Thi+D&background=c8102e&color=fff&size=200",
+        "short_bio": "BSCK II - Tim mạch\nThành viên Hội Tim mạch học Việt Nam",
+        "intro": "là bác sĩ chuyên khoa tim mạch uy tín, có nhiều kinh nghiệm trong quản lý và điều trị tăng huyết áp, rối loạn nhịp tim và suy tim.",
+        "education": [
+            "Tốt nghiệp Đại học Y Hà Nội",
+            "BSCK I Tim mạch",
+            "BSCK II Tim mạch can thiệp"
+        ],
+        "experience": [
+            "15 năm kinh nghiệm điều trị bệnh lý tim mạch tại BV Việt Đức",
+            "Hiện công tác tại Phòng khám ĐK Ba Đình"
+        ],
+        "expertise": [
+            "Quản lý tăng huyết áp và phòng ngừa đột quỵ",
+            "Siêu âm tim, điện tâm đồ, holter 24h",
+            "Điều trị suy tim, rối loạn nhịp tim"
+        ]
+    },
+    "d5": {
+        "avatar": "https://ui-avatars.com/api/?name=Hoang+Van+E&background=c8102e&color=fff&size=200",
+        "short_bio": "BSCK I - Da liễu\nChuyên gia điều trị mề đay, viêm da dị ứng",
+        "intro": "là bác sĩ da liễu nhiệt tình, có thế mạnh trong điều trị các bệnh da mạn tính như viêm da cơ địa, mề đay và mụn trứng cá nặng.",
+        "education": [
+            "Tốt nghiệp Đại học Y Hà Nội",
+            "BSCK I Da liễu"
+        ],
+        "experience": [
+            "10 năm công tác tại Bệnh viện Da liễu Trung ương",
+            "Hiện công tác tại Phòng khám ĐK Cầu Giấy"
+        ],
+        "expertise": [
+            "Điều trị viêm da cơ địa, vảy nến, mề đay",
+            "Điều trị mụn trứng cá nặng và sẹo",
+            "Tư vấn chăm sóc da và điều trị nám, tàn nhang"
+        ]
+    },
+    "d9": {
+        "avatar": "https://ui-avatars.com/api/?name=Dinh+Van+I&background=c8102e&color=fff&size=200",
+        "short_bio": "BSCK II - Cơ Xương Khớp\nNguyên Trưởng khoa Khớp - BV Bach Mai",
+        "intro": "là chuyên gia đầu ngành về Cơ Xương Khớp, đặc biệt có thế mạnh trong điều trị nội khoa và can thiệp các bệnh lý cột sống như thoát vị đĩa đệm.",
+        "education": [
+            "Tốt nghiệp Đại học Y Hà Nội",
+            "BSCK II Cơ Xương Khớp",
+            "Thạc sĩ y học - chuyên ngành Khớp"
+        ],
+        "experience": [
+            "20 năm công tác tại Khoa Khớp - BV Bạch Mai",
+            "Nguyên Trưởng khoa, hiện công tác tại Phòng khám ĐK Hoàn Kiếm"
+        ],
+        "expertise": [
+            "Chẩn đoán và điều trị thoát vị đĩa đệm cột sống thắt lưng và cổ",
+            "Điều trị viêm khớp dạng thấp, gout, thoái hóa khớp",
+            "Tiêm khớp, tiêm ngoài màng cứng điều trị đau"
+        ]
+    },
+    "d10": {
+        "avatar": "https://ui-avatars.com/api/?name=Tran+Van+K&background=c8102e&color=fff&size=200",
+        "short_bio": "BSCK I - Nội tiết & Chuyển hóa\nChuyên gia điều trị Tiểu đường, Gout",
+        "intro": "là bác sĩ chuyên khoa nội tiết và chuyển hoá, có nhiều kinh nghiệm trong quản lý bệnh tiểu đường type 2, gout và rối loạn tuyến giáp.",
+        "education": [
+            "Tốt nghiệp Đại học Y Hà Nội",
+            "BSCK I Nội tiết - Chuyển hóa"
+        ],
+        "experience": [
+            "Công tác tại BV Nội tiết TW 12 năm",
+            "Hiện công tác tại Phòng khám ĐK Cầu Giấy"
+        ],
+        "expertise": [
+            "Quản lý toàn diện bệnh tiểu đường type 1 và type 2",
+            "Điều trị gout cấp và mạn tính",
+            "Chẩn đoán và điều trị bệnh lý tuyến giáp"
+        ]
+    },
+    "d23": {
+        "avatar": "https://ui-avatars.com/api/?name=Pham+Hoang+X&background=008080&color=fff&size=200",
+        "short_bio": "Thạc sĩ Bác sĩ - Tim mạch\nNguyên bác sĩ Viện Tim mạch Quốc gia",
+        "intro": "là thạc sĩ chuyên ngành Tim mạch với chuyên môn sâu về chẩn đoán sớm và quản lý huyết áp, bệnh lý mạch vành.",
+        "education": [
+            "Tốt nghiệp Đại học Y Hà Nội",
+            "Thạc sĩ Y khoa chuyên ngành Tim mạch"
+        ],
+        "experience": [
+            "8 năm làm việc tại Viện Tim mạch Quốc gia - BV Bạch Mai",
+            "Hiện công tác tại Phòng khám Đa khoa Ba Đình"
+        ],
+        "expertise": [
+            "Điều trị tăng huyết áp, xơ vữa động mạch",
+            "Tư vấn phòng ngừa các bệnh mạch vành",
+            "Đọc kết quả điện tim, siêu âm tim nâng cao"
+        ]
+    },
+    "d24": {
+        "avatar": "https://ui-avatars.com/api/?name=Nguyen+Huu+Y&background=4b0082&color=fff&size=200",
+        "short_bio": "Bác sĩ chuyên khoa - Da liễu\nTư vấn và điều trị bệnh lý da mụn",
+        "intro": "có kinh nghiệm phong phú trong chẩn đoán, điều trị mụn và phục hồi da tổn thương cho bệnh nhân trẻ tuổi.",
+        "education": [
+            "Bác sĩ đa khoa - Đại học Y Dược TP.HCM",
+            "Chứng chỉ chuyên khoa da liễu thẩm mỹ"
+        ],
+        "experience": [
+            "6 năm làm việc tại Khoa Da liễu BV Quận 1",
+            "Hiện phụ trách điều trị da liễu tại phòng khám"
+        ],
+        "expertise": [
+            "Điều trị mụn trứng cá mủ, viêm da cơ địa",
+            "Điều trị dị ứng mề đay mạn tính",
+            "Tư vấn trẻ hóa da và chăm sóc da khoa học"
+        ]
+    },
+    "d25": {
+        "avatar": "https://ui-avatars.com/api/?name=Dang+Minh+Z&background=1e90ff&color=fff&size=200",
+        "short_bio": "BSCK I - Hô Hấp\nChuyên gia quản lý Hen & COPD",
+        "intro": "là thạc sĩ bác sĩ chuyên khoa Hô hấp tận tâm, giúp hàng ngàn bệnh nhân kiểm soát hiệu quả bệnh hen và viêm phế quản mạn tính.",
+        "education": [
+            "Tốt nghiệp Đại học Y Hà Nội",
+            "BSCK I chuyên khoa Hô hấp"
+        ],
+        "experience": [
+            "9 năm công tác tại Trung tâm Hô hấp - Bệnh viện Bạch Mai",
+            "Bác sĩ chuyên môn tại Phòng khám ĐK Cầu Giấy"
+        ],
+        "expertise": [
+            "Khám và quản lý bệnh Hen suyễn, COPD",
+            "Điều trị viêm xoang, viêm phế quản",
+            "Tư vấn cai thuốc lá và bảo vệ phổi"
+        ]
+    },
+    "d26": {
+        "avatar": "https://ui-avatars.com/api/?name=Bui+Thi+Lam&background=ff69b4&color=fff&size=200",
+        "short_bio": "Bác sĩ - Tai Mũi Họng\nBác sĩ chuyên khoa Nội soi Tai Mũi Họng",
+        "intro": "là bác sĩ chuyên môn vững vàng về nội soi chẩn đoán sớm các bệnh lý về tai, mũi, họng cho cả người lớn và trẻ em.",
+        "education": [
+            "Tốt nghiệp Đại học Y Dược Hải Phòng",
+            "Chứng chỉ nội soi tai mũi họng nâng cao"
+        ],
+        "experience": [
+            "7 năm công tác tại bệnh viện đa khoa tỉnh",
+            "Hiện công tác tại Phòng khám Đa khoa Hoàn Kiếm"
+        ],
+        "expertise": [
+            "Nội soi chẩn đoán viêm xoang, viêm họng",
+            "Điều trị viêm tai giữa, ù tai kéo dài",
+            "Gắp dị vật tai mũi họng nhẹ nhàng"
+        ]
+    },
+    "d27": {
+        "avatar": "https://ui-avatars.com/api/?name=Vo+Van+Son&background=228b22&color=fff&size=200",
+        "short_bio": "BSCK I - Nội thần kinh\nChuyên gia điều trị đau nửa đầu & mất ngủ",
+        "intro": "là bác sĩ chuyên khoa thần kinh có nhiều năm kinh nghiệm nghiên cứu và xử lý các ca mất ngủ mạn tính, rối loạn lo âu.",
+        "education": [
+            "Tốt nghiệp Đại học Y Hà Nội",
+            "BSCK I chuyên khoa Thần kinh"
+        ],
+        "experience": [
+            "11 năm công tác tại khoa Thần kinh Bệnh viện Bạch Mai",
+            "Hiện làm việc tại Phòng khám Đa khoa Ba Đình"
+        ],
+        "expertise": [
+            "Điều trị mất ngủ mạn tính, suy nhược thần kinh",
+            "Điều trị rối loạn tiền đình, chóng mặt kéo dài",
+            "Tư vấn quản lý căng thẳng và đau nửa đầu"
+        ]
+    },
+    "default": {
+        "avatar": "https://ui-avatars.com/api/?name=Bac+Si&background=c8102e&color=fff&size=200",
+        "short_bio": "Bác sĩ chuyên khoa uy tín\nNhiều năm kinh nghiệm lâm sàng",
+        "intro": "là bác sĩ giàu kinh nghiệm trong lĩnh vực y tế, tận tâm với công tác chăm sóc sức khoẻ cho bệnh nhân.",
+        "education": [
+            "Tốt nghiệp Đại học Y danh tiếng",
+            "Có chứng chỉ chuyên khoa chuyên sâu"
+        ],
+        "experience": [
+            "Nhiều năm công tác tại các cơ sở y tế tuyến Trung ương",
+            "Từng giữ các chức vụ quan trọng tại khoa phòng"
+        ],
+        "expertise": [
+            "Thăm khám lâm sàng và chẩn đoán chính xác",
+            "Điều trị nội khoa và tư vấn chuyên sâu",
+            "Chăm sóc sức khoẻ định kỳ, tầm soát bệnh"
+        ]
+    }
+}

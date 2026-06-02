@@ -5,8 +5,14 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or os.urandom(24).hex()
     
     # Path to the directories
+    # Use __file__ to get the config.py location, then go to parent directory to get project root
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
     DATA_DIR = os.path.join(BASE_DIR, 'data')
+    
+    # DEBUG: Print paths for troubleshooting (remove in production if needed)
+    # print(f"[CONFIG] BASE_DIR: {BASE_DIR}")
+    # print(f"[CONFIG] DATA_DIR: {DATA_DIR}")
+    # print(f"[CONFIG] DATA_DIR exists: {os.path.exists(DATA_DIR)}")
     
     # CSV file paths
     CLINICS_CSV = os.path.join(DATA_DIR, 'clinics.csv')
