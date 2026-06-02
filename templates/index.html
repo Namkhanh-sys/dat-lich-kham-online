@@ -1,0 +1,349 @@
+﻿{% extends "layout.html" %}
+
+{% block title %}Đặt Lịch Khám Trực Tuyến - Tìm Kiếm Bác Sĩ & Phòng Khám{% endblock %}
+
+
+{% block content %}
+<div class="hero">
+    <h1>Đặt Lịch Khám <span>Thông Minh</span></h1>
+    <p>Chẩn đoán triệu chứng ban đầu, đề xuất bác sĩ và tìm phòng khám gần bạn nhất với địa chỉ và khoảng cách thật.</p>
+
+    <div class="glass-panel" style="padding: 2rem; text-align: left; max-width: 800px; margin: 0 auto;">
+        <p style="font-size: 1rem; color: var(--text-muted);">
+            Chức năng tìm kiếm bác sĩ đã được ẩn. Hãy xác định vị trí qua GPS và chọn bệnh để xem phòng khám gần bạn trong vòng 20km.
+        </p>
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: center; margin: 1.5rem 0;">
+            <button id="btnLocateMe" type="button" class="btn btn-primary" onclick="locateUser()" style="padding: 0.85rem 1.75rem; font-size: 1rem;">
+                Xác định vị trí của tôi
+            </button>
+            <span id="gps-status" style="font-size: 0.95rem; color: var(--text-muted);"></span>
+        </div>
+        <div id="gps-address" style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1rem;"></div>
+        <div style="margin: 1rem 0; padding: 1rem; background: #f5f5f5; border-radius: 0.5rem; display: none;" id="manual-location-section">
+            <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1rem;">Hoặc chọn thành phố & quận của bạn:</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                <div>
+                    <select id="manual-province" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 0.25rem; font-size: 0.95rem;">
+                        <option value="">-- Chọn thành phố --</option>
+                        <option value="Hà Nội">Hà Nội</option>
+                        <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
+                    </select>
+                </div>
+                <div>
+                    <select id="manual-district" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 0.25rem; font-size: 0.95rem;">
+                        <option value="">-- Chọn quận --</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <hr style="border: 0; border-top: 1px solid var(--border); margin-bottom: 2rem;">
+
+        <div>
+            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--primary-dark); text-align: center; margin-bottom: 1.25rem;">Bệnh lý trọng tâm</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+                {% for d in diseases %}
+                <button type="button" class="btn btn-outline" style="justify-content: flex-start; padding: 1rem; text-align: left; background: #fff;"
+                        onclick="goToDisease('{{ d.id }}')">
+                    <span style="font-weight: 600;">{{ d.name }}</span>
+                </button>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="margin-top: 2rem;">
+    <h2 style="text-align: center; margin-bottom: 2rem; font-size: 1.8rem;">Dịch vụ chuyên nghiệp & nhanh chóng</h2>
+    <div class="card-grid">
+        <div class="card glass-panel">
+            <h3 style="color: var(--primary);">Khớp Triệu Chứng</h3>
+            <p class="card-body-text">Khớp từ khóa triệu chứng với bác sĩ chuyên khoa phù hợp.</p>
+        </div>
+        <div class="card glass-panel">
+            <h3 style="color: var(--secondary);">Định Vị & Khoảng Cách Thật</h3>
+            <p class="card-body-text">GPS, địa chỉ OpenStreetMap và khoảng cách Haversine đến phòng khám thật (Hà Nội, TP.HCM, Đà Nẵng, Cần Thơ).</p>
+        </div>
+        <div class="card glass-panel">
+            <h3 style="color: var(--success);">Giải Quyết Trùng Lịch</h3>
+            <p class="card-body-text">Kiểm tra trùng lịch và gợi ý khung giờ thay thế.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+    var userLocation = { lat: null, lon: null, source: null };
+
+    function formatReverseAddress(result) {
+        if (!result) return null;
+        if (result.display_name) return result.display_name;
+        if (result.address) {
+            const parts = [];
+            const fields = ['road', 'suburb', 'city_district', 'city', 'state', 'country'];
+            fields.forEach(f => {
+                if (result.address[f] && !parts.includes(result.address[f])) {
+                    parts.push(result.address[f]);
+                }
+            });
+            if (parts.length) return parts.join(', ');
+        }
+        return null;
+    }
+
+    async function reverseGeocode(lat, lon) {
+        const addressElement = document.getElementById('gps-address');
+        addressElement.textContent = 'Đang xác định địa chỉ...';
+        try {
+            const response = await fetch(`/api/geocode/reverse?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`);
+            const data = await response.json();
+            if (data.ok && data.result) {
+                const formatted = formatReverseAddress(data.result);
+                addressElement.textContent = formatted ? 'Địa chỉ của bạn: ' + formatted : 'Không xác định được địa chỉ từ tọa độ GPS.';
+            } else {
+                addressElement.textContent = 'Không xác định được địa chỉ từ tọa độ GPS.';
+                console.warn('Reverse geocode failed:', data.error || data);
+            }
+        } catch (err) {
+            addressElement.textContent = 'Không xác định được địa chỉ từ tọa độ GPS.';
+            console.warn('Reverse geocode exception:', err);
+        }
+    }
+
+    const VIETNAM_LOCATION_HIERARCHY = {
+        'Hà Nội': {
+            'Quận Ba Đình': { lat: 21.0450, lon: 105.8350 },
+            'Quận Hoàn Kiếm': { lat: 21.0283, lon: 105.8542 },
+            'Quận Đống Đa': { lat: 21.0200, lon: 105.8500 },
+            'Quận Hai Bà Trưng': { lat: 21.0100, lon: 105.8450 },
+            'Quận Tây Hồ': { lat: 21.0700, lon: 105.8200 },
+            'Quận Cầu Giấy': { lat: 21.0350, lon: 105.7900 },
+            'Quận Thanh Xuân': { lat: 21.0100, lon: 105.8700 },
+            'Quận Hoàng Mai': { lat: 21.0000, lon: 105.9000 },
+            'Quận Long Biên': { lat: 21.0600, lon: 105.9000 },
+            'Quận Bắc Từ Liêm': { lat: 21.0800, lon: 105.8000 },
+            'Quận Nam Từ Liêm': { lat: 21.0000, lon: 105.7900 },
+            'Quận Hà Đông': { lat: 20.9800, lon: 105.8100 }
+        },
+        'TP. Hồ Chí Minh': {
+            'Quận 1': { lat: 10.7700, lon: 106.7000 },
+            'Quận 3': { lat: 10.7850, lon: 106.6750 },
+            'Quận 4': { lat: 10.7500, lon: 106.7100 },
+            'Quận 5': { lat: 10.7600, lon: 106.6600 },
+            'Quận 6': { lat: 10.7400, lon: 106.6500 },
+            'Quận 7': { lat: 10.7300, lon: 106.7200 },
+            'Quận 8': { lat: 10.6800, lon: 106.6700 },
+            'Quận 10': { lat: 10.7550, lon: 106.6550 },
+            'Quận 11': { lat: 10.7700, lon: 106.6300 },
+            'Quận 12': { lat: 10.8700, lon: 106.6400 },
+            'Quận Phú Nhuận': { lat: 10.8000, lon: 106.7000 },
+            'Quận Bình Thạnh': { lat: 10.8100, lon: 106.7400 },
+            'Quận Gò Vấp': { lat: 10.8300, lon: 106.6800 },
+            'Quận Tân Bình': { lat: 10.8000, lon: 106.6500 },
+            'Quận Bình Tân': { lat: 10.7600, lon: 106.5900 },
+            'Quận Tân Phú': { lat: 10.8200, lon: 106.6100 }
+        }
+    };
+
+    const VIETNAM_CITIES = {
+        'Hà Nội': { lat: 21.0285, lon: 105.8542 },
+        'TP. Hồ Chí Minh': { lat: 10.8231, lon: 106.6297 }
+    };
+
+    function showManualLocationPicker() {
+        document.getElementById('manual-location-section').style.display = 'block';
+    }
+
+    function handleManualProvinceChange() {
+        const province = document.getElementById('manual-province').value;
+        const districtSelect = document.getElementById('manual-district');
+        
+        districtSelect.innerHTML = '<option value="">-- Chọn quận --</option>';
+        
+        if (province && VIETNAM_LOCATION_HIERARCHY[province]) {
+            Object.keys(VIETNAM_LOCATION_HIERARCHY[province]).forEach(district => {
+                const option = document.createElement('option');
+                option.value = district;
+                option.textContent = district;
+                districtSelect.appendChild(option);
+            });
+            userLocation.province = province;
+            document.getElementById('gps-address').textContent = 'Vị trí: ' + province;
+        }
+    }
+
+    function handleManualDistrictChange() {
+        const province = document.getElementById('manual-province').value;
+        const district = document.getElementById('manual-district').value;
+        
+        if (province && district && VIETNAM_LOCATION_HIERARCHY[province] && VIETNAM_LOCATION_HIERARCHY[province][district]) {
+            const districtData = VIETNAM_LOCATION_HIERARCHY[province][district];
+            userLocation.lat = districtData.lat;
+            userLocation.lon = districtData.lon;
+            userLocation.province = province;
+            userLocation.district = district;
+            userLocation.source = 'manual';
+            
+            document.getElementById('gps-address').textContent = 'Vị trí: ' + district + ', ' + province;
+            document.getElementById('gps-status').textContent = '✓ Đã chọn vị trí. Vui lòng chọn bệnh để xem phòng khám gần nhất.';
+        }
+    }
+
+    // DEBUG MODE: Hỗ trợ test bằng URL parameters
+    function loadDebugMode() {
+        const params = new URLSearchParams(window.location.search);
+        const debug = params.get('debug');
+        
+        if (debug === 'true') {
+            const debugProvince = params.get('province');
+            const debugDistrict = params.get('district');
+            const debugLat = params.get('lat');
+            const debugLon = params.get('lon');
+            
+            if (debugLat && debugLon) {
+                userLocation.lat = parseFloat(debugLat);
+                userLocation.lon = parseFloat(debugLon);
+            }
+            
+            if (debugProvince) {
+                const provinceSelect = document.getElementById('manual-province');
+                provinceSelect.value = debugProvince;
+                handleManualProvinceChange();
+                
+                if (debugDistrict) {
+                    const districtSelect = document.getElementById('manual-district');
+                    districtSelect.value = debugDistrict;
+                    handleManualDistrictChange();
+                }
+                userLocation.source = 'debug';
+            }
+            
+            // Debug info tắt
+            // const debugInfo = document.createElement('div');
+            // debugInfo.style.cssText = 'position: fixed; top: 10px; right: 10px; background: #ffeb3b; padding: 10px; border-radius: 4px; font-size: 12px; z-index: 999;';
+            // debugInfo.innerHTML = '🔧 DEBUG MODE<br>Lat: ' + userLocation.lat + '<br>Lon: ' + userLocation.lon + '<br>' + userLocation.province + ' - ' + userLocation.district;
+            // document.body.appendChild(debugInfo);
+            
+            console.log('[DEBUG MODE] Location:', userLocation);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const provinceSelect = document.getElementById('manual-province');
+        const districtSelect = document.getElementById('manual-district');
+        
+        if (provinceSelect) {
+            provinceSelect.addEventListener('change', handleManualProvinceChange);
+        }
+        if (districtSelect) {
+            districtSelect.addEventListener('change', handleManualDistrictChange);
+        }
+        
+        // Load debug mode nếu có
+        loadDebugMode();
+    });
+
+    async function fallbackIPGeolocation() {
+        try {
+            const response = await fetch('https://freegeoip.app/json/', { timeout: 5000 });
+            const data = await response.json();
+            if (data.latitude && data.longitude) {
+                userLocation.lat = data.latitude;
+                userLocation.lon = data.longitude;
+                userLocation.source = 'ip';
+                const btn = document.getElementById('btnLocateMe');
+                btn.textContent = '✓ Xác định qua IP';
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-success');
+                btn.disabled = false;
+                const status = document.getElementById('gps-status');
+                status.textContent = '✓ Xác định vị trí qua IP thành công. Vui lòng chọn bệnh.';
+                status.style.color = '#16a34a';
+                reverseGeocode(userLocation.lat, userLocation.lon);
+                return true;
+            }
+        } catch (err) {
+            console.warn('IP geolocation failed:', err);
+        }
+        return false;
+    }
+
+    function locateUser() {
+        var status = document.getElementById('gps-status');
+        var addressElement = document.getElementById('gps-address');
+        var btn = document.getElementById('btnLocateMe');
+        if (!navigator.geolocation) {
+            status.textContent = '❌ Trình duyệt không hỗ trợ GPS. Vui lòng sử dụng trình duyệt hiện đại hơn (Chrome, Firefox, Safari).';
+            status.style.color = '#dc2626';
+            showManualLocationPicker();
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Đang xác định...';
+        status.textContent = 'Đang lấy vị trí của bạn... (lên đến 20 giây)';
+        status.style.color = 'var(--text-muted)';
+        addressElement.textContent = '';
+
+        navigator.geolocation.getCurrentPosition(function (position) {
+            userLocation.lat = position.coords.latitude;
+            userLocation.lon = position.coords.longitude;
+            userLocation.source = 'gps';
+            btn.textContent = '✓ Đã xác định vị trí';
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-success');
+            btn.disabled = false;
+            status.textContent = '✓ Đã tìm thấy vị trí của bạn. Vui lòng chọn bệnh để xem phòng khám gần bạn trong vòng 20km.';
+            status.style.color = '#16a34a';
+            reverseGeocode(userLocation.lat, userLocation.lon);
+        }, async function (error) {
+            btn.disabled = false;
+            btn.textContent = 'Xác định vị trí của tôi';
+            
+            let showManual = false;
+            if (error.code === error.PERMISSION_DENIED) {
+                status.textContent = '❌ Bạn đã từ chối quyền GPS. Hãy bật GPS hoặc chọn vị trí thủ công bên dưới.';
+                status.style.color = '#dc2626';
+                showManual = true;
+            } else if (error.code === error.POSITION_UNAVAILABLE) {
+                status.textContent = '❌ Thiết bị không hỗ trợ GPS. Hãy chọn vị trí thủ công bên dưới.';
+                status.style.color = '#dc2626';
+                showManual = true;
+            } else if (error.code === error.TIMEOUT) {
+                status.textContent = '⏳ GPS timeout. Đang thử fallback IP-based geolocation...';
+                status.style.color = '#ea580c';
+                const success = await fallbackIPGeolocation();
+                if (!success) {
+                    status.textContent = '❌ GPS timeout. Hãy chọn vị trí thủ công bên dưới hoặc thử lại.';
+                    status.style.color = '#dc2626';
+                    showManual = true;
+                }
+            } else {
+                status.textContent = '❌ Không thể lấy vị trí GPS. Hãy chọn vị trí thủ công bên dưới.';
+                status.style.color = '#dc2626';
+                showManual = true;
+            }
+            
+            if (showManual) {
+                showManualLocationPicker();
+            }
+        }, { enableHighAccuracy: false, timeout: 20000, maximumAge: 300000 });
+    }
+
+    function goToDisease(diseaseId) {
+        if (!userLocation.lat || !userLocation.lon) {
+            alert('❌ GPS là bắt buộc để sử dụng dịch vụ. Vui lòng click "Xác định vị trí của tôi" và bật GPS.');
+            return;
+        }
+        var params = new URLSearchParams({
+            lat: userLocation.lat,
+            lon: userLocation.lon,
+            district: userLocation.district || '',
+            province: userLocation.province || '',
+            location_source: userLocation.source || 'unknown'
+        });
+        window.location.href = '/disease/' + diseaseId + '?' + params.toString();
+    }
+</script>
+{% endblock %}
+

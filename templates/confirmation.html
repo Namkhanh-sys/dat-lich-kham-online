@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% block title %}Đặt Lịch Thành Công - MedBooking{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 3rem auto; text-align: center;">
+    <div class="glass-panel" style="padding: 3rem 2rem;">
+        
+        <!-- Animated Checkmark -->
+        <div class="success-checkmark">
+            <svg viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+            </svg>
+        </div>
+
+        <h2 style="margin-bottom: 0.5rem; color: #ffffff; font-size: 2rem;">Đặt Lịch Thành Công!</h2>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">Lịch hẹn của bạn đã được ghi nhận trên hệ thống.</p>
+
+        <!-- Details Info Box -->
+        <div class="info-box" style="text-align: left;">
+            <div class="info-row">
+                <span class="info-label">Mã lịch hẹn:</span>
+                <span class="info-value" style="font-family: monospace; color: var(--secondary);">{{ appointment.id }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Bác sĩ khám:</span>
+                <span class="info-value">{{ doctor.name }} ({{ doctor.specialty }})</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Thời gian:</span>
+                <span class="info-value" style="color: var(--success);">{{ appointment.time }} ngày {{ appointment.date }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Phòng khám:</span>
+                <span class="info-value">{{ doctor.clinic_name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Địa chỉ:</span>
+                <span class="info-value" style="font-size: 0.9rem; text-align: right;">{{ doctor.clinic_address }}</span>
+            </div>
+        </div>
+
+        <!-- Alert Notification for email -->
+        <div class="alert alert-success" style="margin-bottom: 2rem; justify-content: center;">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
+            <span>Thư xác nhận lịch khám đã được gửi tới email của bạn.</span>
+        </div>
+
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+            <a href="{{ url_for('index') }}" class="btn btn-outline">Đặt lịch thêm</a>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Xem lịch hẹn của tôi</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

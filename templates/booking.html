@@ -1,0 +1,154 @@
+{% extends "layout.html" %}
+
+{% block title %}Đặt Lịch Hẹn Với {{ doctor.name }} - MedBooking{% endblock %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 0 auto;">
+    <div style="margin-bottom: 2rem;">
+        <a href="javascript:history.back()" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.9rem; margin-bottom: 1.5rem;">
+            <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="margin-right: 0.25rem;"><path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
+            Quay lại kết quả
+        </a>
+        
+        <h2>Thông Tin Đặt Lịch Khám</h2>
+        <p style="color: var(--text-muted);">Vui lòng chọn ngày và giờ khám phù hợp với bạn.</p>
+    </div>
+
+    <!-- Doctor Info Card -->
+    <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h3 style="color: var(--secondary); margin-bottom: 0.25rem;">{{ doctor.name }}</h3>
+                <span class="badge badge-specialty" style="margin-bottom: 0.75rem;">{{ doctor.specialty }}</span>
+                <p style="font-size: 0.95rem; color: var(--text-muted);">
+                    <strong>Phòng khám:</strong> {{ doctor.clinic_name }}<br>
+                    <strong>Địa chỉ:</strong> {{ doctor.clinic_address }}
+                </p>
+            </div>
+            <div style="text-align: right;">
+                {% if doctor.distance_km and doctor.distance_km|float < 500 %}
+                <span class="badge badge-distance" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Cách bạn {{ doctor.distance_km }} km</span>
+                {% endif %}
+                {% if location_label %}
+                <br><span style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.4rem; display: block;">📍 {{ location_label }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Collision Warning & Alternatives Suggestion -->
+    {% if collision_error %}
+        <div class="alert alert-danger" style="display: block;">
+            <div style="display: flex; gap: 0.5rem; align-items: flex-start; margin-bottom: 0.75rem;">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" style="margin-top: 0.15rem;"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                <div style="font-weight: 500;">{{ collision_error }}</div>
+            </div>
+            {% if alternatives %}
+                <div style="margin-top: 0.5rem; padding-left: 1.75rem;">
+                    <div style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #fca5a5;">Gợi ý các khung giờ trống thay thế trong ngày:</div>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        {% for slot in alternatives %}
+                            <button type="button" class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05);" onclick="selectAlternativeSlot('{{ slot }}')">
+                                {{ slot }}
+                            </button>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Booking Form -->
+    <div class="glass-panel" style="padding: 2rem;">
+        <form action="{{ url_for('book_appointment', doctor_id=doctor.id) }}" method="POST" id="bookingForm">
+            <input type="hidden" name="lat" value="{{ user_lat }}">
+            <input type="hidden" name="lon" value="{{ user_lon }}">
+            <input type="hidden" name="province" value="{{ province }}">
+            <input type="hidden" name="district" value="{{ district }}">
+            <input type="hidden" name="ward" value="{{ ward }}">
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="date" class="form-label" style="font-weight: 500;">Chọn Ngày Khám</label>
+                    <input type="date" id="date" name="date" class="form-control" required min="{{ today_str }}" value="{{ selected_date or '' }}">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="time" class="form-label" style="font-weight: 500;">Chọn Khung Giờ</label>
+                    <select id="time" name="time" class="form-control" required>
+                        <option value="" disabled {% if not selected_time %}selected{% endif %}>-- Chọn khung giờ khám --</option>
+                        <optgroup label="Buổi Sáng">
+                            <option value="08:00" {% if selected_time == '08:00' %}selected{% endif %}>08:00</option>
+                            <option value="08:30" {% if selected_time == '08:30' %}selected{% endif %}>08:30</option>
+                            <option value="09:00" {% if selected_time == '09:00' %}selected{% endif %}>09:00</option>
+                            <option value="09:30" {% if selected_time == '09:30' %}selected{% endif %}>09:30</option>
+                            <option value="10:00" {% if selected_time == '10:00' %}selected{% endif %}>10:00</option>
+                            <option value="10:30" {% if selected_time == '10:30' %}selected{% endif %}>10:30</option>
+                            <option value="11:00" {% if selected_time == '11:00' %}selected{% endif %}>11:00</option>
+                            <option value="11:30" {% if selected_time == '11:30' %}selected{% endif %}>11:30</option>
+                        </optgroup>
+                        <optgroup label="Buổi Chiều">
+                            <option value="13:30" {% if selected_time == '13:30' %}selected{% endif %}>13:30</option>
+                            <option value="14:00" {% if selected_time == '14:00' %}selected{% endif %}>14:00</option>
+                            <option value="14:30" {% if selected_time == '14:30' %}selected{% endif %}>14:30</option>
+                            <option value="15:00" {% if selected_time == '15:00' %}selected{% endif %}>15:00</option>
+                            <option value="15:30" {% if selected_time == '15:30' %}selected{% endif %}>15:30</option>
+                            <option value="16:00" {% if selected_time == '16:00' %}selected{% endif %}>16:00</option>
+                            <option value="16:30" {% if selected_time == '16:30' %}selected{% endif %}>16:30</option>
+                            <option value="17:00" {% if selected_time == '17:00' %}selected{% endif %}>17:00</option>
+                        </optgroup>
+                    </select>
+                </div>
+            </div>
+
+            <div style="border-top: 1px solid var(--glass-border); padding-top: 1.5rem; display: flex; justify-content: flex-end; gap: 1rem;">
+                <button type="button" class="btn btn-outline" onclick="history.back()">Hủy Bỏ</button>
+                <button type="submit" class="btn btn-primary" style="padding-left: 2.5rem; padding-right: 2.5rem;">Xác Nhận Đặt Lịch</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function selectAlternativeSlot(slot) {
+        var timeSelect = document.getElementById('time');
+        timeSelect.value = slot;
+        timeSelect.focus();
+    }
+
+    // Template Bug Fix: Disable past time slots when today is selected
+    var todayStr = "{{ today_str }}";
+
+    function updateTimeOptions() {
+        var dateInput = document.getElementById('date');
+        var timeSelect = document.getElementById('time');
+        var selectedDate = dateInput.value;
+
+        var nowH = new Date().getHours();
+        var nowM = new Date().getMinutes();
+        var nowTime = (nowH < 10 ? '0' + nowH : '' + nowH) + ':' +
+                      (nowM < 10 ? '0' + nowM : '' + nowM);
+
+        for (var i = 0; i < timeSelect.options.length; i++) {
+            var opt = timeSelect.options[i];
+            if (!opt.value) continue; // skip placeholder
+            if (selectedDate === todayStr && opt.value <= nowTime) {
+                opt.disabled = true;
+                opt.title = 'Giờ này đã qua';
+                if (opt.selected) {
+                    timeSelect.value = ''; // reset if selected was disabled
+                }
+            } else {
+                opt.disabled = false;
+                opt.title = '';
+            }
+        }
+    }
+
+    document.getElementById('date').addEventListener('change', updateTimeOptions);
+    // Run once on load in case date is pre-filled
+    updateTimeOptions();
+</script>
+{% endblock %}

@@ -1,0 +1,830 @@
+/* Google Fonts Import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   Color Variables — Medical White & Red Theme
+   ============================================================ */
+:root {
+    /* Backgrounds */
+    --bg-primary:   #f7f8fa;
+    --bg-secondary: #eef0f4;
+    --bg-card:      #ffffff;
+    --bg-nav:       rgba(255, 255, 255, 0.92);
+
+    /* Brand Colors — Medical Red */
+    --primary:          #dc2626;   /* vibrant medical red */
+    --primary-dark:     #b91c1c;
+    --primary-light:    #fef2f2;
+    --primary-glow:     rgba(220, 38, 38, 0.25);
+
+    /* Accent — Clean Crimson */
+    --secondary:        #e11d48;   /* rose-red for secondary accents */
+    --secondary-glow:   rgba(225, 29, 72, 0.2);
+
+    /* Status Colors */
+    --success:          #059669;
+    --success-bg:       #d1fae5;
+    --success-glow:     rgba(5, 150, 105, 0.2);
+    --danger:           #dc2626;
+    --danger-bg:        #fee2e2;
+    --danger-glow:      rgba(220, 38, 38, 0.2);
+    --warning:          #d97706;
+    --warning-bg:       #fef3c7;
+
+    /* Text */
+    --text-main:        #1e1e2e;
+    --text-muted:       #6b7280;
+    --text-light:       #9ca3af;
+
+    /* Borders & Dividers */
+    --border:           #e5e7eb;
+    --border-strong:    #d1d5db;
+
+    /* Shadows */
+    --shadow-sm:  0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md:  0 4px 12px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+    --shadow-lg:  0 8px 28px rgba(0,0,0,0.10), 0 4px 10px rgba(0,0,0,0.06);
+    --shadow-red: 0 4px 14px rgba(220, 38, 38, 0.25);
+
+    /* Card glass effect (light mode) */
+    --glass-bg:     rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(220, 38, 38, 0.12);
+    --glass-bg-hover: rgba(255, 255, 255, 0.95);
+    --card-shadow:  var(--shadow-md);
+
+    /* Fonts */
+    --font-heading: 'Plus Jakarta Sans', sans-serif;
+    --font-body:    'Inter', sans-serif;
+}
+
+/* ============================================================
+   Global Reset
+   ============================================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font-body);
+}
+
+body {
+    background: var(--bg-primary);
+    background-image:
+        radial-gradient(ellipse at 0% 0%, rgba(220, 38, 38, 0.06) 0%, transparent 55%),
+        radial-gradient(ellipse at 100% 100%, rgba(225, 29, 72, 0.05) 0%, transparent 50%);
+    background-attachment: fixed;
+    color: var(--text-main);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ============================================================
+   Typography
+   ============================================================ */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-main);
+}
+
+a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+a:hover {
+    color: var(--primary-dark);
+}
+
+/* ============================================================
+   Glass Panel (Card Base)
+   ============================================================ */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.glass-panel:hover {
+    border-color: rgba(220, 38, 38, 0.22);
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.10);
+}
+
+/* ============================================================
+   Navbar
+   ============================================================ */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg-nav);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 2px solid var(--primary);
+    box-shadow: 0 2px 16px rgba(220, 38, 38, 0.08);
+}
+
+.navbar-brand {
+    font-family: var(--font-heading);
+    font-size: 1.55rem;
+    font-weight: 800;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Red + Cross medical logo */
+.navbar-brand::before {
+    content: '✚';
+    font-size: 1.2rem;
+    color: var(--primary);
+}
+
+.navbar-brand span {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+}
+
+.nav-item {
+    font-weight: 500;
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    padding: 0.5rem 0.9rem;
+    border-radius: 8px;
+    transition: all 0.25s;
+}
+
+.nav-item:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.nav-item.active {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.btn-nav-logout {
+    color: var(--danger) !important;
+    border: 1px solid rgba(220, 38, 38, 0.2) !important;
+}
+
+.btn-nav-logout:hover {
+    background: var(--danger-bg) !important;
+    color: var(--danger) !important;
+}
+
+/* ============================================================
+   Main Layout
+   ============================================================ */
+.main-content {
+    flex: 1;
+    max-width: 1200px;
+    width: 100%;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+/* ============================================================
+   Footer
+   ============================================================ */
+footer {
+    text-align: center;
+    padding: 1.75rem 2rem;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    margin-top: auto;
+    background: #ffffff;
+}
+
+footer::before {
+    content: '✚ ';
+    color: var(--primary);
+    opacity: 0.6;
+}
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.4rem;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    outline: none;
+    letter-spacing: 0.01em;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #ffffff;
+    box-shadow: var(--shadow-red);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.38);
+    background: linear-gradient(135deg, #ef4444, var(--primary-dark));
+    color: #ffffff;
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, var(--secondary), #be123c);
+    color: #ffffff;
+    box-shadow: 0 4px 14px var(--secondary-glow);
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--secondary-glow);
+    color: #ffffff;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1.5px solid var(--border-strong);
+    color: var(--text-muted);
+}
+
+.btn-outline:hover {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--danger), #991b1b);
+    color: #ffffff;
+    box-shadow: var(--shadow-red);
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.35);
+    color: #ffffff;
+}
+
+.btn:active {
+    transform: translateY(0) !important;
+}
+
+.btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* ============================================================
+   Forms
+   ============================================================ */
+.form-group {
+    margin-bottom: 1.4rem;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.45rem;
+    color: var(--text-main);
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    background: #ffffff;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-main);
+    font-size: 0.925rem;
+    transition: all 0.25s;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.form-control:disabled {
+    background: var(--bg-secondary);
+    color: var(--text-light);
+    cursor: not-allowed;
+}
+
+select.form-control {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 20 20' fill='%236b7280'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.85rem center;
+    padding-right: 2.5rem;
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* ============================================================
+   Alert Notifications
+   ============================================================ */
+.alert {
+    padding: 0.9rem 1.2rem;
+    border-radius: 10px;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.92rem;
+    border-left: 4px solid transparent;
+}
+
+.alert-success {
+    background: var(--success-bg);
+    border-left-color: var(--success);
+    color: #065f46;
+}
+
+.alert-danger {
+    background: var(--danger-bg);
+    border-left-color: var(--danger);
+    color: #991b1b;
+}
+
+.alert-warning {
+    background: var(--warning-bg);
+    border-left-color: var(--warning);
+    color: #92400e;
+}
+
+/* ============================================================
+   Hero Section (Index)
+   ============================================================ */
+.hero {
+    text-align: center;
+    padding: 3.5rem 1rem 2.5rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero h1 {
+    font-size: 2.9rem;
+    margin-bottom: 1.2rem;
+    line-height: 1.18;
+    color: var(--text-main);
+}
+
+.hero h1 span {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+.hero p {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin-bottom: 2.2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Decorative red pulse dot before hero */
+.hero::before {
+    content: '';
+    display: block;
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 1.2rem;
+    border-radius: 50%;
+    background: var(--primary-light);
+    border: 3px solid var(--primary);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23dc2626'%3E%3Cpath d='M11 2a1 1 0 011 1v7h7a1 1 0 110 2h-7v7a1 1 0 11-2 0v-7H3a1 1 0 110-2h7V3a1 1 0 011-1z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 26px;
+    box-shadow: 0 0 0 8px rgba(220, 38, 38, 0.06);
+    animation: pulse-medical 2.5s infinite;
+}
+
+@keyframes pulse-medical {
+    0%   { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.18); }
+    70%  { box-shadow: 0 0 0 14px rgba(220, 38, 38, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+}
+
+/* Search Box */
+.search-box {
+    display: flex;
+    gap: 0.75rem;
+    background: #ffffff;
+    border: 2px solid var(--border);
+    padding: 0.4rem;
+    border-radius: 14px;
+    box-shadow: var(--shadow-md);
+    transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.search-box:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.10), var(--shadow-md);
+}
+
+.search-box input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 0.7rem 1rem;
+    font-size: 1rem;
+    color: var(--text-main);
+}
+
+.search-box input::placeholder {
+    color: var(--text-light);
+}
+
+.search-box input:focus {
+    outline: none;
+}
+
+/* ============================================================
+   Card Grid (Doctor Cards)
+   ============================================================ */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.4rem;
+    margin-top: 1.5rem;
+}
+
+/* Cards */
+.card {
+    background: #ffffff;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(220, 38, 38, 0.2);
+}
+
+/* Red top accent strip */
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 16px 16px 0 0;
+}
+
+.card-header-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.card-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+/* Badges */
+.badge {
+    display: inline-block;
+    padding: 0.22rem 0.65rem;
+    font-size: 0.73rem;
+    font-weight: 600;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.badge-specialty {
+    background: var(--primary-light);
+    color: var(--primary);
+    border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.badge-distance {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid rgba(29, 78, 216, 0.18);
+}
+
+.badge-status-confirmed {
+    background: var(--success-bg);
+    color: #065f46;
+    border: 1px solid rgba(5, 150, 105, 0.3);
+}
+
+.badge-status-cancelled {
+    background: var(--danger-bg);
+    color: #991b1b;
+    border: 1px solid rgba(220, 38, 38, 0.25);
+}
+
+.card-body-text {
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    margin-bottom: 1.1rem;
+    line-height: 1.65;
+}
+
+.card-body-text strong {
+    color: var(--text-main);
+    font-weight: 600;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+    margin-top: auto;
+}
+
+/* ============================================================
+   Dashboard & Profile
+   ============================================================ */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 2rem;
+}
+
+.sidebar {
+    padding: 1.5rem;
+    height: fit-content;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+}
+
+.sidebar-menu {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 1rem;
+    border-radius: 10px;
+    color: var(--text-muted);
+    font-weight: 500;
+    font-size: 0.92rem;
+    transition: all 0.2s;
+}
+
+.sidebar-link:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.sidebar-link.active {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 600;
+    border-left: 3px solid var(--primary);
+}
+
+.main-panel {
+    padding: 2rem;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border);
+}
+
+/* ============================================================
+   Auth Pages (Login / Register)
+   ============================================================ */
+.auth-container {
+    max-width: 460px;
+    width: 100%;
+    margin: 3.5rem auto;
+    padding: 2.5rem;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Decorative red strip at top of auth card */
+.auth-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-header h2 {
+    font-size: 1.85rem;
+    margin-bottom: 0.4rem;
+    color: var(--text-main);
+}
+
+.auth-header p {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.92rem;
+    color: var(--text-muted);
+}
+
+/* ============================================================
+   Confirmation / Success Checkmark
+   ============================================================ */
+.success-checkmark {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 2rem auto;
+    border-radius: 50%;
+    background: var(--success-bg);
+    border: 2px solid var(--success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.3);
+    animation: pulse-success 2.2s infinite;
+}
+
+.success-checkmark svg {
+    color: var(--success);
+    width: 36px;
+    height: 36px;
+}
+
+@keyframes pulse-success {
+    0%  { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.28); }
+    70% { box-shadow: 0 0 0 14px rgba(5, 150, 105, 0); }
+    100%{ box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
+}
+
+/* ============================================================
+   Info Box (Booking Confirmation Details)
+   ============================================================ */
+.info-box {
+    background: #fafafa;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1.4rem;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.92rem;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.info-value {
+    font-weight: 600;
+    color: var(--text-main);
+    text-align: right;
+}
+
+/* ============================================================
+   Reschedule Panel
+   ============================================================ */
+.reschedule-form {
+    padding: 1.5rem;
+    background: #fafafa;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-top: 1.5rem;
+}
+
+/* ============================================================
+   Section Dividers & Headings
+   ============================================================ */
+.section-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-title::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 1.3em;
+    background: var(--primary);
+    border-radius: 4px;
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    .navbar {
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 1rem;
+    }
+    .hero h1 {
+        font-size: 2.1rem;
+    }
+    .card-grid {
+        grid-template-columns: 1fr;
+    }
+}

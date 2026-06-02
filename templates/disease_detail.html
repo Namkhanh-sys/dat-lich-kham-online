@@ -1,0 +1,189 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ disease.name }} - Đặt Lịch Khám{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <a href="{{ url_for('index', province=province, district=district, ward=ward) }}" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.9rem; margin-bottom: 1.5rem;">
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" style="margin-right: 0.25rem;"><path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
+        Quay lại trang chủ
+    </a>
+    
+    <div class="glass-panel" style="padding: 2rem; margin-bottom: 2rem; background: var(--primary-light); border-color: rgba(220, 38, 38, 0.2);">
+        <h2 style="color: var(--primary-dark); margin-bottom: 1rem;">{{ disease.name }}</h2>
+        <p style="font-size: 1.05rem; line-height: 1.6; color: var(--text-main);">
+            {{ disease.description }}
+        </p>
+    </div>
+
+    <!-- District Filter Section -->
+    {% if province and province in ['Hà Nội', 'TP. Hồ Chí Minh'] %}
+    <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 2rem; background: #f0f4f8; border-left: 4px solid var(--secondary);">
+        <h4 style="margin-bottom: 1rem; color: var(--text-main);">Lọc theo quận</h4>
+        <div>
+            <label style="display: block; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text-muted);">Chọn quận:</label>
+            <select id="filter-district" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 0.25rem; font-size: 0.95rem;" onchange="onDistrictFilterChange()">
+                <option value="">-- Tất cả quận --</option>
+                {% for district in available_districts %}
+                <option value="{{ district }}" {% if district == current_district %}selected{% endif %}>{{ district }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <!-- Debug info tắt -->
+        <!-- {% if debug_mode %}
+        <div style="margin-top: 1rem; padding: 0.75rem; background: #ffeb3b; border-radius: 4px; font-size: 0.85rem;">
+            🔧 DEBUG MODE: Lat={{ user_lat }}, Lon={{ user_lon }}, District={{ current_district }}
+        </div>
+        {% endif %} -->
+    </div>
+    {% endif %}
+
+    <h3>Danh sách Bác sĩ điều trị chuyên môn</h3>
+    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+        {% if location_label %}
+        <span style="color: var(--primary);">📍 Gần khu vực: {{ location_label }}</span>
+        {% else %}
+        Danh sách được đề xuất dựa trên chuyên môn và từ khóa liên quan.
+        {% endif %}
+    </p>
+</div>
+
+{% if doctors %}
+    <div class="card-grid">
+        {% for doc in doctors %}
+            <div class="card glass-panel" style="display: flex; flex-direction: column; text-align: center; padding: 1.5rem 1rem;">
+                <!-- Avatar -->
+                <div style="margin: 0 auto 1rem auto; width: 120px; height: 120px; border-radius: 50%; overflow: hidden; border: 3px solid var(--primary-light); box-shadow: var(--shadow-sm);">
+                    <img src="{{ doc.avatar }}" alt="{{ doc.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                
+                <!-- Info -->
+                <h3 style="margin-bottom: 0.5rem; color: var(--primary-dark); font-size: 1.25rem;">{{ doc.name }}</h3>
+                <div style="margin-bottom: 0.75rem;">
+                    <span style="font-size: 0.9rem; color: var(--text-muted); display: block; white-space: pre-line;">{{ doc.short_bio }}</span>
+                </div>
+                
+                <div style="margin-bottom: 1rem;">
+                    {% if is_gps_location %}
+                    <span class="badge badge-distance">Cách {{ doc.distance_km }} km</span>
+                    {% endif %}
+                </div>
+
+                <div class="card-body-text" style="flex: 1; text-align: left; background: var(--bg-secondary); padding: 0.75rem; border-radius: 8px;">
+                    <p style="margin-bottom: 0; font-size: 0.85rem;">
+                        <strong>Phòng khám:</strong> {{ doc.clinic_name }}<br>
+                        <span style="color: var(--text-muted);">{{ doc.clinic_address }}</span>
+                    </p>
+                </div>
+
+                <!-- 2 Buttons -->
+                <div class="card-footer" style="margin-top: 1.5rem; display: flex; gap: 0.5rem; border-top: none; padding-top: 0;">
+                    <a href="{{ url_for('doctor_detail', doctor_id=doc.id, lat=user_lat, lon=user_lon, province=province, district=district, ward=ward) }}" class="btn btn-outline" style="flex: 1; justify-content: center; font-size: 0.85rem; padding: 0.6rem 0.5rem;">
+                        <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+                        ĐỌC THÊM
+                    </a>
+                    <a href="{{ url_for('book_appointment', doctor_id=doc.id, lat=user_lat, lon=user_lon, province=province, district=district, ward=ward) }}" class="btn btn-primary" style="flex: 1; justify-content: center; font-size: 0.85rem; padding: 0.6rem 0.5rem;">
+                        ĐẶT LỊCH
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="glass-panel" style="text-align: center; padding: 4rem 1rem; color: var(--text-muted);">
+        <svg width="48" height="48" viewBox="0 0 20 20" fill="currentColor" style="margin-bottom: 1rem; opacity: 0.5;"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1zm0-3a1 1 0 110-2 1 1 0 010 2z" clip-rule="evenodd"/></svg>
+        <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">Hiện chưa có bác sĩ nào phù hợp với bệnh lý này trong hệ thống.</p>
+        <a href="{{ url_for('index') }}" class="btn btn-primary">Quay lại trang chủ</a>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const LOCATION_HIERARCHY = {
+        'Hà Nội': {
+            'Ba Đình': ['Phúc Tân', 'Liễu Giai', 'Ngô Thời Nhiệm', 'Kim Mã', 'Cống Vị', 'Trúc Bạch', 'Điện Biên'],
+            'Hoàn Kiếm': ['Hàng Bài', 'Cửa Đông', 'Cửa Nam', 'Hàng Gai', 'Hàng Trống', 'Phủ Doãn', 'Quần Ngô'],
+            'Hai Bà Trưng': ['Trần Hưng Đạo', 'Hàng Bông', 'Bà Triệu', 'Tây Sơn', 'Quang Trung', 'Vị Xuyên', 'Thành Công'],
+            'Đống Đa': ['Trung Liệt', 'Quỳnh Mai', 'Quỳnh Lôi', 'Văn Chương', 'Thịnh Quang', 'Đức Giang', 'Ngã Tư Sở'],
+            'Tây Hồ': ['Quảng An', 'Thục Lâm', 'Tứ Liên', 'Phương Canh', 'Thảo Điền', 'Sơn Tây'],
+            'Cầu Giấy': ['Yên Hòa', 'Quan Hoa', 'Dịch Vọng', 'Dịch Vọng Hậu', 'Xuân Phương', 'Trung Hòa', 'Nghĩa Tân'],
+            'Thanh Xuân': ['Khương Thượng', 'Khương Đình', 'Khương Mai', 'Tây Sơn', 'Thanh Xuân Bắc', 'Thanh Xuân Trung', 'Thanh Xuân Nam'],
+            'Hoàng Mai': ['Hoàng Văn Thụ', 'Giáp Bát', 'Yên Sở', 'Bồ Đề', 'Tả Thanh Oai', 'Cự Khối', 'Thiệu Hóa', 'Tam Rạc'],
+            'Long Biên': ['Ngô Quyền', 'Sài Đồng', 'Gia Thụy', 'Việt Hàng', 'Đông Ngạc', 'Cổ Linh', 'Phúc Lộc', 'Long Biên'],
+            'Bắc Từ Liêm': ['Thụ Lâm', 'Phương Canh', 'Sài Đồng', 'Xuân Phương', 'Minh Khai', 'Tây Tựu'],
+            'Nam Từ Liêm': ['Phước Tân', 'Tây Lầu', 'Phường Nghĩa Tân', 'Phương Canh', 'Thanh Xuân', 'Mổ Lao', 'Thạch Bàn'],
+            'Hà Đông': ['Phú Lãm', 'Tân Tài', 'Phúc Diễn', 'Phúc Xá', 'Dương Nội', 'Petro Việt Nam', 'Minh Khai', 'Đông Ngạc'],
+            'Sóc Sơn': ['Sóc Sơn', 'Thạch Thất', 'Kim Sơn', 'Phú Cường', 'Hùng Sơn', 'Hồng Hà', 'Phú Minh'],
+            'Đông Anh': ['Đông Anh', 'Mỹ Đức', 'Quốc Oai', 'Dức Thượng', 'Hoàng Văn Thụ', 'An Khánh'],
+            'Gia Lâm': ['Gia Lâm', 'Trạm Trôi', 'Bắc Sơn', 'Thượng Thanh', 'Duyên Hà', 'Hạ Đình', 'Mạo Khê'],
+            'Thanh Trì': ['Thanh Trì', 'Liên Mạc', 'Vạn Phúc', 'Thượng Thanh', 'Dư Dương', 'Đức Giang'],
+            'Mê Linh': ['Mê Linh', 'Tả Thanh Oai', 'Lỗ Sơn', 'Tòng Báo', 'Xuyên Mộc', 'Đắc Sơn'],
+            'Phú Xuyên': ['Phú Xuyên', 'Liên Châu', 'Tam Đảo', 'Thượng Thanh', 'Duyên Thái', 'Quốc Oai'],
+            'Thạch Thất': ['Thạch Thất', 'Chiêu Liêu', 'Ngũ Hiệp', 'Mộc Châu', 'Hòa Sơn', 'Minh Phú']
+        },
+        'TP. Hồ Chí Minh': {
+            'Quận 1': ['Bến Nghé', 'Bến Thành', 'Phạm Ngũ Lão', 'Tân Định', 'Nguyễn Thái Bình', 'Đa Kao'],
+            'Quận 2': ['An Khánh', 'An Lợi Đông', 'An Phú', 'Bình An', 'Cát Lái', 'Thảo Điền', 'Thạnh Mỹ Lợi'],
+            'Quận 3': ['Võ Thị Sáu', 'Phường 6', 'Phường 7', 'Phường 8', 'Phường 9', 'Phường 11', 'Phường 13', 'Phường 14'],
+            'Quận 4': ['Phường 1', 'Phường 2', 'Phường 4', 'Phường 6', 'Phường 8', 'Phường 10', 'Phường 12', 'Phường 13', 'Phường 14', 'Phường 15', 'Phường 16', 'Phường 18'],
+            'Quận 5': ['Phường 1', 'Phường 2', 'Phường 3', 'Phường 4', 'Phường 5', 'Phường 6', 'Phường 7', 'Phường 8', 'Phường 9', 'Phường 10', 'Phường 11', 'Phường 12', 'Phường 14'],
+            'Quận 6': ['Phường 1', 'Phường 2', 'Phường 3', 'Phường 4', 'Phường 5', 'Phường 8', 'Phường 9', 'Phường 10', 'Phường 11', 'Phường 12', 'Phường 13', 'Phường 14'],
+            'Quận 7': ['Bình Thuận', 'Bình Trưởng', 'Phú Mỹ', 'Phú Nhuận', 'Tân Phong', 'Tân Phú', 'Tân Quy'],
+            'Quận 8': ['Phường 1', 'Phường 2', 'Phường 3', 'Phường 4', 'Phường 5', 'Phường 6', 'Phường 7', 'Phường 8', 'Phường 10', 'Phường 11', 'Phường 12', 'Phường 13', 'Phường 14', 'Phường 15', 'Phường 16', 'Phường 17', 'Phường 18'],
+            'Quận 9': ['An Phú', 'Bình An', 'Hiệp Phú', 'Long Bình', 'Long Trường', 'Phú Hữu', 'Tân Phú', 'Tăng Nhơn Phú A', 'Tăng Nhơn Phú B', 'Thảo Điền', 'Thanh Bình'],
+            'Quận 10': ['Phường 1', 'Phường 3', 'Phường 4', 'Phường 5', 'Phường 6', 'Phường 7', 'Phường 8', 'Phường 9', 'Phường 10', 'Phường 11', 'Phường 12', 'Phường 13', 'Phường 14', 'Phường 15'],
+            'Quận 11': ['Phường 1', 'Phường 2', 'Phường 3', 'Phường 4', 'Phường 5', 'Phường 6', 'Phường 7', 'Phường 8', 'Phường 9', 'Phường 10', 'Phường 11', 'Phường 12', 'Phường 13', 'Phường 14', 'Phường 15', 'Phường 16'],
+            'Quận 12': ['Phường 1', 'Phường 2', 'Phường 3', 'Phường 4', 'Phường 5', 'Phường 6', 'Phường 7', 'Phường 8', 'Phường 9', 'Phường 10', 'Phường 11', 'Phường 12', 'Phường 13', 'Phường 14', 'Phường 15', 'Phường 16', 'Phường 17'],
+            'Thành phố Thủ Đức': ['Linh Chiểu', 'Linh Đông', 'Linh Trung', 'Bình Thạnh', 'Hiệp Phú', 'Long Bình', 'Long Thạnh Mỹ', 'Phú Hữu', 'Tây Thạnh', 'Tân Phú', 'Tăng Nhơn Phú A', 'Tăng Nhơn Phú B', 'Thạnh Mỹ Lợi', 'Thảo Điền', 'Trường Thạnh', 'Ưu Nước'],
+            'Huyện Bình Chánh': ['Bình Chánh', 'An Lạc', 'An Nhơn', 'Tân Kiên', 'Vĩnh Lộc A', 'Vĩnh Lộc B', 'Lê Minh Xuân'],
+            'Huyện Cần Giờ': ['Cần Giờ', 'An Thới', 'Thạnh An', 'Long Hòa', 'Tam Thôn Hiệp'],
+            'Huyện Cù Chi': ['Cù Chi', 'Hòa Phú', 'Nhuận Ức', 'Phước Vĩnh', 'Phước Thạnh', 'Tân An Hội', 'Tân Phú', 'Tân Thạnh', 'Thạnh Phú'],
+            'Huyện Hóc Môn': ['Hóc Môn', 'Bà Điểm', 'Nhơn Ích', 'Tân Hiệp', 'Tân Thắng', 'Xuân Thới Đông', 'Xuân Thới Sơn'],
+            'Huyện Nhà Bè': ['Nhà Bè', 'An Khánh', 'Phước Kiển', 'Tân Nhựt', 'Tân Phú']
+        }
+    };
+
+    function onDistrictFilterChange() {
+        const province = '{{ province }}';
+        const district = document.getElementById('filter-district').value;
+        const wardSelect = document.getElementById('filter-ward');
+        
+        wardSelect.innerHTML = '<option value="">-- Tất cả phường --</option>';
+        
+        if (district && LOCATION_HIERARCHY[province] && LOCATION_HIERARCHY[province][district]) {
+            const wards = LOCATION_HIERARCHY[province][district];
+            wards.forEach(ward => {
+                const option = document.createElement('option');
+                option.value = ward;
+                option.textContent = ward;
+                wardSelect.appendChild(option);
+            });
+        }
+        
+        // Reload page with new filters
+        updateFilterURL();
+    }
+
+    function onWardFilterChange() {
+        updateFilterURL();
+    }
+
+    function updateFilterURL() {
+        const province = '{{ province }}';
+        const district = document.getElementById('filter-district').value;
+        const ward = document.getElementById('filter-ward').value;
+        const diseaseId = '{{ disease.id }}';
+        
+        const params = new URLSearchParams({
+            lat: {{ user_lat }},
+            lon: {{ user_lon }},
+            province: province,
+            district: district,
+            ward: ward
+        });
+        
+        window.location.href = '/disease/' + diseaseId + '?' + params.toString();
+    }
+</script>
+{% endblock %}

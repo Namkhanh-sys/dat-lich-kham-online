@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+
+{% block title %}Đăng Ký - MedBooking{% endblock %}
+
+{% block content %}
+<div class="auth-container glass-panel">
+    <div class="auth-header">
+        <h2>Đăng Ký Tài Khoản</h2>
+        <p>Bắt đầu đăng ký và theo dõi lịch khám tiện lợi</p>
+    </div>
+    
+    <form action="{{ url_for('register') }}" method="POST">
+        <div class="form-group">
+            <label for="name" class="form-label">Họ và Tên</label>
+            <input type="text" id="name" name="name" class="form-control" placeholder="Nguyễn Văn A" required value="{{ request.form.get('name', '') }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="email" class="form-label">Địa chỉ Email</label>
+            <input type="email" id="email" name="email" class="form-control" placeholder="example@gmail.com" required value="{{ request.form.get('email', '') }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="phone" class="form-label">Số điện thoại</label>
+            <input type="tel" id="phone" name="phone" class="form-control" placeholder="0987654321" required value="{{ request.form.get('phone', '') }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="password" class="form-label">Mật khẩu</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Tối thiểu 6 ký tự" minlength="6" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Đăng Ký</button>
+    </form>
+    
+    <div class="auth-footer">
+        Đã có tài khoản? <a href="{{ url_for('login') }}">Đăng nhập ngay</a>
+    </div>
+</div>
+{% endblock %}
