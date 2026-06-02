@@ -1,11 +1,12 @@
 """
-Debug endpoints for testing geolocation and distance calculations.
+Debug endpoints for testing geolocation, distance calculations, and email.
 Only available in development mode.
 """
 
 from flask import Blueprint, request, jsonify
 from src.geocoding_service import GeocodingService
 from src.distance_calculator import DistanceCalculator
+from src.email_service import EmailService
 
 debug_bp = Blueprint('debug', __name__, url_prefix='/api/debug')
 
@@ -210,4 +211,75 @@ def clinics_near_address():
         return jsonify({
             'ok': False,
             'error': str(e)
+        }), 500
+
+
+@debug_bp.route('/send-test-email', methods=['POST'])
+def send_test_email():
+    """
+    Test email sending via EmailJS.
+    
+    JSON payload:
+      - to_email: Recipient email (required)
+      - user_name: User name (default: "Test User")
+      - doctor_name: Doctor name (default: "Dr. John Doe")
+      - date_str: Appointment date (default: "2026-06-15")
+      - time_str: Appointment time (default: "14:00")
+      - clinic_name: Clinic name (default: "Clinic 1")
+      - address: Clinic address (default: "123 Main St")
+      
+    Example:
+      POST /api/debug/send-test-email
+      {
+        "to_email": "test@example.com",
+        "user_name": "John",
+        "doctor_name": "Dr. Smith"
+      }
+    """
+    try:
+        data = request.get_json() or {}
+        
+        to_email = data.get('to_email')
+        if not to_email:
+            return jsonify({
+                'ok': False,
+                'error': 'Missing required field: to_email'
+            }), 400
+        
+        user_name = data.get('user_name', 'Test User')
+        doctor_name = data.get('doctor_name', 'Dr. John Doe')
+        date_str = data.get('date_str', '2026-06-15')
+        time_str = data.get('time_str', '14:00')
+        clinic_name = data.get('clinic_name', 'Clinic 1')
+        address = data.get('address', '123 Main St')
+        
+        # Send email
+        success, message = EmailService.send_booking_confirmation(
+            user_email=to_email,
+            user_name=user_name,
+            doctor_name=doctor_name,
+            date_str=date_str,
+            time_str=time_str,
+            clinic_name=clinic_name,
+            address=address
+        )
+        
+        return jsonify({
+            'ok': success,
+            'message': message,
+            'to_email': to_email,
+            'user_name': user_name,
+            'doctor_name': doctor_name,
+            'date_str': date_str,
+            'time_str': time_str,
+            'clinic_name': clinic_name,
+            'address': address
+        }), 200 if success else 400
+        
+    except Exception as e:
+        import traceback
+        return jsonify({
+            'ok': False,
+            'error': str(e),
+            'traceback': traceback.format_exc()
         }), 500
