@@ -34,12 +34,15 @@ certs/
 *.key
 
 # Data
-*.csv
 data/
 
 # Logs
 *.log
 
-# Allow important JSON files
+# Allow important data files
 !data/diseases.json
-!doctors_info.json
+!data/clinics.csv
+!data/doctors.csv
+!data/appointments.csv
+!data/users.csv
+!data/doctors_info.json

@@ -1,0 +1,28 @@
+id,name,specialty,symptoms,clinic_id
+d1,Bác sĩ Nguyễn Văn A,Tai Mũi Họng,đau họng;ho;sổ mũi;nghẹt mũi;ù tai;viêm họng;viêm xoang;viêm phế quản;hen suyễn,c1
+d2,Bác sĩ Trần Thị B,Nội khoa,sốt;mệt mỏi;đau đầu;chóng mặt;cảm cúm;đau lưng;mất ngủ;suy nhược thần kinh,c1
+d3,Bác sĩ Phạm Văn C,Tiêu hóa,đau bụng;buồn nôn;tiêu chảy;đầy hơi;khó tiêu;đau dạ dày;trào ngược;đại tràng,c2
+d4,Bác sĩ Lê Thị D,Tim mạch,đau ngực;khó thở;hồi hộp;nhịp tim nhanh;cao huyết áp;xơ vữa động mạch;rối loạn nhịp tim,c2
+d5,Bác sĩ Hoàng Văn E,Da liễu,ngứa da;nổi mẩn đỏ;mụn trứng cá;dị ứng da;viêm da cơ địa;mề đay;nấm da,c3
+d6,Bác sĩ Vũ Thị F,Tai Mũi Họng,đau họng;ho;khàn tiếng;nghẹt mũi;viêm xoang;viêm phế quản,c3
+d7,Bác sĩ Ngô Văn G,Nội khoa,sốt;đau đầu;đau lưng;mất ngủ;suy nhược;đau nửa đầu;suy nhược thần kinh,c4
+d8,Bác sĩ Đỗ Thị H,Tiêu hóa,đau dạ dày;trào ngược;táo bón;buồn nôn;gan nhiễm mỡ;viêm gan;gan mật,c4
+d9,Bác sĩ Đinh Văn I,Cơ xương khớp,thoát vị đĩa đệm;thoái hóa khớp;viêm khớp;đau lưng;đau cổ;đau khớp gối,c1
+d10,Bác sĩ Trần Văn K,Nội tiết,tiểu đường;cường giáp;gout;béo phì;rối loạn tuyến giáp;chuyển hóa,c3
+d11,Bác sĩ Nguyễn Thị L,Tim mạch,cao huyết áp;rối loạn nhịp tim;suy tim;đau ngực;xơ vữa động mạch,c5
+d12,Bác sĩ Lê Văn M,Da liễu,viêm da cơ địa;mề đay;mụn trứng cá;ngứa da;nấm da;dị ứng,c5
+d13,Bác sĩ Phạm Thị N,Tiêu hóa,đau dạ dày;trào ngược;gan nhiễm mỡ;viêm gan;đại tràng;dạ dày,c6
+d14,Bác sĩ Hoàng Văn O,Cơ xương khớp,thoát vị đĩa đệm;thoái hóa khớp;đau khớp;đau lưng;viêm khớp dạng thấp,c6
+d15,Bác sĩ Vũ Thị P,Hô hấp,hen suyễn;viêm phế quản;viêm xoang;khó thở;ho mạn tính;COPD,c7
+d16,Bác sĩ Ngô Văn Q,Thần kinh,đau nửa đầu;mất ngủ;suy nhược thần kinh;chóng mặt;tê bì chân tay;đau đầu mạn,c7
+d17,Bác sĩ Đinh Thị R,Nội tiết,tiểu đường;gout;cường giáp;suy giáp;rối loạn chuyển hóa;béo phì,c8
+d18,Bác sĩ Trần Văn S,Hô hấp,viêm xoang;viêm phế quản;hen suyễn;ho;khó thở;viêm phổi,c8
+d19,Bác sĩ Nguyễn Thị T,Gan mật,gan nhiễm mỡ;viêm gan;xơ gan;vàng da;đau hạ sườn phải;gan mật,c9
+d20,Bác sĩ Lê Văn U,Thần kinh,đau đầu mạn;mất ngủ;đau nửa đầu;suy nhược thần kinh;động kinh;parkinson,c9
+d21,Bác sĩ Phạm Văn V,Cơ xương khớp,thoái hóa khớp;viêm khớp;đau lưng;thoát vị đĩa đệm;loãng xương;đau khớp,c10
+d22,Bác sĩ Hoàng Thị W,Nội tiết,tiểu đường;gout;rối loạn tuyến giáp;béo phì;cường giáp,c10
+d23,Bác sĩ Phạm Hoàng X,Tim mạch,cao huyết áp;rối loạn nhịp tim;xơ vữa động mạch;suy tim;hồi hộp;đau ngực,c4
+d24,Bác sĩ Nguyễn Hữu Y,Da liễu,mụn trứng cá;viêm da cơ địa;mề đay;dị ứng da;ngứa da;nấm da,c8
+d25,Bác sĩ Đặng Minh Z,Hô hấp,hen suyễn;viêm phế quản;viêm xoang;khó thở;ho kéo dài;viêm phổi,c7
+d26,Bác sĩ Bùi Thị Lâm,Tai Mũi Họng,đau họng;ù tai;khàn tiếng;nghẹt mũi;viêm xoang;viêm họng,c2
+d27,Bác sĩ Võ Văn Sơn,Thần kinh,đau đầu;mất ngủ;suy nhược thần kinh;đau nửa đầu;chóng mặt;rối loạn tiền đình,c9

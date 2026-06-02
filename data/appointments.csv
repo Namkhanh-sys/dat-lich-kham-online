@@ -1,0 +1,11 @@
+id,user_id,doctor_id,date,time,status,reminder_sent
+a1,u1,d1,2026-06-01,09:00,Đã xác nhận,True
+a2,u1,d2,2026-06-01,10:30,Đã xác nhận,True
+a_b4280c0d,u_38f76d49,d7,2026-06-04,16:30,Đã xác nhận,False
+a_4f70721d,u_38f76d49,d7,2026-06-01,15:30,Đã xác nhận,True
+a_3d80eb9d,u_38f76d49,d4,2026-06-05,14:00,Đã xác nhận,False
+a_c1c6fbbb,u_15980601,d23,2026-06-04,13:30,Đã xác nhận,
+a_3322939a,u_e0d5fea5,d23,2026-06-06,16:00,Đã xác nhận,
+a_afea9640,u_80d3f744,d13,2026-06-06,16:30,Đã hủy,
+a_23ae442e,u1,d1,2026-08-01,14:00,Đã xác nhận,
+a_b8c7c72f,u_80d3f744,d5,2026-06-11,17:00,Đã xác nhận,

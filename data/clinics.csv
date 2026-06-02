@@ -1,0 +1,11 @@
+id,name,address,lat,lon,city
+c1,Phòng khám Đa khoa Hoàn Kiếm,12 Hàng Bài Hoàn Kiếm Hà Nội,21.0278,105.8523,Hà Nội
+c2,Phòng khám Đa khoa Ba Đình,36 Điện Biên Phủ Ba Đình Hà Nội,21.0362,105.8340,Hà Nội
+c3,Phòng khám Đa khoa Cầu Giấy,150 Cầu Giấy Cầu Giấy Hà Nội,21.0366,105.7820,Hà Nội
+c4,Phòng khám Đa khoa Hai Bà Trưng,250 Trần Khát Chân Hai Bà Trưng Hà Nội,21.0115,105.8505,Hà Nội
+c5,Bệnh viện Đa khoa Quận 1,12 Lý Thường Kiệt Quận 1 TP.HCM,10.7769,106.6956,TP. Hồ Chí Minh
+c6,Phòng khám Đa khoa Quận 3,115 Võ Thị Sáu Quận 3 TP.HCM,10.7846,106.6910,TP. Hồ Chí Minh
+c7,Bệnh viện Đa khoa Bình Thạnh,36 Nơ Trang Long Bình Thạnh TP.HCM,10.8119,106.7126,TP. Hồ Chí Minh
+c8,Phòng khám Đa khoa Đà Nẵng,55 Phan Châu Trinh Hải Châu Đà Nẵng,16.0544,108.2022,Đà Nẵng
+c9,Bệnh viện C Đà Nẵng,122 Hải Phòng Hải Châu Đà Nẵng,16.0678,108.2205,Đà Nẵng
+c10,Phòng khám Đa khoa Cần Thơ,23 Nguyễn An Ninh Ninh Kiều Cần Thơ,10.0452,105.7469,Cần Thơ
