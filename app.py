@@ -561,11 +561,11 @@ def book_appointment(doctor_id):
                         clinic_name=doctor['clinic_name'],
                         address=doctor['clinic_address']
                     )
-                    print(f"[BOOKING] Email sent successfully")
+                    print(f"[BOOKING] Email confirmation logged")
                 except Exception as email_err:
-                    print(f"[BOOKING] Email error (non-blocking): {email_err}")
+                    print(f"[BOOKING] Notification error (non-blocking): {email_err}")
                 
-                flash("Đặt lịch khám thành công!", "success")
+                flash("✓ Đặt lịch thành công! Chi tiết lịch hẹn đã được lưu.", "success")
                 return redirect(url_for('confirmation', appointment_id=result['id']))
             else:
                 collision_error = result

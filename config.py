@@ -20,11 +20,12 @@ class Config:
     APPOINTMENTS_CSV = os.path.join(DATA_DIR, 'appointments.csv')
     USERS_CSV = os.path.join(DATA_DIR, 'users.csv')
     
-    # Email configuration (Mock or SMTP)
-    SMTP_SERVER = 'smtp.gmail.com'
-    SMTP_PORT = 587
-    SMTP_EMAIL = os.environ.get('SMTP_EMAIL') or 'namkanhkanh@gmail.com'
-    SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD') or 'cskh vjug lnbm ohjz'
+    # Email configuration
+    # NOTE: For MVP, using file-based logging instead of SMTP
+    # In production, integrate with SendGrid (sendgrid_api_key via env var)
+    SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY', None)
+    EMAIL_FROM = os.environ.get('EMAIL_FROM', 'noreply@medbooking.local')
+    SUPPORT_EMAIL = 'support@medbooking.local'
     
     # Session options
     SESSION_COOKIE_NAME = 'medical_booking_session'

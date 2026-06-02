@@ -1,7 +1,4 @@
 import os
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 from config import Config
 
@@ -28,47 +25,20 @@ class EmailService:
     @classmethod
     def send_email(cls, to_email, subject, body):
         """
-        Send an email notification. 
-        Tries to use SMTP if configured, falls back to logging locally.
+        Send an email notification via file logging.
+        In production, integrate with SendGrid or similar service.
         """
-        # Always log the email locally for easy verification
+        # Log the email to file for verification
         cls._log_mock_email(to_email, subject, body)
         
-        # If credentials are default/mock, don't try real SMTP to avoid timeout delays
-        if Config.SMTP_EMAIL == 'booking-notification@example.com' or Config.SMTP_PASSWORD == 'smtp-password':
-            msg_log = f"[EmailService] Mock email -> {to_email}: {subject}"
-            try:
-                print(msg_log.encode('utf-8').decode('ascii', errors='replace'))
-            except Exception:
-                pass
-            return True, "Email logged to mock system."
-
+        msg_log = f"[EmailService] Confirmation logged -> {to_email}: {subject}"
         try:
-            print(f"[EmailService] Attempting SMTP send to {to_email}")
-            msg = MIMEMultipart()
-            msg['From'] = Config.SMTP_EMAIL
-            msg['To'] = to_email
-            msg['Subject'] = subject
-            
-            msg.attach(MIMEText(body, 'plain', 'utf-8'))
-            
-            # Connect to SMTP server with timeout
-            print(f"[EmailService] Connecting to {Config.SMTP_SERVER}:{Config.SMTP_PORT}")
-            server = smtplib.SMTP(Config.SMTP_SERVER, Config.SMTP_PORT, timeout=10)
-            print(f"[EmailService] Connected, starting TLS")
-            server.starttls()
-            print(f"[EmailService] Logging in...")
-            server.login(Config.SMTP_EMAIL, Config.SMTP_PASSWORD)
-            print(f"[EmailService] Sending email...")
-            server.sendmail(Config.SMTP_EMAIL, to_email, msg.as_string())
-            server.quit()
-            print(f"[EmailService] Email sent successfully")
-            
-            return True, "Email sent successfully via SMTP."
-        except Exception as e:
-            error_msg = f"[EmailService] SMTP error (fallback to mock): {str(e)}"
-            print(error_msg)
-            return True, error_msg
+            print(msg_log.encode('utf-8').decode('ascii', errors='replace'))
+        except Exception:
+            pass
+        
+        print(f"[EmailService] Email notification saved to: {cls.LOG_FILE}")
+        return True, "Confirmation email logged to system."
 
     @classmethod
     def send_booking_confirmation(cls, user_email, user_name, doctor_name, date_str, time_str, clinic_name, address):
