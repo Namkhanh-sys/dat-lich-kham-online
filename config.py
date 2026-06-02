@@ -21,7 +21,8 @@ class Config:
     USERS_CSV = os.path.join(DATA_DIR, 'users.csv')
     
     # Email configuration - Resend
-    RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
+    # Hardcoded for testing (remove after confirming email works)
+    RESEND_API_KEY = 're_bKPiAejP_ETtgcBJcXKjwAHymMHynL6QQ'
     EMAIL_FROM = 'onboarding@resend.dev'  # Resend default domain
     EMAIL_FROM_NAME = 'MedBooking - Đặt Lịch Khám Online'
     SUPPORT_EMAIL = 'support@medbooking.local'
