@@ -20,11 +20,10 @@ class Config:
     APPOINTMENTS_CSV = os.path.join(DATA_DIR, 'appointments.csv')
     USERS_CSV = os.path.join(DATA_DIR, 'users.csv')
     
-    # Email configuration
-    # NOTE: For MVP, using file-based logging instead of SMTP
-    # In production, integrate with SendGrid (sendgrid_api_key via env var)
-    SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY', None)
-    EMAIL_FROM = os.environ.get('EMAIL_FROM', 'noreply@medbooking.local')
+    # Email configuration - SendGrid
+    SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY', '')
+    EMAIL_FROM = 'noreply@medbooking.local'
+    EMAIL_FROM_NAME = 'MedBooking - Đặt Lịch Khám Online'
     SUPPORT_EMAIL = 'support@medbooking.local'
     
     # Session options

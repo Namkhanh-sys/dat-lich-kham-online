@@ -2,6 +2,13 @@ import os
 from datetime import datetime
 from config import Config
 
+try:
+    from sendgrid import SendGridAPIClient
+    from sendgrid.helpers.mail import Mail
+    HAS_SENDGRID = True
+except ImportError:
+    HAS_SENDGRID = False
+
 class EmailService:
     LOG_FILE = os.path.join(Config.DATA_DIR, 'email_notifications.log')
 
@@ -25,20 +32,40 @@ class EmailService:
     @classmethod
     def send_email(cls, to_email, subject, body):
         """
-        Send an email notification via file logging.
-        In production, integrate with SendGrid or similar service.
+        Send an email via SendGrid API.
+        Falls back to file logging if API key not configured.
         """
-        # Log the email to file for verification
+        # Always log to file for audit trail
         cls._log_mock_email(to_email, subject, body)
         
-        msg_log = f"[EmailService] Confirmation logged -> {to_email}: {subject}"
-        try:
-            print(msg_log.encode('utf-8').decode('ascii', errors='replace'))
-        except Exception:
-            pass
+        # If SendGrid API key not configured, use file logging only
+        if not Config.SENDGRID_API_KEY or not HAS_SENDGRID:
+            msg_log = f"[EmailService] Email logged (no SendGrid key configured) -> {to_email}: {subject}"
+            print(msg_log)
+            return True, "Confirmation saved to system."
         
-        print(f"[EmailService] Email notification saved to: {cls.LOG_FILE}")
-        return True, "Confirmation email logged to system."
+        try:
+            print(f"[EmailService] Sending via SendGrid to {to_email}")
+            
+            # Create email
+            message = Mail(
+                from_email=(Config.EMAIL_FROM, Config.EMAIL_FROM_NAME),
+                to_emails=to_email,
+                subject=subject,
+                plain_text_content=body
+            )
+            
+            # Send via SendGrid API
+            sg = SendGridAPIClient(Config.SENDGRID_API_KEY)
+            response = sg.send(message)
+            
+            print(f"[EmailService] Email sent successfully, status_code={response.status_code}")
+            return True, "Email sent successfully!"
+            
+        except Exception as e:
+            error_msg = f"[EmailService] SendGrid error: {str(e)}"
+            print(error_msg)
+            return False, error_msg
 
     @classmethod
     def send_booking_confirmation(cls, user_email, user_name, doctor_name, date_str, time_str, clinic_name, address):
