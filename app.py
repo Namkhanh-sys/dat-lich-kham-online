@@ -538,8 +538,7 @@ def book_appointment(doctor_id):
         doctor['clinic_address'] = clinic['address']
         doctor['distance_km'] = clinic['distance_km']
 
-    if request.method == 'POST':
-        try:
+        if request.method == 'POST':
             appt_date = request.form.get('date', '').strip()
             appt_time = request.form.get('time', '').strip()
             
@@ -588,35 +587,8 @@ def book_appointment(doctor_id):
                     collision_error=collision_error,
                     alternatives=alternatives
                 )
-        except Exception as e:
-            import traceback
-            error_msg = f"[BOOKING_ERROR] {str(e)}\n{traceback.format_exc()}"
-            print(error_msg)
-            flash(f"Lỗi hệ thống: {str(e)}", "error")
-            return render_template(
-                'booking.html',
-                doctor=doctor,
-                user_lat=user_lat,
-                user_lon=user_lon,
-                province=province,
-                district=district,
-                ward=ward,
-                location_label=location_label,
-                today_str=today_str,
-                selected_date=None,
-                selected_time=None,
-                collision_error=f"Lỗi hệ thống: {str(e)}",
-                alternatives=None
-            )
-
-    except Exception as e:
-        import traceback
-        error_msg = f"[BOOKING_GET_ERROR] {str(e)}\n{traceback.format_exc()}"
-        print(error_msg)
-        flash(f"Lỗi khi tải trang: {str(e)}", "error")
-        return redirect(url_for('index'))
-
-    try:
+        
+        # GET request - render booking form
         print(f"[BOOKING] Rendering GET page for doctor {doctor_id}")
         return render_template(
             'booking.html',
@@ -633,11 +605,12 @@ def book_appointment(doctor_id):
             collision_error=None,
             alternatives=None
         )
+    
     except Exception as e:
         import traceback
-        error_msg = f"[BOOKING_RENDER_ERROR] {str(e)}\n{traceback.format_exc()}"
+        error_msg = f"[BOOKING_ERROR] {str(e)}\n{traceback.format_exc()}"
         print(error_msg)
-        flash(f"Lỗi khi hiển thị trang: {str(e)}", "error")
+        flash(f"Lỗi hệ thống: {str(e)}", "error")
         return redirect(url_for('index'))
 
 @app.route('/confirmation/<appointment_id>')
