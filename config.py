@@ -21,6 +21,8 @@ class Config:
     USERS_CSV = os.path.join(DATA_DIR, 'users.csv')
     
     # Email configuration - SMTP Gmail
+    RESEND_API_KEY = os.environ.get('RESEND_API_KEY') or os.environ.get('RESEND_API_KEY_TEST')
+    EMAIL_FROM = os.environ.get('EMAIL_FROM', 'onboarding@resend.dev')
     SMTP_SERVER = 'smtp.gmail.com'
     SMTP_PORT = 587
     SMTP_USER = os.environ.get('SMTP_USER', 'namkanhkanh@gmail.com')

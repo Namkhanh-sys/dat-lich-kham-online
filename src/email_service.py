@@ -1,5 +1,6 @@
 import os
 import smtplib
+import requests
 from concurrent.futures import ThreadPoolExecutor
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -30,7 +31,7 @@ class EmailService:
     @classmethod
     def send_email(cls, to_email, subject, body, template_id=None, template_params=None):
         """
-        Send an email via SMTP Gmail.
+        Send an email via Resend API when configured, otherwise fall back to SMTP Gmail.
         
         Args:
             to_email: Recipient email
@@ -39,6 +40,9 @@ class EmailService:
             template_id: Unused (for compatibility)
             template_params: Unused (for compatibility)
         """
+        if Config.RESEND_API_KEY:
+            return cls._send_via_resend(to_email, subject, body)
+
         # Check if SMTP is configured
         if not Config.SMTP_PASSWORD:
             msg_log = f"[EmailService] Email logged (SMTP password not configured) -> {to_email}: {subject}"
@@ -84,6 +88,49 @@ class EmailService:
             import traceback
             traceback.print_exc()
             cls._log_email(to_email, subject, body, status="error")
+            return False, error_msg
+
+    @classmethod
+    def _send_via_resend(cls, to_email, subject, body):
+        """Send email through Resend over HTTPS, which works on Render free instances."""
+        try:
+            print(f"[EmailService] Sending via Resend to {to_email}")
+            response = requests.post(
+                "https://api.resend.com/emails",
+                headers={
+                    "Authorization": f"Bearer {Config.RESEND_API_KEY}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "from": f"{Config.EMAIL_FROM_NAME} <{Config.EMAIL_FROM}>",
+                    "to": [to_email],
+                    "subject": subject,
+                    "html": body.replace("\n", "<br>"),
+                    "reply_to": Config.SUPPORT_EMAIL,
+                },
+                timeout=10,
+            )
+
+            if 200 <= response.status_code < 300:
+                print(f"[EmailService] Email sent successfully via Resend to {to_email}")
+                cls._log_email(to_email, subject, body, status="sent_via_resend")
+                return True, "Email sent successfully!"
+
+            error_msg = f"[EmailService] Resend error: {response.status_code} - {response.text}"
+            print(error_msg)
+            cls._log_email(to_email, subject, body, status="resend_error")
+            return False, error_msg
+        except requests.Timeout:
+            error_msg = "[EmailService] Resend request timeout"
+            print(error_msg)
+            cls._log_email(to_email, subject, body, status="resend_timeout")
+            return False, error_msg
+        except Exception as e:
+            error_msg = f"[EmailService] Resend error: {str(e)}"
+            print(error_msg)
+            import traceback
+            traceback.print_exc()
+            cls._log_email(to_email, subject, body, status="resend_error")
             return False, error_msg
 
     @classmethod
