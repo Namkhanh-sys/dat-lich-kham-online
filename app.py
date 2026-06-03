@@ -16,8 +16,9 @@ from src.debug_routes import debug_bp
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# Register debug routes (development mode only)
-app.register_blueprint(debug_bp)
+# Register debug routes only when explicitly enabled.
+if app.debug or Config.ENABLE_DEBUG_ROUTES:
+    app.register_blueprint(debug_bp)
 
 # Helper function to check login
 def is_logged_in():

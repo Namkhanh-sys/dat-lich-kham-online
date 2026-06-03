@@ -1,5 +1,6 @@
 import os
 import smtplib
+from concurrent.futures import ThreadPoolExecutor
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
@@ -7,6 +8,7 @@ from config import Config
 
 class EmailService:
     LOG_FILE = os.path.join(Config.DATA_DIR, 'email_notifications.log')
+    _executor = ThreadPoolExecutor(max_workers=2)
 
     @classmethod
     def _log_email(cls, to_email, subject, body, status="sent"):
@@ -37,13 +39,11 @@ class EmailService:
             template_id: Unused (for compatibility)
             template_params: Unused (for compatibility)
         """
-        # Always log to file for audit trail
-        cls._log_email(to_email, subject, body)
-        
         # Check if SMTP is configured
         if not Config.SMTP_PASSWORD:
             msg_log = f"[EmailService] Email logged (SMTP password not configured) -> {to_email}: {subject}"
             print(msg_log)
+            cls._log_email(to_email, subject, body, status="logged_only")
             return True, "Email logged to system (SMTP not configured)."
         
         try:
@@ -59,7 +59,7 @@ class EmailService:
             msg.attach(MIMEText(body, 'html'))
             
             # Connect to Gmail SMTP server and send
-            with smtplib.SMTP(Config.SMTP_SERVER, Config.SMTP_PORT) as server:
+            with smtplib.SMTP(Config.SMTP_SERVER, Config.SMTP_PORT, timeout=10) as server:
                 server.starttls()  # Upgrade connection to TLS
                 server.login(Config.SMTP_USER, Config.SMTP_PASSWORD)
                 server.send_message(msg)
@@ -85,6 +85,14 @@ class EmailService:
             traceback.print_exc()
             cls._log_email(to_email, subject, body, status="error")
             return False, error_msg
+
+    @classmethod
+    def send_email_async(cls, to_email, subject, body, template_id=None, template_params=None):
+        """Queue email sending so user-facing requests do not wait on SMTP."""
+        if not Config.SEND_EMAIL_ASYNC:
+            return cls.send_email(to_email, subject, body, template_id, template_params)
+        cls._log_email(to_email, subject, body, status="queued")
+        return cls._executor.submit(cls.send_email, to_email, subject, body, template_id, template_params)
 
     @classmethod
     def send_booking_confirmation(cls, user_email, user_name, doctor_name, date_str, time_str, clinic_name, address):
@@ -117,7 +125,8 @@ Hệ thống Đặt Lịch Khám Online.
             "message": body
         }
         
-        return cls.send_email(
+        sender = cls.send_email_async if Config.SEND_EMAIL_ASYNC else cls.send_email
+        return sender(
             user_email, 
             subject, 
             body
@@ -142,7 +151,8 @@ Cảm ơn bạn đã tin tưởng dịch vụ của chúng tôi!
 Hệ thống Đặt Lịch Khám Online.
 """
         
-        return cls.send_email(
+        sender = cls.send_email_async if Config.SEND_EMAIL_ASYNC else cls.send_email
+        return sender(
             user_email,
             subject,
             body
@@ -164,7 +174,8 @@ Số tiền hoặc chi phí (nếu có) sẽ được giải quyết theo chính
 Hệ thống Đặt Lịch Khám Online.
 """
         
-        return cls.send_email(
+        sender = cls.send_email_async if Config.SEND_EMAIL_ASYNC else cls.send_email
+        return sender(
             user_email,
             subject,
             body

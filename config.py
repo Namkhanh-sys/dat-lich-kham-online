@@ -27,6 +27,8 @@ class Config:
     SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD', '')  # Use app password from Gmail
     EMAIL_FROM_NAME = os.environ.get('EMAIL_FROM_NAME', 'MedBooking - Đặt Lịch Khám Online')
     SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL', 'namkanhkanh@gmail.com')
+    ENABLE_DEBUG_ROUTES = os.environ.get('ENABLE_DEBUG_ROUTES', 'false').lower() == 'true'
+    SEND_EMAIL_ASYNC = os.environ.get('SEND_EMAIL_ASYNC', 'true').lower() == 'true'
     
     # Session options
     SESSION_COOKIE_NAME = 'medical_booking_session'
