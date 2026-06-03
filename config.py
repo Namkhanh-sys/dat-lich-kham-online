@@ -23,6 +23,7 @@ class Config:
     # Email configuration
     EMAILJS_SERVICE_ID = os.environ.get('EMAILJS_SERVICE_ID', 'service_qdlw3em')
     EMAILJS_PUBLIC_KEY = os.environ.get('EMAILJS_PUBLIC_KEY', '3AknfTh_9nfeelswy')
+    EMAILJS_PRIVATE_KEY = os.environ.get('EMAILJS_PRIVATE_KEY', '')
     EMAILJS_TEMPLATE_ID = os.environ.get('EMAILJS_TEMPLATE_ID', 'template_1mv18ta')
     EMAILJS_API_URL = 'https://api.emailjs.com/api/v1.0/email/send'
     RESEND_API_KEY = os.environ.get('RESEND_API_KEY') or os.environ.get('RESEND_API_KEY_TEST')

@@ -109,14 +109,18 @@ class EmailService:
 
         try:
             print(f"[EmailService] Sending via EmailJS to {to_email}")
+            payload = {
+                "service_id": Config.EMAILJS_SERVICE_ID,
+                "template_id": Config.EMAILJS_TEMPLATE_ID,
+                "user_id": Config.EMAILJS_PUBLIC_KEY,
+                "template_params": params,
+            }
+            if Config.EMAILJS_PRIVATE_KEY:
+                payload["accessToken"] = Config.EMAILJS_PRIVATE_KEY
+
             response = requests.post(
                 Config.EMAILJS_API_URL,
-                json={
-                    "service_id": Config.EMAILJS_SERVICE_ID,
-                    "template_id": Config.EMAILJS_TEMPLATE_ID,
-                    "user_id": Config.EMAILJS_PUBLIC_KEY,
-                    "template_params": params,
-                },
+                json=payload,
                 headers={"Content-Type": "application/json"},
                 timeout=10,
             )
