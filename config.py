@@ -21,10 +21,10 @@ class Config:
     USERS_CSV = os.path.join(DATA_DIR, 'users.csv')
     
     # Email configuration
-    EMAILJS_SERVICE_ID = os.environ.get('EMAILJS_SERVICE_ID', 'service_qdlw3em')
-    EMAILJS_PUBLIC_KEY = os.environ.get('EMAILJS_PUBLIC_KEY', '3AknfTh_9nfeelswy')
-    EMAILJS_PRIVATE_KEY = os.environ.get('EMAILJS_PRIVATE_KEY', '')
-    EMAILJS_TEMPLATE_ID = os.environ.get('EMAILJS_TEMPLATE_ID', 'template_1mv18ta')
+    EMAILJS_SERVICE_ID = os.environ.get('EMAILJS_SERVICE_ID', 'service_qdlw3em').strip()
+    EMAILJS_PUBLIC_KEY = os.environ.get('EMAILJS_PUBLIC_KEY', '3AknfTh_9nfeelswy').strip()
+    EMAILJS_PRIVATE_KEY = os.environ.get('EMAILJS_PRIVATE_KEY', '').strip()
+    EMAILJS_TEMPLATE_ID = os.environ.get('EMAILJS_TEMPLATE_ID', 'template_1mv18ta').strip()
     EMAILJS_API_URL = 'https://api.emailjs.com/api/v1.0/email/send'
     RESEND_API_KEY = os.environ.get('RESEND_API_KEY') or os.environ.get('RESEND_API_KEY_TEST')
     EMAIL_FROM = os.environ.get('EMAIL_FROM', 'onboarding@resend.dev')

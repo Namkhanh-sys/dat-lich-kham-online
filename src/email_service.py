@@ -108,14 +108,15 @@ class EmailService:
         })
 
         try:
-            print(f"[EmailService] Sending via EmailJS to {to_email}")
+            has_private_key = bool(Config.EMAILJS_PRIVATE_KEY)
+            print(f"[EmailService] Sending via EmailJS to {to_email} (private_key_configured={has_private_key})")
             payload = {
                 "service_id": Config.EMAILJS_SERVICE_ID,
                 "template_id": Config.EMAILJS_TEMPLATE_ID,
                 "user_id": Config.EMAILJS_PUBLIC_KEY,
                 "template_params": params,
             }
-            if Config.EMAILJS_PRIVATE_KEY:
+            if has_private_key:
                 payload["accessToken"] = Config.EMAILJS_PRIVATE_KEY
 
             response = requests.post(
