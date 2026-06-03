@@ -1,5 +1,7 @@
 import os
-import requests
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 from config import Config
 
@@ -26,72 +28,55 @@ class EmailService:
     @classmethod
     def send_email(cls, to_email, subject, body, template_id=None, template_params=None):
         """
-        Send an email via EmailJS API.
+        Send an email via SMTP Gmail.
         
         Args:
             to_email: Recipient email
             subject: Email subject
             body: Email body (plain text or HTML)
-            template_id: EmailJS template ID (optional, if using templates)
-            template_params: Dictionary of template parameters (optional)
+            template_id: Unused (for compatibility)
+            template_params: Unused (for compatibility)
         """
         # Always log to file for audit trail
         cls._log_email(to_email, subject, body)
         
-        # Check if EmailJS credentials are configured
-        if not Config.EMAILJS_SERVICE_ID or not Config.EMAILJS_PUBLIC_KEY:
-            msg_log = f"[EmailService] Email logged (EmailJS not configured) -> {to_email}: {subject}"
+        # Check if SMTP is configured
+        if not Config.SMTP_PASSWORD:
+            msg_log = f"[EmailService] Email logged (SMTP password not configured) -> {to_email}: {subject}"
             print(msg_log)
-            return True, "Email logged to system."
+            return True, "Email logged to system (SMTP not configured)."
         
         try:
-            print(f"[EmailService] Sending via EmailJS to {to_email}")
+            print(f"[EmailService] Sending via SMTP to {to_email}")
             
-            # Prepare payload for EmailJS
-            if template_id and template_params:
-                # Send using template
-                payload = {
-                    "service_id": Config.EMAILJS_SERVICE_ID,
-                    "template_id": template_id,
-                    "user_id": Config.EMAILJS_PUBLIC_KEY,
-                    "template_params": template_params
-                }
-            else:
-                # Send plain email
-                payload = {
-                    "service_id": Config.EMAILJS_SERVICE_ID,
-                    "template_id": "plain_email",  # You need to create this template
-                    "user_id": Config.EMAILJS_PUBLIC_KEY,
-                    "template_params": {
-                        "to_email": to_email,
-                        "subject": subject,
-                        "message": body
-                    }
-                }
+            # Create message
+            msg = MIMEMultipart('alternative')
+            msg['Subject'] = subject
+            msg['From'] = Config.SMTP_USER
+            msg['To'] = to_email
             
-            # Send request to EmailJS API
-            response = requests.post(
-                Config.EMAILJS_API_URL,
-                json=payload,
-                headers={"Content-Type": "application/json"},
-                timeout=10
-            )
+            # Attach body
+            msg.attach(MIMEText(body, 'html'))
             
-            if response.status_code == 200:
-                response_data = response.json()
-                print(f"[EmailService] Email sent successfully via EmailJS")
-                cls._log_email(to_email, subject, body, status="sent_via_emailjs")
-                return True, "Email sent successfully!"
-            else:
-                error_msg = f"[EmailService] EmailJS error: {response.status_code} - {response.text}"
-                print(error_msg)
-                cls._log_email(to_email, subject, body, status="failed")
-                return False, error_msg
-                
-        except requests.Timeout:
-            error_msg = "[EmailService] EmailJS request timeout"
+            # Connect to Gmail SMTP server and send
+            with smtplib.SMTP(Config.SMTP_SERVER, Config.SMTP_PORT) as server:
+                server.starttls()  # Upgrade connection to TLS
+                server.login(Config.SMTP_USER, Config.SMTP_PASSWORD)
+                server.send_message(msg)
+            
+            print(f"[EmailService] Email sent successfully via SMTP to {to_email}")
+            cls._log_email(to_email, subject, body, status="sent_via_smtp")
+            return True, "Email sent successfully!"
+            
+        except smtplib.SMTPAuthenticationError:
+            error_msg = "[EmailService] SMTP Authentication failed - check SMTP_PASSWORD"
             print(error_msg)
-            cls._log_email(to_email, subject, body, status="timeout")
+            cls._log_email(to_email, subject, body, status="auth_failed")
+            return False, error_msg
+        except smtplib.SMTPException as e:
+            error_msg = f"[EmailService] SMTP error: {str(e)}"
+            print(error_msg)
+            cls._log_email(to_email, subject, body, status="smtp_error")
             return False, error_msg
         except Exception as e:
             error_msg = f"[EmailService] Error: {str(e)}"
@@ -135,9 +120,7 @@ Hệ thống Đặt Lịch Khám Online.
         return cls.send_email(
             user_email, 
             subject, 
-            body,
-            template_id=Config.EMAILJS_TEMPLATE_ID,
-            template_params=template_params
+            body
         )
 
     @classmethod
@@ -158,23 +141,11 @@ Chi tiết lịch hẹn mới:
 Cảm ơn bạn đã tin tưởng dịch vụ của chúng tôi!
 Hệ thống Đặt Lịch Khám Online.
 """
-        template_params = {
-            "to_email": user_email,
-            "user_name": user_name,
-            "doctor_name": doctor_name,
-            "date_str": date_str,
-            "time_str": time_str,
-            "clinic_name": clinic_name,
-            "address": address,
-            "message": body
-        }
         
         return cls.send_email(
             user_email,
             subject,
-            body,
-            template_id=Config.EMAILJS_TEMPLATE_ID,
-            template_params=template_params
+            body
         )
 
     @classmethod
@@ -192,21 +163,11 @@ Số tiền hoặc chi phí (nếu có) sẽ được giải quyết theo chính
 
 Hệ thống Đặt Lịch Khám Online.
 """
-        template_params = {
-            "to_email": user_email,
-            "user_name": user_name,
-            "doctor_name": doctor_name,
-            "date_str": date_str,
-            "time_str": time_str,
-            "message": body
-        }
         
         return cls.send_email(
             user_email,
             subject,
-            body,
-            template_id=Config.EMAILJS_TEMPLATE_ID,
-            template_params=template_params
+            body
         )
 
     @classmethod
@@ -228,21 +189,8 @@ Nếu bạn có thay đổi lịch trình, vui lòng truy cập Dashboard để 
 Chúc bạn nhiều sức khỏe,
 Hệ thống Đặt Lịch Khám Online."""
         
-        template_params = {
-            "to_email": user_email,
-            "user_name": user_name,
-            "doctor_name": doctor_name,
-            "date_str": date_str,
-            "time_str": time_str,
-            "clinic_name": clinic_name,
-            "address": address,
-            "message": body
-        }
-        
         return cls.send_email(
             user_email,
             subject,
-            body,
-            template_id=Config.EMAILJS_TEMPLATE_ID,
-            template_params=template_params
+            body
         )

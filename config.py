@@ -20,13 +20,13 @@ class Config:
     APPOINTMENTS_CSV = os.path.join(DATA_DIR, 'appointments.csv')
     USERS_CSV = os.path.join(DATA_DIR, 'users.csv')
     
-    # Email configuration - EmailJS
-    EMAILJS_SERVICE_ID = os.environ.get('EMAILJS_SERVICE_ID', 'service_qdlw3em')
-    EMAILJS_PUBLIC_KEY = os.environ.get('EMAILJS_PUBLIC_KEY', '3AknfTh_9nfeelswy')
-    EMAILJS_TEMPLATE_ID = os.environ.get('EMAILJS_TEMPLATE_ID', 'template_1mv18ta')
-    EMAILJS_API_URL = 'https://api.emailjs.com/api/v1.0/email/send'
+    # Email configuration - SMTP Gmail
+    SMTP_SERVER = 'smtp.gmail.com'
+    SMTP_PORT = 587
+    SMTP_USER = os.environ.get('SMTP_USER', 'namkanhkanh@gmail.com')
+    SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD', '')  # Use app password from Gmail
     EMAIL_FROM_NAME = os.environ.get('EMAIL_FROM_NAME', 'MedBooking - Đặt Lịch Khám Online')
-    SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL', 'support@medbooking.local')
+    SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL', 'namkanhkanh@gmail.com')
     
     # Session options
     SESSION_COOKIE_NAME = 'medical_booking_session'
