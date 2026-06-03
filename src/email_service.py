@@ -31,7 +31,7 @@ class EmailService:
     @classmethod
     def send_email(cls, to_email, subject, body, template_id=None, template_params=None):
         """
-        Send an email via Resend API when configured, otherwise fall back to SMTP Gmail.
+        Send an email via EmailJS when configured, then Resend, then SMTP Gmail.
         
         Args:
             to_email: Recipient email
@@ -40,6 +40,13 @@ class EmailService:
             template_id: Unused (for compatibility)
             template_params: Unused (for compatibility)
         """
+        if Config.EMAILJS_SERVICE_ID and Config.EMAILJS_PUBLIC_KEY and Config.EMAILJS_TEMPLATE_ID:
+            ok, message = cls._send_via_emailjs(to_email, subject, body, template_params)
+            if ok:
+                return ok, message
+            if not Config.RESEND_API_KEY and not Config.SMTP_PASSWORD:
+                return ok, message
+
         if Config.RESEND_API_KEY:
             return cls._send_via_resend(to_email, subject, body)
 
@@ -88,6 +95,52 @@ class EmailService:
             import traceback
             traceback.print_exc()
             cls._log_email(to_email, subject, body, status="error")
+            return False, error_msg
+
+    @classmethod
+    def _send_via_emailjs(cls, to_email, subject, body, template_params=None):
+        """Send email through EmailJS over HTTPS."""
+        params = dict(template_params or {})
+        params.update({
+            "to_email": to_email,
+            "subject": subject,
+            "message": body,
+        })
+
+        try:
+            print(f"[EmailService] Sending via EmailJS to {to_email}")
+            response = requests.post(
+                Config.EMAILJS_API_URL,
+                json={
+                    "service_id": Config.EMAILJS_SERVICE_ID,
+                    "template_id": Config.EMAILJS_TEMPLATE_ID,
+                    "user_id": Config.EMAILJS_PUBLIC_KEY,
+                    "template_params": params,
+                },
+                headers={"Content-Type": "application/json"},
+                timeout=10,
+            )
+
+            if response.status_code == 200:
+                print(f"[EmailService] Email sent successfully via EmailJS to {to_email}")
+                cls._log_email(to_email, subject, body, status="sent_via_emailjs")
+                return True, "Email sent successfully!"
+
+            error_msg = f"[EmailService] EmailJS error: {response.status_code} - {response.text}"
+            print(error_msg)
+            cls._log_email(to_email, subject, body, status="emailjs_error")
+            return False, error_msg
+        except requests.Timeout:
+            error_msg = "[EmailService] EmailJS request timeout"
+            print(error_msg)
+            cls._log_email(to_email, subject, body, status="emailjs_timeout")
+            return False, error_msg
+        except Exception as e:
+            error_msg = f"[EmailService] EmailJS error: {str(e)}"
+            print(error_msg)
+            import traceback
+            traceback.print_exc()
+            cls._log_email(to_email, subject, body, status="emailjs_error")
             return False, error_msg
 
     @classmethod
@@ -176,7 +229,8 @@ Hệ thống Đặt Lịch Khám Online.
         return sender(
             user_email, 
             subject, 
-            body
+            body,
+            template_params=template_params
         )
 
     @classmethod
@@ -198,11 +252,23 @@ Cảm ơn bạn đã tin tưởng dịch vụ của chúng tôi!
 Hệ thống Đặt Lịch Khám Online.
 """
         
+        template_params = {
+            "to_email": user_email,
+            "user_name": user_name,
+            "doctor_name": doctor_name,
+            "date_str": date_str,
+            "time_str": time_str,
+            "clinic_name": clinic_name,
+            "address": address,
+            "message": body,
+        }
+
         sender = cls.send_email_async if Config.SEND_EMAIL_ASYNC else cls.send_email
         return sender(
             user_email,
             subject,
-            body
+            body,
+            template_params=template_params
         )
 
     @classmethod
@@ -221,11 +287,21 @@ Số tiền hoặc chi phí (nếu có) sẽ được giải quyết theo chính
 Hệ thống Đặt Lịch Khám Online.
 """
         
+        template_params = {
+            "to_email": user_email,
+            "user_name": user_name,
+            "doctor_name": doctor_name,
+            "date_str": date_str,
+            "time_str": time_str,
+            "message": body,
+        }
+
         sender = cls.send_email_async if Config.SEND_EMAIL_ASYNC else cls.send_email
         return sender(
             user_email,
             subject,
-            body
+            body,
+            template_params=template_params
         )
 
     @classmethod
@@ -247,8 +323,20 @@ Nếu bạn có thay đổi lịch trình, vui lòng truy cập Dashboard để 
 Chúc bạn nhiều sức khỏe,
 Hệ thống Đặt Lịch Khám Online."""
         
+        template_params = {
+            "to_email": user_email,
+            "user_name": user_name,
+            "doctor_name": doctor_name,
+            "date_str": date_str,
+            "time_str": time_str,
+            "clinic_name": clinic_name,
+            "address": address,
+            "message": body,
+        }
+
         return cls.send_email(
             user_email,
             subject,
-            body
+            body,
+            template_params=template_params
         )
