@@ -96,13 +96,29 @@ def _build_location_label(province, district, ward):
     return ""
 
 
-def _prepare_doctors_with_real_distance(matched_docs, user_lat, user_lon, province, district, ward, max_distance_km=150):
+def _prepare_doctors_with_real_distance(
+    matched_docs, user_lat, user_lon, province, district, ward,
+    max_distance_km=150, strict_region=False
+):
     """Gắn phòng khám thật, khoảng cách Haversine thật, lọc theo khu vực, ưu tiên quận."""
     user_city = DistanceCalculator.resolve_user_city(user_lat, user_lon, province)
     clinics_list = DistanceCalculator.get_clinics_with_distance(
-        user_lat, user_lon, province=province, prefer_city=user_city
+        user_lat, user_lon, province=province, district=district, prefer_city=user_city
     )
+
+    if strict_region:
+        if district:
+            clinics_list = [c for c in clinics_list if c.get('district', '') == district]
+        elif user_city:
+            clinics_list = [c for c in clinics_list if c.get('city', '') == user_city]
+
     clinics_dict = {str(c['id']).strip(): c for c in clinics_list}
+    if strict_region and clinics_dict:
+        allowed_clinic_ids = set(clinics_dict.keys())
+        matched_docs = [
+            doc for doc in matched_docs
+            if str(doc.get('clinic_id', '')).strip() in allowed_clinic_ids
+        ]
 
     filtered, _, region_note = DistanceCalculator.filter_doctors_by_region(
         matched_docs, clinics_dict, user_lat, user_lon, province, max_distance_km=max_distance_km
@@ -217,7 +233,8 @@ def api_clinics_nearby():
     max_radius = float(max_km) if max_km else None
     user_city = DistanceCalculator.resolve_user_city(user_lat, user_lon, province)
     clinics = DistanceCalculator.get_clinics_with_distance(
-        user_lat, user_lon, province=province, prefer_city=user_city, max_radius_km=max_radius
+        user_lat, user_lon, province=province, district=district,
+        prefer_city=user_city, max_radius_km=max_radius
     )
     return jsonify({'ok': True, 'clinics': clinics, 'user_city': user_city})
 
@@ -236,8 +253,10 @@ def select_doctor():
         return redirect(url_for('index', symptoms=symptoms))
 
     matched_docs = SymptomMatcher.match_doctors_by_symptom(symptoms)
+    strict_region = location_source in ('gps', 'ip', 'debug') and bool(province or district)
     matched_docs, region_note = _prepare_doctors_with_real_distance(
-        matched_docs, user_lat, user_lon, province, district, ward
+        matched_docs, user_lat, user_lon, province, district, ward,
+        strict_region=strict_region
     )
 
     if region_note:
@@ -254,6 +273,7 @@ def select_doctor():
         province=province,
         district=district,
         ward=ward,
+        location_source=location_source,
         location_label=location_label
     )
 
@@ -272,8 +292,10 @@ def disease_detail(disease_id):
         return redirect(url_for('index'))
 
     matched_docs = SymptomMatcher.match_doctors_by_symptom(disease['keywords'])
+    strict_region = location_source in ('gps', 'ip', 'debug') and bool(province or district)
     matched_docs, region_note = _prepare_doctors_with_real_distance(
-        matched_docs, user_lat, user_lon, province, district, ward, max_distance_km=20
+        matched_docs, user_lat, user_lon, province, district, ward,
+        max_distance_km=20, strict_region=strict_region
     )
 
     if region_note:
@@ -302,6 +324,7 @@ def disease_detail(disease_id):
         province=province,
         district=district,
         ward=ward,
+        location_source=location_source,
         location_label=location_label,
         available_districts=available_districts,
         current_district=district or '',

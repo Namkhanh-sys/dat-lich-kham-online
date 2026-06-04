@@ -91,6 +91,49 @@
         return null;
     }
 
+    function normalizeLocationText(value) {
+        return (value || '')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/đ/g, 'd')
+            .replace(/\b(thanh pho|tp\.?|quan|huyen|thi xa|phuong|xa|thi tran)\b/g, '')
+            .replace(/[^a-z0-9\s]/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+
+    function inferLocationFromReverseResult(result) {
+        if (!result) return null;
+        const address = result.address || {};
+        const rawText = [
+            result.display_name,
+            address.road,
+            address.suburb,
+            address.city_district,
+            address.county,
+            address.city,
+            address.town,
+            address.state,
+        ].filter(Boolean).join(' ');
+        const normalizedText = normalizeLocationText(rawText);
+
+        for (const [province, districts] of Object.entries(VIETNAM_LOCATION_HIERARCHY)) {
+            const provinceText = normalizeLocationText(province);
+            const provinceMatches = normalizedText.includes(provinceText)
+                || (province === 'TP. Hồ Chí Minh' && /ho chi minh|hcm|sai gon/.test(normalizedText));
+            if (!provinceMatches) continue;
+
+            for (const district of Object.keys(districts)) {
+                if (normalizedText.includes(normalizeLocationText(district))) {
+                    return { province, district };
+                }
+            }
+            return { province, district: '' };
+        }
+        return null;
+    }
+
     async function reverseGeocode(lat, lon) {
         const addressElement = document.getElementById('gps-address');
         addressElement.textContent = 'Đang xác định địa chỉ...';
@@ -99,7 +142,19 @@
             const data = await response.json();
             if (data.ok && data.result) {
                 const formatted = formatReverseAddress(data.result);
+                const inferred = inferLocationFromReverseResult(data.result);
+                if (inferred) {
+                    userLocation.province = inferred.province;
+                    userLocation.district = inferred.district || '';
+                }
                 addressElement.textContent = formatted ? 'Địa chỉ của bạn: ' + formatted : 'Không xác định được địa chỉ từ tọa độ GPS.';
+                if (inferred && inferred.district) {
+                    document.getElementById('gps-status').textContent =
+                        '✓ Đã xác định vị trí tại ' + inferred.district + ', ' + inferred.province + '. Vui lòng chọn bệnh.';
+                } else if (inferred) {
+                    document.getElementById('gps-status').textContent =
+                        '✓ Đã xác định vị trí tại ' + inferred.province + '. Vui lòng chọn bệnh.';
+                }
             } else {
                 addressElement.textContent = 'Không xác định được địa chỉ từ tọa độ GPS.';
                 console.warn('Reverse geocode failed:', data.error || data);

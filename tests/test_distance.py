@@ -36,6 +36,14 @@ def test_resolve_user_city_and_region_filter():
     )
     assert all(c.get('city') == 'Hà Nội' for c in clinics)
 
+def test_get_clinics_with_distance_filters_by_district():
+    clinics = DistanceCalculator.get_clinics_with_distance(
+        21.0285, 105.8542, province='HÃ  Ná»™i', district='Quáº­n HoÃ n Kiáº¿m'
+    )
+
+    assert len(clinics) == 1
+    assert clinics[0]['id'] == 'c1'
+
 def test_zero_coordinates_not_treated_as_missing():
     """Bug Fix #4: latitude/longitude of 0.0 should be valid coordinates,
     not falsy/missing — distance should be computed, not defaulted to 9999."""

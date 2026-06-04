@@ -143,6 +143,11 @@ class DistanceCalculator:
         else:
             pool = clinics_list
 
+        if district:
+            district_pool = [c for c in pool if c.get('district', '') == district]
+            if district_pool:
+                pool = district_pool
+
         if max_radius_km is not None and parsed_lat is not None:
             pool = [c for c in pool if c['distance_km'] <= max_radius_km]
 

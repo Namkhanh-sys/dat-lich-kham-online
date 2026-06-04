@@ -38,6 +38,7 @@ def setup_test_environment(tmp_path_factory):
         'address': ['12 Hàng Bài Hoàn Kiếm Hà Nội', '36 Điện Biên Phủ Ba Đình Hà Nội'],
         'lat': [21.0278, 21.0362],
         'lon': [105.8523, 105.8340],
+        'district': ['Quáº­n HoÃ n Kiáº¿m', 'Quáº­n Ba ÄÃ¬nh'],
         'city': ['Hà Nội', 'Hà Nội'],
     }).to_csv(Config.CLINICS_CSV, index=False)
 
