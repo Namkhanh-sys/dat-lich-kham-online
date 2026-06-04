@@ -51,6 +51,8 @@
                             <div>
                                 {% if app.status == 'Đã xác nhận' %}
                                     <span class="badge badge-status-confirmed">Đã xác nhận</span>
+                                {% elif app.status == 'Đã thanh toán' %}
+                                    <span class="badge" style="background: var(--success); color: white;">Đã thanh toán</span>
                                 {% else %}
                                     <span class="badge badge-status-cancelled">Đã hủy</span>
                                 {% endif %}
@@ -74,11 +76,12 @@
 
                         {% if app.status == 'Đã xác nhận' %}
                             <div class="card-footer" style="padding-top: 0.75rem;">
+
                                 <button class="btn btn-outline" onclick="toggleRescheduleForm('{{ app.id }}')">
-                                    Đổi lịch khám
+                                    Đổi lịch
                                 </button>
-                                <form action="{{ url_for('cancel_appointment', appointment_id=app.id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn hủy lịch khám này?');" style="margin: 0;">
-                                    <button type="submit" class="btn btn-danger" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;">
+                                <form action="{{ url_for('cancel_appointment', appointment_id=app.id) }}" method="POST" id="cancel-form-{{ app.id }}" style="margin: 0;">
+                                    <button type="button" class="btn btn-danger" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;" onclick="submitCancelForm('{{ app.id }}')">
                                         Hủy lịch
                                     </button>
                                 </form>
@@ -138,6 +141,19 @@
 
 {% block extra_js %}
 <script>
+    function submitCancelForm(appointmentId) {
+        if (window.confirm('Bạn có chắc chắn muốn hủy lịch khám này?')) {
+            var form = document.getElementById('cancel-form-' + appointmentId);
+            if (form) {
+                form.submit();
+            } else {
+                alert('Lỗi: Không tìm thấy form hủy lịch. ID=' + appointmentId);
+            }
+        }
+    }
+
+
+
     function toggleRescheduleForm(appId) {
         var form = document.getElementById('reschedule-form-' + appId);
         if (form.style.display === 'none' || form.style.display === '') {

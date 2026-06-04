@@ -7,6 +7,45 @@
 }
 
 /* ============================================================
+   New Animations
+   ============================================================ */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes gradientShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes pulse-ring {
+    0%   { transform: scale(0.8); opacity: 1; }
+    100% { transform: scale(2.2); opacity: 0; }
+}
+
+@keyframes countUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ripple {
+    to { transform: scale(4); opacity: 0; }
+}
+
+@keyframes blink {
+    0%, 100% { border-color: transparent; }
+    50%       { border-color: var(--primary); }
+}
+
+
+/* ============================================================
    Color Variables — Medical White & Red Theme
    ============================================================ */
 :root {
@@ -810,21 +849,310 @@ textarea.form-control {
 }
 
 /* ============================================================
-   Responsive
+   Responsive Design
    ============================================================ */
-@media (max-width: 768px) {
-    .dashboard-grid {
-        grid-template-columns: 1fr;
-    }
-    .navbar {
-        flex-direction: column;
-        gap: 0.75rem;
-        padding: 1rem;
-    }
-    .hero h1 {
-        font-size: 2.1rem;
-    }
+/* For Tablets (Max-width 992px) */
+@media (max-width: 992px) {
+    .main-content { padding: 0 1rem; }
+    .hero h1 { font-size: 2.5rem; }
     .card-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1rem;
     }
 }
+
+/* For Mobile Phones (Max-width 768px) */
+@media (max-width: 768px) {
+    .dashboard-grid { grid-template-columns: 1fr; gap: 1.25rem; }
+    .sidebar { padding: 1.25rem; }
+    .main-panel { padding: 1.25rem; }
+    .panel-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .panel-header .btn { width: 100%; }
+
+    .navbar { flex-direction: column; gap: 0.75rem; padding: 0.75rem 1rem; }
+    .nav-links { 
+        flex-wrap: nowrap; 
+        justify-content: flex-start; 
+        gap: 0.5rem; 
+        width: 100%; 
+        overflow-x: auto; 
+        padding-bottom: 0.25rem; 
+        -webkit-overflow-scrolling: touch; 
+        scrollbar-width: none; /* Firefox */
+    }
+    .nav-links::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+    .nav-item { padding: 0.45rem 0.75rem; font-size: 0.88rem; white-space: nowrap; }
+    .hide-on-mobile { display: none !important; }
+    
+    .hero h1 { font-size: 2.1rem; }
+    .hero p { font-size: 1rem; margin-bottom: 1.5rem; }
+    
+    .card-grid { grid-template-columns: 1fr; }
+    .card { padding: 1.2rem; }
+    .card-footer { flex-direction: column; gap: 0.75rem; }
+    .card-footer .btn { width: 100%; }
+    
+    .search-box { flex-direction: column; padding: 1rem; }
+    .search-box .btn { width: 100%; }
+    .search-box input { padding: 0.5rem; }
+
+    .auth-container { margin: 1.5rem auto; padding: 1.5rem; }
+}
+
+/* For Small Phones (Max-width 768px) - Responsive Adjustments */
+@media (max-width: 768px) {
+    .hero h1 { font-size: 2rem; }
+    .hero p { font-size: 1rem; padding: 0 1rem; }
+    .navbar-brand { font-size: 1.3rem; }
+    .page-btn { min-width: 32px; height: 32px; padding: 0 0.4rem; font-size: 0.85rem; }
+    .panel-header h2 { font-size: 1.4rem; }
+    
+    /* Doctor Detail Profile Header */
+    .doctor-header-card {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center;
+        padding: 1.5rem !important;
+    }
+    .doctor-header-card > div:first-child {
+        margin-bottom: 1.5rem;
+    }
+    .doctor-header-card .badge-container {
+        justify-content: center !important;
+    }
+    .doctor-header-card .address-container {
+        justify-content: center !important;
+        text-align: center !important;
+        flex-direction: column;
+        align-items: center !important;
+    }
+    .doctor-header-card .address-container > div:last-child {
+        margin-left: 0 !important;
+        margin-top: 0.5rem;
+    }
+    .doctor-header-card h2 {
+        justify-content: center !important;
+    }
+    .doctor-header-card .short-bio-box {
+        border-left: none !important;
+        border-top: 4px solid var(--primary);
+        border-radius: 8px !important;
+        padding: 1.2rem 1rem !important;
+        text-align: left;
+    }
+    
+    /* Disease / Select Doctor Grid */
+    .card-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem;
+    }
+    .container {
+        padding: 1rem;
+    }
+    .cv-section h3 {
+        font-size: 1.15rem !important;
+    }
+}
+
+/* ============================================================
+   Animated Hero Gradient Background
+   ============================================================ */
+.hero {
+    position: relative;
+    overflow: hidden;
+}
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(220,38,38,0.07) 0%, rgba(225,29,72,0.05) 40%, rgba(99,102,241,0.04) 100%);
+    background-size: 300% 300%;
+    animation: gradientShift 8s ease infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+.hero > * { position: relative; z-index: 1; }
+
+/* ============================================================
+   Ripple Button Effect
+   ============================================================ */
+.btn { position: relative; overflow: hidden; }
+.ripple-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+    transform: scale(0);
+    animation: ripple 0.55s linear;
+    pointer-events: none;
+}
+
+/* ============================================================
+   Dark Mode Toggle Button
+   ============================================================ */
+#dark-mode-toggle {
+    background: none;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+#dark-mode-toggle:hover {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: rotate(20deg);
+}
+
+/* ============================================================
+   Stats Counter Section
+   ============================================================ */
+.stats-row {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 2.5rem 0 1rem;
+}
+.stat-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    padding: 1.25rem 2rem;
+    text-align: center;
+    min-width: 130px;
+    box-shadow: var(--shadow-sm);
+    animation: fadeInUp 0.6s ease both;
+}
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.2s; }
+.stat-card:nth-child(3) { animation-delay: 0.3s; }
+.stat-number {
+    font-size: 2rem;
+    font-weight: 800;
+    font-family: var(--font-heading);
+    color: var(--primary);
+    line-height: 1;
+    animation: countUp 0.5s ease;
+}
+.stat-label {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-top: 0.35rem;
+    font-weight: 500;
+}
+
+/* ============================================================
+   Doctor Avatar in Cards
+   ============================================================ */
+.doctor-avatar {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--primary-light), rgba(225,29,72,0.08));
+    border: 2px solid rgba(220,38,38,0.15);
+    box-shadow: 0 2px 8px rgba(220,38,38,0.12);
+}
+
+/* ============================================================
+   Card 3D Hover Tilt Effect
+   ============================================================ */
+.card.tilt-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+/* ============================================================
+   Fade-in Animations on Page Load
+   ============================================================ */
+.animate-fadeup {
+    animation: fadeInUp 0.55s ease both;
+}
+.animate-fadeup:nth-child(1) { animation-delay: 0.05s; }
+.animate-fadeup:nth-child(2) { animation-delay: 0.12s; }
+.animate-fadeup:nth-child(3) { animation-delay: 0.19s; }
+.animate-fadeup:nth-child(4) { animation-delay: 0.26s; }
+.animate-fadeup:nth-child(5) { animation-delay: 0.33s; }
+.animate-fadeup:nth-child(6) { animation-delay: 0.40s; }
+
+/* ============================================================
+   Typewriter Cursor
+   ============================================================ */
+.typewriter-cursor {
+    display: inline-block;
+    border-right: 3px solid var(--primary);
+    animation: blink 0.75s step-end infinite;
+    padding-right: 2px;
+}
+
+/* ============================================================
+   Dashboard: Countdown Badge
+   ============================================================ */
+.countdown-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    border-radius: 20px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-top: 0.4rem;
+}
+.countdown-badge.soon {
+    background: #fef3c7;
+    color: #92400e;
+}
+.countdown-badge.today {
+    background: #fee2e2;
+    color: var(--primary-dark);
+    animation: pulse-ring 1.2s ease infinite;
+}
+
+/* ============================================================
+   GPS Loading Pulse (Medical Cross)
+   ============================================================ */
+.gps-pulse {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    background: #ffffff;
+    border: 2px solid var(--primary);
+    border-radius: 50%;
+    position: relative;
+    margin-right: 8px;
+}
+.gps-pulse::before {
+    content: '+';
+    color: var(--primary);
+    font-weight: 900;
+    font-size: 14px;
+    line-height: 1;
+    margin-top: 1px;
+}
+.gps-pulse::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid var(--primary);
+    animation: pulse-ring 1.2s ease infinite;
+}
+
+

@@ -1,16 +1,16 @@
-﻿{% extends "layout.html" %}
+{% extends "layout.html" %}
 
 {% block title %}Đặt Lịch Khám Trực Tuyến - Tìm Kiếm Bác Sĩ & Phòng Khám{% endblock %}
 
 
 {% block content %}
 <div class="hero">
-    <h1>Đặt Lịch Khám <span>Thông Minh</span></h1>
-    <p>Chẩn đoán triệu chứng ban đầu, đề xuất bác sĩ và tìm phòng khám gần bạn nhất với địa chỉ và khoảng cách thật.</p>
+    <h1>Đặt Lịch Khám <span>Online</span></h1>
+    <p>Đề xuất bác sĩ và tìm phòng khám gần bạn nhất với địa chỉ và khoảng cách thật.</p>
 
     <div class="glass-panel" style="padding: 2rem; text-align: left; max-width: 800px; margin: 0 auto;">
         <p style="font-size: 1rem; color: var(--text-muted);">
-            Chức năng tìm kiếm bác sĩ đã được ẩn. Hãy xác định vị trí qua GPS và chọn bệnh để xem phòng khám gần bạn trong vòng 20km.
+            Hãy xác định vị trí qua GPS và chọn bệnh để xem phòng khám gần nhất.
         </p>
         <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: center; margin: 1.5rem 0;">
             <button id="btnLocateMe" type="button" class="btn btn-primary" onclick="locateUser()" style="padding: 0.85rem 1.75rem; font-size: 1rem;">
@@ -24,6 +24,11 @@
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                 <div>
+                    <select id="manual-province" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 0.25rem; font-size: 0.95rem;">
+                        <option value="">-- Chọn thành phố --</option>
+                        <option value="Hà Nội">Hà Nội</option>
+                        <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
+                    </select>
                     <select id="manual-province" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 0.25rem; font-size: 0.95rem;">
                         <option value="">-- Chọn thành phố --</option>
                         <option value="Hà Nội">Hà Nội</option>
@@ -43,7 +48,7 @@
             <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--primary-dark); text-align: center; margin-bottom: 1.25rem;">Bệnh lý trọng tâm</h3>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
                 {% for d in diseases %}
-                <button type="button" class="btn btn-outline" style="justify-content: flex-start; padding: 1rem; text-align: left; background: #fff;"
+                <button type="button" class="btn btn-outline animate-fadeup" style="justify-content: flex-start; padding: 1rem; text-align: left; background: var(--bg-card);"
                         onclick="goToDisease('{{ d.id }}')">
                     <span style="font-weight: 600;">{{ d.name }}</span>
                 </button>
@@ -53,24 +58,45 @@
     </div>
 </div>
 
+<!-- Stats Counter Section -->
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-number" data-target="500" data-suffix="+">500+</div>
+        <div class="stat-label">👨‍⚕️ Bác sĩ</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number" data-target="20" data-suffix="+">20+</div>
+        <div class="stat-label">🏥 Chuyên khoa</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number" data-target="2000" data-suffix="+">2000+</div>
+        <div class="stat-label">📅 Lịch đặt thành công</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number" data-target="2" data-suffix=" TP">2 TP</div>
+        <div class="stat-label">🇻🇳 Thành phố</div>
+    </div>
+</div>
+
 <div style="margin-top: 2rem;">
-    <h2 style="text-align: center; margin-bottom: 2rem; font-size: 1.8rem;">Dịch vụ chuyên nghiệp & nhanh chóng</h2>
+    <h2 style="text-align: center; margin-bottom: 2rem; font-size: 1.8rem;">Dịch vụ chuyên nghiệp &amp; nhanh chóng</h2>
     <div class="card-grid">
-        <div class="card glass-panel">
+        <div class="card glass-panel animate-fadeup">
             <h3 style="color: var(--primary);">Khớp Triệu Chứng</h3>
             <p class="card-body-text">Khớp từ khóa triệu chứng với bác sĩ chuyên khoa phù hợp.</p>
         </div>
-        <div class="card glass-panel">
-            <h3 style="color: var(--secondary);">Định Vị & Khoảng Cách Thật</h3>
-            <p class="card-body-text">GPS, địa chỉ OpenStreetMap và khoảng cách Haversine đến phòng khám thật (Hà Nội, TP.HCM, Đà Nẵng, Cần Thơ).</p>
+        <div class="card glass-panel animate-fadeup">
+            <h3 style="color: var(--primary);">Định Vị &amp; Khoảng Cách Thật</h3>
+            <p class="card-body-text">GPS, địa chỉ OpenStreetMap và khoảng cách Haversine đến phòng khám thật (Hà Nội, TP.HCM).</p>
         </div>
-        <div class="card glass-panel">
-            <h3 style="color: var(--success);">Giải Quyết Trùng Lịch</h3>
+        <div class="card glass-panel animate-fadeup">
+            <h3 style="color: var(--primary-dark);">Giải Quyết Trùng Lịch</h3>
             <p class="card-body-text">Kiểm tra trùng lịch và gợi ý khung giờ thay thế.</p>
         </div>
     </div>
 </div>
 {% endblock %}
+
 {% block extra_js %}
 <script>
     var userLocation = { lat: null, lon: null, source: null };
@@ -348,7 +374,7 @@
             btn.classList.remove('btn-primary');
             btn.classList.add('btn-success');
             btn.disabled = false;
-            status.textContent = '✓ Đã tìm thấy vị trí của bạn. Vui lòng chọn bệnh để xem phòng khám gần bạn trong vòng 20km.';
+            status.textContent = '✓ Đã tìm thấy vị trí của bạn. Vui lòng chọn bệnh để xem phòng khám gần nhất.';
             status.style.color = '#16a34a';
             reverseGeocode(userLocation.lat, userLocation.lon);
         }, async function (error) {

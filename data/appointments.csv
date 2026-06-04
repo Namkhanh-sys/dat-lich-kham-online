@@ -1,1 +1,7 @@
-id,user_id,doctor_id,date,time,status
+id,user_id,doctor_id,date,time,status,reminder_sent
+a_2bf428c0,u_80d3f744,d479,2026-06-19,16:00,Đã hủy,False
+a_3e606ffd,u_80d3f744,d61,2026-06-19,14:00,Đã hủy,True
+a_d2354a49,u_80d3f744,d901,2026-06-24,09:30,Đã xác nhận,False
+a_83aae928,u_80d3f744,d899,2026-06-19,15:30,Đã xác nhận,
+a_4aa4bcc4,u_80d3f744,d2099,2026-06-05,09:30,Đã hủy,
+a_be6ab9be,u_80d3f744,d709,2026-06-20,15:30,Đã xác nhận,

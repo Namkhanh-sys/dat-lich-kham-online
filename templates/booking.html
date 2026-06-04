@@ -22,7 +22,8 @@
                 <span class="badge badge-specialty" style="margin-bottom: 0.75rem;">{{ doctor.specialty }}</span>
                 <p style="font-size: 0.95rem; color: var(--text-muted);">
                     <strong>Phòng khám:</strong> {{ doctor.clinic_name }}<br>
-                    <strong>Địa chỉ:</strong> {{ doctor.clinic_address }}
+                    <strong>Địa chỉ:</strong> {{ doctor.clinic_address }}<br>
+                    <strong>Giá khám:</strong> <span style="color: var(--success); font-weight: 600;">{{ doctor.consultation_fee_display }} / lượt</span>
                 </p>
             </div>
             <div style="text-align: right;">
@@ -99,6 +100,13 @@
                         </optgroup>
                     </select>
                 </div>
+            </div>
+
+            <div style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; background: var(--bg-primary); padding: 1rem 1.25rem; border: 1px solid var(--border); border-radius: 10px;">
+                <input type="checkbox" id="pay_after_exam" name="pay_after_exam" value="yes" required style="width: 1.25rem; height: 1.25rem; cursor: pointer; accent-color: var(--primary);">
+                <label for="pay_after_exam" style="font-size: 0.95rem; color: var(--text-main); cursor: pointer; user-select: none; margin: 0;">
+                    Tôi đồng ý thanh toán chi phí <strong style="color: var(--primary);">{{ doctor.consultation_fee_display }}</strong> sau khi hoàn tất việc khám bệnh tại cơ sở y tế.
+                </label>
             </div>
 
             <div style="border-top: 1px solid var(--glass-border); padding-top: 1.5rem; display: flex; justify-content: flex-end; gap: 1rem;">

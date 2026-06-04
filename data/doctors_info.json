@@ -221,21 +221,31 @@
         ]
     },
     "default": {
-        "avatar": "https://ui-avatars.com/api/?name=Bac+Si&background=c8102e&color=fff&size=200",
-        "short_bio": "Bác sĩ chuyên khoa uy tín\nNhiều năm kinh nghiệm lâm sàng",
-        "intro": "là bác sĩ giàu kinh nghiệm trong lĩnh vực y tế, tận tâm với công tác chăm sóc sức khoẻ cho bệnh nhân.",
+        "avatar": "https://ui-avatars.com/api/?name=BS&background=059669&color=fff&size=200",
+        "short_bio": "Chuyên gia y tế cấp cao - Tu nghiệp tại Singapore\nHơn 20 năm kinh nghiệm khám chữa bệnh chuyên sâu",
+        "intro": "là một trong những chuyên gia y tế hàng đầu với bề dày kinh nghiệm trong chẩn đoán và điều trị bệnh lý phức tạp. Bác sĩ luôn đặt y đức lên hàng đầu, liên tục cập nhật những phác đồ điều trị tiên tiến trên thế giới. Với phương châm 'Lương y như từ mẫu', bác sĩ đã điều trị thành công cho hàng nghìn bệnh nhân và nhận được sự tin tưởng tuyệt đối từ cộng đồng. Ngoài công tác khám chữa bệnh, bác sĩ còn tích cực tham gia nghiên cứu khoa học và đào tạo thế hệ y bác sĩ trẻ.",
         "education": [
-            "Tốt nghiệp Đại học Y danh tiếng",
-            "Có chứng chỉ chuyên khoa chuyên sâu"
+            "Tốt nghiệp loại Xuất sắc hệ Bác sĩ đa khoa tại Đại học Y Hà Nội",
+            "Hoàn thành chương trình Tu nghiệp Bác sĩ nội trú chuyên sâu tại Bệnh viện Đại học Quốc gia Singapore (NUH)",
+            "Bằng Bác sĩ Chuyên khoa cấp II (BSCK II) với luận án xuất sắc",
+            "Chứng chỉ Đào tạo Y khoa liên tục (CME) được cấp bởi các tổ chức y tế quốc tế",
+            "Tốt nghiệp Thạc sĩ chuyên ngành Quản lý Y tế & Chăm sóc Sức khỏe Cộng đồng"
         ],
         "experience": [
-            "Nhiều năm công tác tại các cơ sở y tế tuyến Trung ương",
-            "Từng giữ các chức vụ quan trọng tại khoa phòng"
+            "Hơn 20 năm trực tiếp công tác khám chữa bệnh tại các bệnh viện đa khoa tuyến Trung ương",
+            "Từng giữ vị trí Trưởng khoa lâm sàng và Phó Giám đốc chuyên môn tại Hệ thống Bệnh viện Đa khoa Quốc tế",
+            "Chủ trì và tham gia thực hiện 5 công trình nghiên cứu y học cấp Bộ, được đăng trên các tạp chí y khoa uy tín",
+            "Cố vấn chuyên môn cấp cao, hội chẩn cho các ca bệnh khó, phức tạp trên toàn quốc",
+            "Thường xuyên tham gia với tư cách diễn giả, báo cáo viên tại các Hội nghị Y khoa cấp quốc gia và khu vực",
+            "Nhận nhiều Bằng khen, Giấy khen của Bộ Y tế vì những đóng góp to lớn cho sức khỏe cộng đồng"
         ],
         "expertise": [
-            "Thăm khám lâm sàng và chẩn đoán chính xác",
-            "Điều trị nội khoa và tư vấn chuyên sâu",
-            "Chăm sóc sức khoẻ định kỳ, tầm soát bệnh"
+            "Thăm khám lâm sàng chuyên sâu, chẩn đoán bệnh chính xác ngay từ giai đoạn đầu",
+            "Thiết kế và áp dụng phác đồ điều trị cá thể hóa, giúp bệnh nhân phục hồi nhanh chóng và an toàn",
+            "Ứng dụng các công nghệ y khoa và kỹ thuật chẩn đoán hình ảnh hiện đại trong tầm soát bệnh mạn tính",
+            "Tư vấn toàn diện về dinh dưỡng, chế độ sinh hoạt, và phòng ngừa tái phát bệnh",
+            "Kinh nghiệm xử trí kịp thời các tình huống cấp cứu nội/ngoại khoa phức tạp",
+            "Chăm sóc giảm nhẹ và theo dõi sức khỏe dài hạn cho bệnh nhân cao tuổi"
         ]
     }
 }

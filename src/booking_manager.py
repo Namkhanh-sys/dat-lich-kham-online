@@ -182,6 +182,28 @@ class BookingManager:
         return False, "Lỗi hệ thống khi cập nhật lịch hẹn."
 
     @classmethod
+    def confirm_payment(cls, appointment_id, user_id):
+        """Confirm payment for an existing booking, changing its status."""
+        df = CSVHelper.get_appointments()
+        if df.empty:
+            return False, "Không tìm thấy dữ liệu lịch hẹn."
+
+        mask = (df['id'] == appointment_id) & (df['user_id'] == user_id)
+        if not mask.any():
+            return False, "Lịch hẹn không tồn tại hoặc không thuộc quyền sở hữu của bạn."
+
+        current_status = df.loc[mask, 'status'].values[0].strip()
+        if current_status == 'Đã hủy':
+            return False, "Không thể thanh toán cho lịch hẹn đã hủy."
+        elif current_status == 'Đã thanh toán':
+            return False, "Lịch hẹn này đã được thanh toán rồi."
+
+        df.loc[mask, 'status'] = 'Đã thanh toán'
+        if CSVHelper.save_appointments(df):
+            return True, "Xác nhận thanh toán thành công. Cảm ơn bạn!"
+        return False, "Lỗi hệ thống khi cập nhật lịch hẹn."
+
+    @classmethod
     def update_booking_time(cls, appointment_id, user_id, new_date, new_time):
         """Update date/time of a booking (reschedule)."""
         # BUG FIX #2: Validate that the new date/time is not in the past

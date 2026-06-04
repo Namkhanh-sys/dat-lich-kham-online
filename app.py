@@ -1,4 +1,12 @@
 import os
+import sys
+import io
+
+# Force UTF-8 encoding for Windows console to prevent charmap errors
+if sys.stdout.encoding.lower() != 'utf-8':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
 import datetime as dt
 from urllib.parse import urlparse, urljoin
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
@@ -11,6 +19,7 @@ from src.booking_manager import BookingManager
 from src.email_service import EmailService
 from src.reminder_service import ReminderService
 from src.geocoding_service import GeocodingService
+from src.pricing import Pricing
 from src.debug_routes import debug_bp
 
 app = Flask(__name__)
@@ -126,9 +135,14 @@ def _prepare_doctors_with_real_distance(
 
     all_info = CSVHelper.get_doctors_info()
     for doc in filtered:
-        doc_info = all_info.get(doc['id'], all_info.get('default', {}))
+        if doc['id'] in all_info:
+            doc_info = all_info[doc['id']]
+        else:
+            doc_info = get_dynamic_doc_info(doc['id'], doc.get('name', ''), doc.get('specialty', ''), all_info.get('default', {}))
         doc['avatar'] = doc_info.get('avatar', '')
         doc['short_bio'] = doc_info.get('short_bio', '')
+        doc['consultation_fee'] = Pricing.consultation_fee(doc['id'])
+        doc['consultation_fee_display'] = Pricing.format_vnd(doc['consultation_fee'])
 
     # If district is selected, filter doctors to only those from clinics in that district
     if district:
@@ -400,7 +414,9 @@ def dashboard():
         flash("Vui lòng đăng nhập để xem lịch cá nhân.", "warning")
         return redirect(url_for('login', next=request.url))
         
-    appointments = BookingManager.get_user_appointments(session['user_id'])
+    all_appointments = BookingManager.get_user_appointments(session['user_id'])
+    # Only show active appointments (exclude cancelled ones)
+    appointments = [a for a in all_appointments if a.get('status', '').strip() != 'Đã hủy']
     today_str = dt.date.today().strftime('%Y-%m-%d')
     return render_template('dashboard.html', appointments=appointments, today_str=today_str)
 
@@ -468,6 +484,66 @@ def change_password():
         flash(message, "error")
     return redirect(url_for('profile'))
 
+def get_dynamic_doc_info(doctor_id, doctor_name, specialty, default_profile):
+    import random
+    import hashlib
+    import copy
+    
+    # Deterministic random seed based on doctor_id so it stays the same on refresh
+    seed = int(hashlib.md5(doctor_id.encode('utf-8')).hexdigest(), 16)
+    random.seed(seed)
+    
+    info = copy.deepcopy(default_profile)
+    
+    # Dynamic avatar color (Reds, Dark Grays, Slates to match theme)
+    colors = ["dc2626", "b91c1c", "991b1b", "7f1d1d", "1e293b", "334155", "111827", "374151"]
+    color = random.choice(colors)
+    
+    # Extract the last word (first name) from the doctor's full name
+    name_parts = doctor_name.strip().split()
+    first_name = name_parts[-1] if name_parts else "BS"
+    
+    import urllib.parse
+    enc_name = urllib.parse.quote(first_name)
+    info['avatar'] = f"https://ui-avatars.com/api/?name={enc_name}&background={color}&color=fff&size=200&length=1"
+    
+    titles = [
+        f"Chuyên gia y tế cấp cao - Tu nghiệp tại Singapore",
+        f"Bác sĩ chuyên khoa {specialty} uy tín",
+        f"Bác sĩ chuyên sâu về {specialty} - Từng tu nghiệp tại Pháp",
+        f"Chuyên gia hàng đầu trong lĩnh vực {specialty}",
+        f"Bác sĩ CKII với hơn 15 năm kinh nghiệm lâm sàng",
+    ]
+    info['short_bio'] = random.choice(titles) + "\n" + random.choice([
+        "Hơn 20 năm kinh nghiệm khám chữa bệnh chuyên sâu",
+        "Tận tâm chăm sóc sức khỏe cộng đồng",
+        "Liên tục cập nhật phác đồ điều trị mới nhất",
+        "Thường xuyên tham gia hội chẩn các ca bệnh khó"
+    ])
+    
+    intros = [
+        f"là một trong những bác sĩ hàng đầu về {specialty} với bề dày kinh nghiệm trong chẩn đoán và điều trị bệnh lý phức tạp. Bác sĩ luôn đặt y đức lên hàng đầu, liên tục cập nhật phác đồ điều trị tiên tiến.",
+        f"là bác sĩ có chuyên môn sâu rộng trong khoa {specialty}. Với phương châm 'Lương y như từ mẫu', bác sĩ đã điều trị thành công cho hàng nghìn bệnh nhân và nhận được sự tin tưởng tuyệt đối từ cộng đồng.",
+        f"hiện đang là chuyên gia y tế chuyên sâu về {specialty}. Bác sĩ luôn nỗ lực nghiên cứu và mang lại những giải pháp điều trị hiệu quả, an toàn nhất cho người bệnh.",
+        f"là bác sĩ giàu kinh nghiệm điều trị các bệnh lý {specialty}. Bác sĩ luôn tận tình, lắng nghe và chia sẻ cùng bệnh nhân trong suốt quá trình thăm khám."
+    ]
+    info['intro'] = random.choice(intros)
+    
+    # Pick a subset to vary the lengths and items
+    edus = default_profile.get('education', [])
+    if len(edus) >= 3:
+        info['education'] = random.sample(edus, k=random.randint(2, len(edus)))
+        
+    exps = default_profile.get('experience', [])
+    if len(exps) >= 3:
+        info['experience'] = random.sample(exps, k=random.randint(3, len(exps)))
+        
+    expsrt = default_profile.get('expertise', [])
+    if len(expsrt) >= 3:
+        info['expertise'] = random.sample(expsrt, k=random.randint(3, len(expsrt)))
+        
+    return info
+
 @app.route('/doctor/<doctor_id>')
 def doctor_detail(doctor_id):
     # Get basic info
@@ -502,8 +578,14 @@ def doctor_detail(doctor_id):
 
     # Get detailed info
     all_info = CSVHelper.get_doctors_info()
-    doc_info = all_info.get(doctor_id, all_info.get('default', {}))
+    if doctor_id in all_info:
+        doc_info = all_info[doctor_id]
+    else:
+        doc_info = get_dynamic_doc_info(doctor_id, doctor['name'], doctor['specialty'], all_info.get('default', {}))
+        
     doctor.update(doc_info)
+    doctor['consultation_fee'] = Pricing.consultation_fee(doctor_id)
+    doctor['consultation_fee_display'] = Pricing.format_vnd(doctor['consultation_fee'])
 
     return render_template(
         'doctor_detail.html',
@@ -561,10 +643,30 @@ def book_appointment(doctor_id):
         doctor['clinic_name'] = clinic['name']
         doctor['clinic_address'] = clinic['address']
         doctor['distance_km'] = clinic['distance_km']
+        doctor['consultation_fee'] = Pricing.consultation_fee(doctor_id)
+        doctor['consultation_fee_display'] = Pricing.format_vnd(doctor['consultation_fee'])
 
         if request.method == 'POST':
             appt_date = request.form.get('date', '').strip()
             appt_time = request.form.get('time', '').strip()
+            pay_after_exam = request.form.get('pay_after_exam') == 'yes'
+            if not pay_after_exam:
+                flash("Vui lòng xác nhận thanh toán sau khi khám.", "error")
+                return render_template(
+                    'booking.html',
+                    doctor=doctor,
+                    user_lat=user_lat,
+                    user_lon=user_lon,
+                    province=province,
+                    district=district,
+                    ward=ward,
+                    location_label=location_label,
+                    today_str=today_str,
+                    selected_date=appt_date,
+                    selected_time=appt_time,
+                    collision_error=None,
+                    alternatives=None
+                )
             
             print(f"[BOOKING] POST request: user={session['user_id']}, doctor={doctor_id}, date={appt_date}, time={appt_time}")
             
@@ -583,7 +685,9 @@ def book_appointment(doctor_id):
                         date_str=appt_date,
                         time_str=appt_time,
                         clinic_name=doctor['clinic_name'],
-                        address=doctor['clinic_address']
+                        address=doctor['clinic_address'],
+                        consultation_fee=doctor['consultation_fee_display'],
+                        payment_note="Thanh toán sau khi khám"
                     )
                     print(f"[BOOKING] Email confirmation logged")
                 except Exception as email_err:
@@ -671,35 +775,58 @@ def confirmation(appointment_id):
         doctor['clinic_name'] = "Phòng khám chưa xác định"
         doctor['clinic_address'] = "Chưa có địa chỉ"
 
+    appointment['consultation_fee'] = Pricing.format_vnd(Pricing.consultation_fee(appointment['doctor_id']))
+    appointment['payment_note'] = "Thanh toán sau khi khám"
+
     return render_template('confirmation.html', appointment=appointment, doctor=doctor)
 
 @app.route('/cancel/<appointment_id>', methods=['POST'])
 def cancel_appointment(appointment_id):
+    print(f"[CANCEL] Request received for appointment_id={appointment_id}")
     if not is_logged_in():
+        print(f"[CANCEL] User not logged in, redirecting")
         return redirect(url_for('login'))
         
+    print(f"[CANCEL] User={session['user_id']}, cancelling appointment={appointment_id}")
     # Get doctor name and date/time before cancellation for notification
     df_app = CSVHelper.get_appointments()
     app_row = df_app[(df_app['id'] == appointment_id) & (df_app['user_id'] == session['user_id'])]
     if app_row.empty:
+        print(f"[CANCEL] Appointment not found! Checking all appointments:")
+        print(df_app[['id','user_id','status']].to_string())
         flash("Không tìm thấy thông tin lịch khám.", "error")
         return redirect(url_for('dashboard'))
         
     app_data = app_row.iloc[0].to_dict()
     df_docs = CSVHelper.get_doctors()
     doc_row = df_docs[df_docs['id'] == app_data['doctor_id']]
-    doc_name = doc_row.iloc[0]['name'] if not doc_row.empty else "Bác sĩ"
+    doc_name = doc_row.iloc[0]['name'] if not doc_row.empty else "Bac si"
         
     success, message = BookingManager.cancel_booking(appointment_id, session['user_id'])
+    print(f"[CANCEL] cancel_booking result: success={success}, message={message}")
     if success:
-        # Send cancellation email notification
-        EmailService.send_booking_cancellation(
-            user_email=session['user_email'],
-            user_name=session['user_name'],
-            doctor_name=doc_name,
-            date_str=app_data['date'],
-            time_str=app_data['time']
-        )
+        try:
+            EmailService.send_booking_cancellation(
+                user_email=session['user_email'],
+                user_name=session['user_name'],
+                doctor_name=doc_name,
+                date_str=app_data['date'],
+                time_str=app_data['time']
+            )
+        except Exception as email_err:
+            print(f"[CANCEL] Email error (non-blocking): {email_err}")
+        flash(message, "success")
+    else:
+        flash(message, "error")
+    return redirect(url_for('dashboard'))
+
+@app.route('/confirm_payment/<appointment_id>', methods=['POST'])
+def confirm_payment(appointment_id):
+    if not is_logged_in():
+        return redirect(url_for('login'))
+        
+    success, message = BookingManager.confirm_payment(appointment_id, session['user_id'])
+    if success:
         flash(message, "success")
     else:
         flash(message, "error")
