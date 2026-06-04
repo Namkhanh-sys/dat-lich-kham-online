@@ -200,9 +200,13 @@ class EmailService:
         return cls._executor.submit(cls.send_email, to_email, subject, body, template_id, template_params)
 
     @classmethod
-    def send_booking_confirmation(cls, user_email, user_name, doctor_name, date_str, time_str, clinic_name, address):
+    def send_booking_confirmation(cls, user_email, user_name, doctor_name, date_str, time_str, clinic_name, address, consultation_fee=None, payment_note=None, **kwargs):
         """Send booking confirmation email."""
         subject = f"[Đặt Lịch Khám] Xác nhận đặt lịch khám thành công - {date_str}"
+        
+        fee_info = f"\n- Phí khám: {consultation_fee}" if consultation_fee else ""
+        payment_info = f"\n- Ghi chú: {payment_note}" if payment_note else ""
+        
         body = f"""Chào {user_name},
 
 Chúc mừng bạn đã đặt lịch khám thành công qua hệ thống Đặt Lịch Khám Online!
@@ -212,7 +216,7 @@ Chi tiết lịch hẹn của bạn:
 - Ngày khám: {date_str}
 - Khung giờ: {time_str}
 - Phòng khám: {clinic_name}
-- Địa chỉ: {address}
+- Địa chỉ: {address}{fee_info}{payment_info}
 
 Lưu ý: Vui lòng đến trước giờ hẹn 10-15 phút để làm thủ tục check-in. Nếu muốn thay đổi hoặc hủy lịch, vui lòng thực hiện trên Dashboard cá nhân trước ít nhất 2 tiếng.
 
@@ -227,6 +231,8 @@ Hệ thống Đặt Lịch Khám Online.
             "time_str": time_str,
             "clinic_name": clinic_name,
             "address": address,
+            "consultation_fee": consultation_fee if consultation_fee else "Theo quy định phòng khám",
+            "payment_note": payment_note if payment_note else "",
             "message": body
         }
         
