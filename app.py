@@ -495,8 +495,8 @@ def get_dynamic_doc_info(doctor_id, doctor_name, specialty, default_profile):
     
     info = copy.deepcopy(default_profile)
     
-    # Dynamic avatar color (Reds, Dark Grays, Slates to match theme)
-    colors = ["dc2626", "b91c1c", "991b1b", "7f1d1d", "1e293b", "334155", "111827", "374151"]
+    # Dynamic avatar color (Vibrant professional palette)
+    colors = ["2563eb", "059669", "dc2626", "d97706", "7c3aed", "db2777", "0284c7", "4f46e5"]
     color = random.choice(colors)
     
     # Extract the last word (first name) from the doctor's full name
