@@ -1,6 +1,6 @@
 {
     "d1": {
-        "avatar": "https://ui-avatars.com/api/?name=Nguyen+Van+A&background=c8102e&color=fff&size=200",
+        "avatar": "https://ui-avatars.com/api/?name=A&background=059669&color=fff&size=200&length=1",
         "short_bio": "BSCK II - Chuyên khoa Tai Mũi Họng\nTrưởng khoa TMH - BV Bạch Mai",
         "intro": "là chuyên gia đầu ngành về Tai Mũi Họng với hơn 20 năm kinh nghiệm điều trị viêm xoang, hen suyễn và các bệnh đường hô hấp trên.",
         "education": [
@@ -19,7 +19,7 @@
         ]
     },
     "d2": {
-        "avatar": "https://ui-avatars.com/api/?name=Tran+Thi+B&background=c8102e&color=fff&size=200",
+        "avatar": "https://ui-avatars.com/api/?name=B&background=db2777&color=fff&size=200&length=1",
         "short_bio": "BSCK II - Chuyên khoa Nội tổng hợp\nPhó Giám đốc Phòng khám Hoàn Kiếm",
         "intro": "có hơn 18 năm kinh nghiệm trong thăm khám và điều trị các bệnh lý nội khoa, tư vấn chăm sóc sức khoẻ toàn diện.",
         "education": [
@@ -38,7 +38,7 @@
         ]
     },
     "d3": {
-        "avatar": "https://ui-avatars.com/api/?name=Pham+Van+C&background=c8102e&color=fff&size=200",
+        "avatar": "https://ui-avatars.com/api/?name=C&background=059669&color=fff&size=200&length=1",
         "short_bio": "Tiến sĩ - Chuyên khoa Tiêu hóa\nNguyên PGĐ Trung tâm Nội soi BV E",
         "intro": "là tiến sĩ y khoa chuyên về nội soi và can thiệp tiêu hoá, đã thực hiện trên 15.000 ca nội soi dạ dày - đại tràng an toàn.",
         "education": [
@@ -57,7 +57,7 @@
         ]
     },
     "d4": {
-        "avatar": "https://ui-avatars.com/api/?name=Le+Thi+D&background=c8102e&color=fff&size=200",
+        "avatar": "https://ui-avatars.com/api/?name=D&background=2563eb&color=fff&size=200&length=1",
         "short_bio": "BSCK II - Tim mạch\nThành viên Hội Tim mạch học Việt Nam",
         "intro": "là bác sĩ chuyên khoa tim mạch uy tín, có nhiều kinh nghiệm trong quản lý và điều trị tăng huyết áp, rối loạn nhịp tim và suy tim.",
         "education": [
@@ -76,7 +76,7 @@
         ]
     },
     "d5": {
-        "avatar": "https://ui-avatars.com/api/?name=Hoang+Van+E&background=c8102e&color=fff&size=200",
+        "avatar": "https://ui-avatars.com/api/?name=E&background=4f46e5&color=fff&size=200&length=1",
         "short_bio": "BSCK I - Da liễu\nChuyên gia điều trị mề đay, viêm da dị ứng",
         "intro": "là bác sĩ da liễu nhiệt tình, có thế mạnh trong điều trị các bệnh da mạn tính như viêm da cơ địa, mề đay và mụn trứng cá nặng.",
         "education": [
@@ -94,7 +94,7 @@
         ]
     },
     "d9": {
-        "avatar": "https://ui-avatars.com/api/?name=Dinh+Van+I&background=c8102e&color=fff&size=200",
+        "avatar": "https://ui-avatars.com/api/?name=I&background=7c3aed&color=fff&size=200&length=1",
         "short_bio": "BSCK II - Cơ Xương Khớp\nNguyên Trưởng khoa Khớp - BV Bach Mai",
         "intro": "là chuyên gia đầu ngành về Cơ Xương Khớp, đặc biệt có thế mạnh trong điều trị nội khoa và can thiệp các bệnh lý cột sống như thoát vị đĩa đệm.",
         "education": [
@@ -113,7 +113,7 @@
         ]
     },
     "d10": {
-        "avatar": "https://ui-avatars.com/api/?name=Tran+Van+K&background=c8102e&color=fff&size=200",
+        "avatar": "https://ui-avatars.com/api/?name=K&background=db2777&color=fff&size=200&length=1",
         "short_bio": "BSCK I - Nội tiết & Chuyển hóa\nChuyên gia điều trị Tiểu đường, Gout",
         "intro": "là bác sĩ chuyên khoa nội tiết và chuyển hoá, có nhiều kinh nghiệm trong quản lý bệnh tiểu đường type 2, gout và rối loạn tuyến giáp.",
         "education": [
@@ -131,7 +131,7 @@
         ]
     },
     "d23": {
-        "avatar": "https://ui-avatars.com/api/?name=Pham+Hoang+X&background=008080&color=fff&size=200",
+        "avatar": "https://ui-avatars.com/api/?name=X&background=db2777&color=fff&size=200&length=1",
         "short_bio": "Thạc sĩ Bác sĩ - Tim mạch\nNguyên bác sĩ Viện Tim mạch Quốc gia",
         "intro": "là thạc sĩ chuyên ngành Tim mạch với chuyên môn sâu về chẩn đoán sớm và quản lý huyết áp, bệnh lý mạch vành.",
         "education": [
@@ -149,7 +149,7 @@
         ]
     },
     "d24": {
-        "avatar": "https://ui-avatars.com/api/?name=Nguyen+Huu+Y&background=4b0082&color=fff&size=200",
+        "avatar": "https://ui-avatars.com/api/?name=Y&background=2563eb&color=fff&size=200&length=1",
         "short_bio": "Bác sĩ chuyên khoa - Da liễu\nTư vấn và điều trị bệnh lý da mụn",
         "intro": "có kinh nghiệm phong phú trong chẩn đoán, điều trị mụn và phục hồi da tổn thương cho bệnh nhân trẻ tuổi.",
         "education": [
@@ -167,7 +167,7 @@
         ]
     },
     "d25": {
-        "avatar": "https://ui-avatars.com/api/?name=Dang+Minh+Z&background=1e90ff&color=fff&size=200",
+        "avatar": "https://ui-avatars.com/api/?name=Z&background=d97706&color=fff&size=200&length=1",
         "short_bio": "BSCK I - Hô Hấp\nChuyên gia quản lý Hen & COPD",
         "intro": "là thạc sĩ bác sĩ chuyên khoa Hô hấp tận tâm, giúp hàng ngàn bệnh nhân kiểm soát hiệu quả bệnh hen và viêm phế quản mạn tính.",
         "education": [
@@ -185,7 +185,7 @@
         ]
     },
     "d26": {
-        "avatar": "https://ui-avatars.com/api/?name=Bui+Thi+Lam&background=ff69b4&color=fff&size=200",
+        "avatar": "https://ui-avatars.com/api/?name=Lam&background=4f46e5&color=fff&size=200&length=1",
         "short_bio": "Bác sĩ - Tai Mũi Họng\nBác sĩ chuyên khoa Nội soi Tai Mũi Họng",
         "intro": "là bác sĩ chuyên môn vững vàng về nội soi chẩn đoán sớm các bệnh lý về tai, mũi, họng cho cả người lớn và trẻ em.",
         "education": [
@@ -203,7 +203,7 @@
         ]
     },
     "d27": {
-        "avatar": "https://ui-avatars.com/api/?name=Vo+Van+Son&background=228b22&color=fff&size=200",
+        "avatar": "https://ui-avatars.com/api/?name=Son&background=dc2626&color=fff&size=200&length=1",
         "short_bio": "BSCK I - Nội thần kinh\nChuyên gia điều trị đau nửa đầu & mất ngủ",
         "intro": "là bác sĩ chuyên khoa thần kinh có nhiều năm kinh nghiệm nghiên cứu và xử lý các ca mất ngủ mạn tính, rối loạn lo âu.",
         "education": [
