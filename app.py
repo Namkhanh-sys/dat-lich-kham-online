@@ -95,6 +95,25 @@ def _parse_location_args():
     return user_lat, user_lon, province, district, ward, valid_coords, location_source
 
 
+def _clean_clinic_address(address: str) -> str:
+    """Remove trailing city names (Hà Nội, TP. Hồ Chí Minh, etc.) from clinic address."""
+    import re
+    if not address:
+        return address
+    # Strip trailing commas/spaces then remove trailing city variants
+    addr = address.strip().rstrip(',').strip()
+    city_patterns = [
+        r',?\s*TP\.?\s*Hồ\s*Chí\s*Minh$',
+        r',?\s*Thành\s*phố\s*Hồ\s*Chí\s*Minh$',
+        r',?\s*Hồ\s*Chí\s*Minh$',
+        r',?\s*Hà\s*Nội$',
+        r',?\s*TP\.?\s*HCM$',
+    ]
+    for pattern in city_patterns:
+        addr = re.sub(pattern, '', addr, flags=re.IGNORECASE).strip().rstrip(',').strip()
+    return addr
+
+
 def _build_location_label(province, district, ward):
     if ward and district and province:
         return f"{ward}, {district}, {province}"
@@ -143,6 +162,9 @@ def _prepare_doctors_with_real_distance(
         doc['short_bio'] = doc_info.get('short_bio', '')
         doc['consultation_fee'] = Pricing.consultation_fee(doc['id'])
         doc['consultation_fee_display'] = Pricing.format_vnd(doc['consultation_fee'])
+        # Clean up clinic address: remove trailing city name
+        if 'clinic_address' in doc:
+            doc['clinic_address'] = _clean_clinic_address(doc['clinic_address'])
 
     # If district is selected, filter doctors to only those from clinics in that district
     if district:
@@ -573,7 +595,7 @@ def doctor_detail(doctor_id):
     clinic_id = str(doctor.get('clinic_id', '')).strip()
     clinic = DistanceCalculator.get_clinic_details(clinic_id, user_lat, user_lon, province, district, ward)
     doctor['clinic_name'] = clinic['name']
-    doctor['clinic_address'] = clinic['address']
+    doctor['clinic_address'] = _clean_clinic_address(clinic['address'])
     doctor['distance_km'] = clinic['distance_km'] if clinic['distance_km'] != 9999.0 else None
 
     # Get detailed info

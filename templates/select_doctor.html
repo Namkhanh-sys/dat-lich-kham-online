@@ -44,7 +44,7 @@
                 <div class="card-body-text" style="text-align: left; background: var(--bg-secondary); padding: 0.75rem; border-radius: 8px;">
                     <p style="margin-bottom: 0; font-size: 0.85rem;">
                         <strong>Phòng khám:</strong> {{ doc.clinic_name }}<br>
-                        <span style="color: var(--text-muted); display: block; margin-bottom: 0.25rem;">{{ doc.clinic_address }}</span>
+                        <span style="color: var(--text-muted); display: block; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.8rem;">{{ doc.clinic_address }}</span>
                         <strong>Giá khám:</strong> <span style="color: var(--success); font-weight: 600;">{{ doc.consultation_fee_display }} / lượt</span><br>
                         <a href="https://maps.google.com/maps?q={{ doc.clinic_address|urlencode }}" target="_blank" style="font-size: 0.82rem; color: var(--primary); text-decoration: none; margin-top: 0.4rem; display: inline-flex; align-items: center; gap: 0.25rem;">
                             <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
