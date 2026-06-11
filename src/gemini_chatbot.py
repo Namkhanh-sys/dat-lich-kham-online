@@ -58,9 +58,6 @@ class GeminiChatbot:
         self.chat_sessions = OrderedDict()
         self.max_sessions = 1000
         self.max_history_len = 10  # Giữ 10 tin nhắn gần nhất để tiết kiệm token
-        # Per-session last-request timestamp for server-side cooldown
-        self._last_request_time = {}  # session_id -> float (time.time())
-        self._request_cooldown = 3.0  # seconds between requests per session
         self._available = self.client is not None
         self._initialized = True
 
@@ -110,20 +107,7 @@ class GeminiChatbot:
                 "options": []
             }
 
-        # Server-side cooldown: prevent rapid-fire requests per session
-        import time as _time
-        with self._lock:
-            last = self._last_request_time.get(session_id, 0)
-            elapsed = _time.time() - last
-            if elapsed < self._request_cooldown:
-                wait = self._request_cooldown - elapsed
-                return {
-                    "reply": f"⏳ Vui lòng chờ {wait:.0f} giây trước khi gửi tin nhắn tiếp theo.",
-                    "doctors": [],
-                    "advice": "",
-                    "options": []
-                }
-            self._last_request_time[session_id] = _time.time()
+
 
         try:
             # Đảm bảo luồng an toàn khi truy xuất và cập nhật lịch sử
