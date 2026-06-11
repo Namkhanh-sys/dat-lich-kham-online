@@ -93,7 +93,7 @@ class GeminiChatbot:
             # chat_sessions: OrderedDict làm LRU cache tự chế tránh tràn RAM
             self.chat_sessions = OrderedDict()
             self.max_sessions = 1000  # Lưu tối đa 1000 phiên hoạt động gần nhất
-            self.max_history_len = 10  # Giữ tối đa 10 tin nhắn gần nhất để tiết kiệm token
+            self.max_history_len = 10  # Giữ tối đa 10 tin nhắn gần nhất để tiết kiệm token đầu vào
             self._initialized = True
             self._available = True
         except Exception as e:
@@ -164,6 +164,12 @@ class GeminiChatbot:
                     history = [history[0]] + history[-(self.max_history_len - 1):]
                     self.chat_sessions[session_id] = history
 
+            # Di chuyển cấu hình động hoặc tính toán số câu hỏi đã hỏi
+            active_prompt = SYSTEM_PROMPT
+            user_msg_count = sum(1 for m in history if m["role"] == "user")
+            if user_msg_count >= 5:
+                active_prompt += "\n\n⚠️ YÊU CẦU BẮT BUỘC: Bạn đã hỏi người dùng đủ 5 câu hỏi. KHÔNG ĐƯỢC HỎI THÊM NỮA. Hãy đưa ra kết luận phân tích triệu chứng chi tiết và gợi ý chuyên khoa phù hợp dưới dạng DOCTOR_SUGGESTION ngay trong tin nhắn này. Tuyệt đối KHÔNG xuất hiện OPTIONS."
+
             full_reply = None
 
             # 1. Thử gọi Groq Cloud API nếu có Key hoạt động
@@ -171,28 +177,38 @@ class GeminiChatbot:
             if bool(groq_key) and groq_key.strip() not in ('', 'PASTE_YOUR_KEY_HERE'):
                 try:
                     import requests
+                    import time
                     headers = {
                         "Authorization": f"Bearer {groq_key.strip()}",
                         "Content-Type": "application/json"
                     }
-                    messages = [{"role": "system", "content": SYSTEM_PROMPT}] + history
+                    messages = [{"role": "system", "content": active_prompt}] + history
                     payload = {
                         "model": "llama-3.3-70b-versatile",
                         "messages": messages,
                         "temperature": 0.85,
-                        "max_tokens": 700
+                        "max_tokens": 400
                     }
-                    response = requests.post(
-                        "https://api.groq.com/openai/v1/chat/completions",
-                        headers=headers,
-                        json=payload,
-                        timeout=10
-                    )
-                    if response.status_code == 200:
-                        res_data = response.json()
-                        full_reply = res_data["choices"][0]["message"]["content"]
-                    else:
-                        print(f"[CHATBOT] Groq error status: {response.status_code}, response: {response.text}")
+                    for _attempt in range(2):  # 1 retry on 429
+                        response = requests.post(
+                            "https://api.groq.com/openai/v1/chat/completions",
+                            headers=headers,
+                            json=payload,
+                            timeout=15
+                        )
+                        if response.status_code == 200:
+                            res_data = response.json()
+                            full_reply = res_data["choices"][0]["message"]["content"]
+                            break
+                        elif response.status_code == 429 and _attempt == 0:
+                            # Respect Retry-After header; cap wait at 8 s to stay within request timeout
+                            retry_after = float(response.headers.get('Retry-After', '5'))
+                            wait_secs = min(retry_after + 0.5, 8.0)
+                            print(f"[CHATBOT] Groq 429 — retrying in {wait_secs:.1f}s...")
+                            time.sleep(wait_secs)
+                        else:
+                            print(f"[CHATBOT] Groq error status: {response.status_code}, response: {response.text}")
+                            break
                 except Exception as groq_err:
                     print(f"[CHATBOT] Groq call failed: {groq_err}. Falling back to Gemini...")
 
@@ -214,9 +230,9 @@ class GeminiChatbot:
                         model=self.model_name,
                         contents=gemini_history,
                         config=types.GenerateContentConfig(
-                            system_instruction=SYSTEM_PROMPT,
+                            system_instruction=active_prompt,
                             temperature=0.85,
-                            max_output_tokens=700,
+                            max_output_tokens=400,
                         )
                     )
                     full_reply = response.text
