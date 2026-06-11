@@ -89,7 +89,7 @@ class GeminiChatbot:
             return
         try:
             self.client = genai.Client(api_key=Config.GEMINI_API_KEY)
-            self.model_name = 'gemini-2.5-flash-lite'
+            self.model_name = 'gemini-2.0-flash'  # 200 RPD free tier (vs 20 RPD for 2.5-flash-lite)
             # chat_sessions: OrderedDict làm LRU cache tự chế tránh tràn RAM
             self.chat_sessions = OrderedDict()
             self.max_sessions = 1000  # Lưu tối đa 1000 phiên hoạt động gần nhất
