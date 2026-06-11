@@ -149,48 +149,8 @@ class GeminiChatbot:
 
             full_reply = None
 
-            # 1. Thử gọi Groq Cloud API nếu có Key hoạt động
-            groq_key = getattr(Config, 'GROQ_API_KEY', '')
-            if bool(groq_key) and groq_key.strip() not in ('', 'PASTE_YOUR_KEY_HERE'):
-                try:
-                    import requests
-                    import time
-                    headers = {
-                        "Authorization": f"Bearer {groq_key.strip()}",
-                        "Content-Type": "application/json"
-                    }
-                    messages = [{"role": "system", "content": active_prompt}] + history
-                    payload = {
-                        "model": "llama-3.3-70b-versatile",
-                        "messages": messages,
-                        "temperature": 0.85,
-                        "max_tokens": 400
-                    }
-                    for _attempt in range(2):  # 1 retry on 429
-                        response = requests.post(
-                            "https://api.groq.com/openai/v1/chat/completions",
-                            headers=headers,
-                            json=payload,
-                            timeout=15
-                        )
-                        if response.status_code == 200:
-                            res_data = response.json()
-                            full_reply = res_data["choices"][0]["message"]["content"]
-                            break
-                        elif response.status_code == 429 and _attempt == 0:
-                            # Respect Retry-After header; cap wait at 8 s to stay within request timeout
-                            retry_after = float(response.headers.get('Retry-After', '5'))
-                            wait_secs = min(retry_after + 0.5, 8.0)
-                            print(f"[CHATBOT] Groq 429 — retrying in {wait_secs:.1f}s...")
-                            time.sleep(wait_secs)
-                        else:
-                            print(f"[CHATBOT] Groq error status: {response.status_code}, response: {response.text}")
-                            break
-                except Exception as groq_err:
-                    print(f"[CHATBOT] Groq call failed: {groq_err}")
-
-            # 2. Fallback: Gemini 1.5-flash (1500 RPD free tier)
-            if full_reply is None and self._available and self.client:
+            # 1. PRIMARY: Gemini 1.5-flash (1500 RPD, ổn định)
+            if self._available and self.client:
                 try:
                     gemini_key = getattr(Config, 'GEMINI_API_KEY', '')
                     if bool(gemini_key) and gemini_key.strip() not in ('', 'PASTE_YOUR_KEY_HERE'):
@@ -210,9 +170,39 @@ class GeminiChatbot:
                             )
                         )
                         full_reply = resp.text
-                        print("[CHATBOT] Used Gemini fallback")
                 except Exception as gem_err:
-                    print(f"[CHATBOT] Gemini fallback failed: {gem_err}")
+                    print(f"[CHATBOT] Gemini failed: {gem_err}. Falling back to Groq...")
+
+            # 2. FALLBACK: Groq (nhanh nhưng TPM giới hạn)
+            if full_reply is None:
+                groq_key = getattr(Config, 'GROQ_API_KEY', '')
+                if bool(groq_key) and groq_key.strip() not in ('', 'PASTE_YOUR_KEY_HERE'):
+                    try:
+                        import requests
+                        headers = {
+                            "Authorization": f"Bearer {groq_key.strip()}",
+                            "Content-Type": "application/json"
+                        }
+                        messages = [{"role": "system", "content": active_prompt}] + history
+                        payload = {
+                            "model": "llama-3.3-70b-versatile",
+                            "messages": messages,
+                            "temperature": 0.85,
+                            "max_tokens": 400
+                        }
+                        response = requests.post(
+                            "https://api.groq.com/openai/v1/chat/completions",
+                            headers=headers,
+                            json=payload,
+                            timeout=8
+                        )
+                        if response.status_code == 200:
+                            full_reply = response.json()["choices"][0]["message"]["content"]
+                            print("[CHATBOT] Used Groq fallback")
+                        else:
+                            print(f"[CHATBOT] Groq error: {response.status_code}")
+                    except Exception as groq_err:
+                        print(f"[CHATBOT] Groq fallback failed: {groq_err}")
 
             if full_reply is None:
                 raise Exception("Tất cả API đều không khả dụng. Vui lòng thử lại sau.")
