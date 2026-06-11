@@ -128,8 +128,8 @@ class GeminiChatbot:
             # Di chuyển cấu hình động hoặc tính toán số câu hỏi đã hỏi
             active_prompt = SYSTEM_PROMPT
             user_msg_count = sum(1 for m in history if m["role"] == "user")
-            if user_msg_count >= 5:
-                active_prompt += "\n\n⚠️ YÊU CẦU BẮT BUỘC: Bạn đã hỏi người dùng đủ 5 câu hỏi. KHÔNG ĐƯỢC HỎI THÊM NỮA. Hãy đưa ra kết luận phân tích triệu chứng chi tiết và gợi ý chuyên khoa phù hợp dưới dạng DOCTOR_SUGGESTION ngay trong tin nhắn này. Tuyệt đối KHÔNG xuất hiện OPTIONS."
+            if user_msg_count >= 3:
+                active_prompt += "\n\n⚠️ YÊU CẦU BẮT BUỘC: Bạn đã thu thập đủ thông tin (qua 3 tin nhắn của người dùng). KHÔNG ĐƯỢC HỎI THÊM NỮA. Hãy đưa ra kết luận phân tích triệu chứng chi tiết và gợi ý chuyên khoa phù hợp dưới dạng DOCTOR_SUGGESTION ngay trong tin nhắn này. Tuyệt đối KHÔNG xuất hiện OPTIONS."
 
             full_reply = None
 
