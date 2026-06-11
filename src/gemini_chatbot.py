@@ -9,58 +9,18 @@ from src.symptom_matcher import SymptomMatcher
 from src.distance_calculator import DistanceCalculator
 from src.csv_helper import CSVHelper
 
-# Prompt hệ thống — định nghĩa vai trò chatbot
-SYSTEM_PROMPT = """Bạn là trợ lý y tế AI của hệ thống đặt lịch khám trực tuyến tại Việt Nam.
+# Prompt hệ thống — rút gọn tối đa để tiết kiệm token
+SYSTEM_PROMPT = """Bạn là trợ lý y tế AI đặt lịch khám Việt Nam. Trả lời tiếng Việt, ngắn gọn (≤4 câu/tin).
 
-NHIỆM VỤ CHÍNH:
-Hỏi từng câu một để thu thập đủ thông tin, rồi mới đưa ra nhận định chuyên khoa phù hợp.
+QUY TRÌNH (bắt buộc):
+1. Nhận triệu chứng → hỏi 1 câu làm rõ + OPTIONS.["...","..."]
+2. Hỏi thêm ít nhất 2 lần (mỗi lần chỉ 1 câu + OPTIONS).
+3. Sau ≥2 lượt hỏi–đáp → đưa kết luận + DOCTOR_SUGGESTION (không kèm OPTIONS).
 
-⚠️ CẢNH BÁO QUAN TRỌNG:
-1. MỖI LẦN CHỈ ĐƯỢC HỎI DUY NHẤT 1 CÂU HỎI. Không được hỏi gộp nhiều câu cùng lúc.
-2. BẤT KỲ CÂU HỎI NÀO CỦA BẠN CŨNG BẮT BUỘC PHẢI CÓ gợi ý câu trả lời dưới dạng OPTIONS ở cuối tin nhắn. Cấm tuyệt đối việc đặt câu hỏi mà không có OPTIONS.
-
-══════════════════════════════════════════
-QUY TRÌNH BẮT BUỘC — PHẢI TUÂN THỦ NGHIÊM NGẶT:
-
-BƯỚC 1 — NHẬN TRIỆU CHỨNG BAN ĐẦU:
-  Người dùng nói triệu chứng → bạn hỏi ngay 1 câu làm rõ (thời gian, mức độ, vị trí...).
-  TUYỆT ĐỐI KHÔNG được đưa ra kết luận ở bước này.
-  BẮT BUỘC đi kèm OPTIONS tương ứng.
-
-BƯỚC 2 — HỎI THÊM (ít nhất 2 lần hỏi):
-  Sau mỗi câu trả lời của người dùng, hỏi thêm 1 câu cụ thể hơn.
-  Mỗi lượt chỉ hỏi 1 câu duy nhất và BẮT BUỘC đi kèm OPTIONS.
-  Ví dụ các câu hỏi tốt:
-  • "Cơn đau xuất hiện từ bao lâu rồi?"  OPTIONS:["Vài giờ nay","1–2 ngày","Hơn 3 ngày","Tái đi tái lại nhiều lần"]
-  • "Đau ở vị trí nào trong ngực?"       OPTIONS:["Ngực trái","Ngực phải","Giữa ngực","Toàn bộ ngực"]
-  • "Ngoài đau ngực, bạn còn có triệu chứng nào khác không?" OPTIONS:["Khó thở, hụt hơi","Hồi hộp, tim đập nhanh","Buồn nôn, chóng mặt","Chỉ đau ngực thôi"]
-  • "Cơn đau có liên quan đến vận động không?" OPTIONS:["Đau nhiều hơn khi vận động","Đau kể cả khi nghỉ ngơi","Đau khi hít thở sâu","Không rõ"]
-
-BƯỚC 3 — KẾT LUẬN (chỉ sau ≥ 2 lượt hỏi–đáp):
-  Khi đã có đủ thông tin, đưa ra phân tích và thêm DOCTOR_SUGGESTION.
-  (Không được kèm OPTIONS ở bước kết luận này).
-
-══════════════════════════════════════════
-FORMAT CÂU HỎI — dùng OPTIONS ở cuối tin nhắn:
-Nội dung câu hỏi của bạn.
+FORMAT:
+Câu hỏi của bạn.
 OPTIONS:["lựa chọn 1","lựa chọn 2","lựa chọn 3"]
 
-FORMAT KẾT LUẬN — thêm vào CUỐI tin nhắn kết luận:
-DOCTOR_SUGGESTION:{"specialty":"<tên chuyên khoa>","keywords":"<từ khóa triệu chứng tiếng Việt>","advice":"<1 câu lời khuyên ngắn>"}
-
-Chuyên khoa thường dùng: Tim mạch, Thần kinh, Tiêu hóa, Hô hấp, Cơ xương khớp, Da liễu, Tai mũi họng, Mắt, Nội tiết, Tiết niệu.
-
-══════════════════════════════════════════
-PHONG CÁCH KẾT LUẬN:
-
-❌ SAI — rập khuôn, vô nghĩa:
-"Dựa trên thông tin bạn cung cấp, có thể bạn cần khám tại chuyên khoa Tim mạch hoặc Hô hấp."
-"Tình trạng của bạn có thể liên quan đến các vấn đề về tim mạch."
-
-✅ ĐÚNG — phân tích cụ thể, ân cần:
-"Cơn đau ngực trái kéo dài 2 ngày, tăng khi vận động và kèm theo hồi hộp là những dấu hiệu cần được đánh giá kỹ về chức năng tim. Đây có thể là biểu hiện của rối loạn nhịp tim hoặc co thắt mạch vành. Bạn nên đến khám chuyên khoa Tim mạch sớm để được điện tâm đồ và tư vấn chính xác."
-
-══════════════════════════════════════════
 QUY TẮC KHÁC:
 - Mỗi tin nhắn tối đa 4 câu, ngắn gọn, không dài dòng
 - Không dùng OPTIONS lẫn DOCTOR_SUGGESTION trong cùng một tin nhắn
@@ -87,22 +47,30 @@ class GeminiChatbot:
     def __init__(self):
         if self._initialized:
             return
-        # Gemini fallback disabled: free-tier key has limit=0 for all models
-        self._available = False
+        try:
+            self.client = genai.Client(api_key=Config.GEMINI_API_KEY)
+            self.model_name = 'gemini-1.5-flash'  # 1500 RPD free tier
+        except Exception as e:
+            print(f"[CHATBOT] Gemini init error: {e}")
+            self.client = None
+            self.model_name = None
         # chat_sessions: OrderedDict làm LRU cache tự chế tránh tràn RAM
         self.chat_sessions = OrderedDict()
-        self.max_sessions = 1000  # Lưu tối đa 1000 phiên hoạt động gần nhất
-        self.max_history_len = 10  # Giữ tối đa 10 tin nhắn gần nhất để tiết kiệm token đầu vào
+        self.max_sessions = 1000
+        self.max_history_len = 10  # Giữ 10 tin nhắn gần nhất để tiết kiệm token
         # Per-session last-request timestamp for server-side cooldown
         self._last_request_time = {}  # session_id -> float (time.time())
         self._request_cooldown = 3.0  # seconds between requests per session
+        self._available = self.client is not None
         self._initialized = True
 
     @property
     def is_available(self):
         groq_key = getattr(Config, 'GROQ_API_KEY', '')
+        gemini_key = getattr(Config, 'GEMINI_API_KEY', '')
         has_groq = bool(groq_key) and groq_key.strip() not in ('', 'PASTE_YOUR_KEY_HERE')
-        return has_groq
+        has_gemini = self._available and bool(gemini_key) and gemini_key.strip() not in ('', 'PASTE_YOUR_KEY_HERE')
+        return has_groq or has_gemini
 
     def _get_history(self, session_id: str) -> list:
         """Lấy lịch sử chat (list of dict). Khởi tạo với greeting nếu chưa có."""
@@ -221,8 +189,33 @@ class GeminiChatbot:
                 except Exception as groq_err:
                     print(f"[CHATBOT] Groq call failed: {groq_err}")
 
+            # 2. Fallback: Gemini 1.5-flash (1500 RPD free tier)
+            if full_reply is None and self._available and self.client:
+                try:
+                    gemini_key = getattr(Config, 'GEMINI_API_KEY', '')
+                    if bool(gemini_key) and gemini_key.strip() not in ('', 'PASTE_YOUR_KEY_HERE'):
+                        gemini_history = []
+                        for h in history:
+                            role = "model" if h["role"] == "assistant" else h["role"]
+                            gemini_history.append(
+                                types.Content(role=role, parts=[types.Part(text=h["content"])])
+                            )
+                        resp = self.client.models.generate_content(
+                            model=self.model_name,
+                            contents=gemini_history,
+                            config=types.GenerateContentConfig(
+                                system_instruction=active_prompt,
+                                temperature=0.85,
+                                max_output_tokens=400,
+                            )
+                        )
+                        full_reply = resp.text
+                        print("[CHATBOT] Used Gemini fallback")
+                except Exception as gem_err:
+                    print(f"[CHATBOT] Gemini fallback failed: {gem_err}")
+
             if full_reply is None:
-                raise Exception("Groq API không khả dụng hoặc gặp lỗi. Vui lòng thử lại sau.")
+                raise Exception("Tất cả API đều không khả dụng. Vui lòng thử lại sau.")
 
             # Tách OPTIONS, DOCTOR_SUGGESTION khỏi nội dung hiển thị trước khi lưu vào lịch sử
             display_reply, options = self._extract_options(full_reply)
