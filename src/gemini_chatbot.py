@@ -87,28 +87,22 @@ class GeminiChatbot:
     def __init__(self):
         if self._initialized:
             return
-        try:
-            self.client = genai.Client(api_key=Config.GEMINI_API_KEY)
-            self.model_name = 'gemini-2.0-flash'  # 200 RPD free tier (vs 20 RPD for 2.5-flash-lite)
-            # chat_sessions: OrderedDict làm LRU cache tự chế tránh tràn RAM
-            self.chat_sessions = OrderedDict()
-            self.max_sessions = 1000  # Lưu tối đa 1000 phiên hoạt động gần nhất
-            self.max_history_len = 10  # Giữ tối đa 10 tin nhắn gần nhất để tiết kiệm token đầu vào
-            self._initialized = True
-            self._available = True
-        except Exception as e:
-            print(f"[CHATBOT] Gemini init error: {e}")
-            self._available = False
+        # Gemini fallback disabled: free-tier key has limit=0 for all models
+        self._available = False
+        # chat_sessions: OrderedDict làm LRU cache tự chế tránh tràn RAM
+        self.chat_sessions = OrderedDict()
+        self.max_sessions = 1000  # Lưu tối đa 1000 phiên hoạt động gần nhất
+        self.max_history_len = 10  # Giữ tối đa 10 tin nhắn gần nhất để tiết kiệm token đầu vào
+        # Per-session last-request timestamp for server-side cooldown
+        self._last_request_time = {}  # session_id -> float (time.time())
+        self._request_cooldown = 3.0  # seconds between requests per session
+        self._initialized = True
 
     @property
     def is_available(self):
         groq_key = getattr(Config, 'GROQ_API_KEY', '')
-        gemini_key = getattr(Config, 'GEMINI_API_KEY', '')
-        
         has_groq = bool(groq_key) and groq_key.strip() not in ('', 'PASTE_YOUR_KEY_HERE')
-        has_gemini = getattr(self, '_available', False) and bool(gemini_key) and gemini_key.strip() not in ('', 'PASTE_YOUR_KEY_HERE')
-        
-        return has_groq or has_gemini
+        return has_groq
 
     def _get_history(self, session_id: str) -> list:
         """Lấy lịch sử chat (list of dict). Khởi tạo với greeting nếu chưa có."""
@@ -147,6 +141,21 @@ class GeminiChatbot:
                 "advice": "",
                 "options": []
             }
+
+        # Server-side cooldown: prevent rapid-fire requests per session
+        import time as _time
+        with self._lock:
+            last = self._last_request_time.get(session_id, 0)
+            elapsed = _time.time() - last
+            if elapsed < self._request_cooldown:
+                wait = self._request_cooldown - elapsed
+                return {
+                    "reply": f"⏳ Vui lòng chờ {wait:.0f} giây trước khi gửi tin nhắn tiếp theo.",
+                    "doctors": [],
+                    "advice": "",
+                    "options": []
+                }
+            self._last_request_time[session_id] = _time.time()
 
         try:
             # Đảm bảo luồng an toàn khi truy xuất và cập nhật lịch sử
@@ -210,35 +219,10 @@ class GeminiChatbot:
                             print(f"[CHATBOT] Groq error status: {response.status_code}, response: {response.text}")
                             break
                 except Exception as groq_err:
-                    print(f"[CHATBOT] Groq call failed: {groq_err}. Falling back to Gemini...")
-
-            # 2. Dự phòng: Gọi Google Gemini API nếu Groq không khả dụng hoặc gặp lỗi
-            if full_reply is None:
-                gemini_key = getattr(Config, 'GEMINI_API_KEY', '')
-                if getattr(self, '_available', False) and bool(gemini_key) and gemini_key.strip() not in ('', 'PASTE_YOUR_KEY_HERE'):
-                    # Chuyển đổi lịch sử sang định dạng Content của SDK Gemini
-                    gemini_history = []
-                    for h in history:
-                        role = "model" if h["role"] == "assistant" else h["role"]
-                        gemini_history.append(
-                            types.Content(
-                                role=role,
-                                parts=[types.Part(text=h["content"])]
-                            )
-                        )
-                    response = self.client.models.generate_content(
-                        model=self.model_name,
-                        contents=gemini_history,
-                        config=types.GenerateContentConfig(
-                            system_instruction=active_prompt,
-                            temperature=0.85,
-                            max_output_tokens=400,
-                        )
-                    )
-                    full_reply = response.text
+                    print(f"[CHATBOT] Groq call failed: {groq_err}")
 
             if full_reply is None:
-                raise Exception("Tất cả các API Engine (Groq, Gemini) đều không khả dụng hoặc gặp lỗi cuộc gọi.")
+                raise Exception("Groq API không khả dụng hoặc gặp lỗi. Vui lòng thử lại sau.")
 
             # Tách OPTIONS, DOCTOR_SUGGESTION khỏi nội dung hiển thị trước khi lưu vào lịch sử
             display_reply, options = self._extract_options(full_reply)
