@@ -18,6 +18,7 @@ from src.symptom_matcher import SymptomMatcher
 from src.booking_manager import BookingManager
 from src.email_service import EmailService
 from src.reminder_service import ReminderService
+from src.gemini_chatbot import chatbot_instance
 from src.geocoding_service import GeocodingService
 from src.pricing import Pricing
 from src.debug_routes import debug_bp
@@ -900,6 +901,50 @@ def reschedule_appointment(appointment_id):
     else:
         flash(message, "error")
     return redirect(url_for('dashboard'))
+
+# ===== CHATBOT ROUTES =====
+
+@app.route('/chatbot')
+def chatbot_page():
+    """Redirect to home page where the chatbot widget is now integrated."""
+    return redirect(url_for('index'))
+
+
+@app.route('/api/chat', methods=['POST'])
+def api_chat():
+    """API endpoint nhận tin nhắn và trả lời từ Gemini AI."""
+    data = request.get_json(force=True)
+    user_message = (data.get('message') or '').strip()
+    if not user_message:
+        return jsonify({'reply': 'Vui lòng nhập tin nhắn.', 'doctors': [], 'advice': ''}), 400
+
+    lat = data.get('lat')
+    lon = data.get('lon')
+    province = data.get('province')
+    district = data.get('district')
+    location_source = data.get('location_source')
+
+    # Dùng Flask session id làm chatbot session id
+    session_id = session.get('user_id') or request.remote_addr or 'anonymous'
+    result = chatbot_instance.chat(
+        str(session_id), 
+        user_message,
+        lat=lat,
+        lon=lon,
+        province=province,
+        district=district,
+        location_source=location_source
+    )
+    return jsonify(result)
+
+
+@app.route('/api/chat/reset', methods=['POST'])
+def api_chat_reset():
+    """Reset phiên hội thoại chatbot."""
+    session_id = session.get('user_id') or request.remote_addr or 'anonymous'
+    chatbot_instance.reset_session(str(session_id))
+    return jsonify({'ok': True})
+
 
 if __name__ == '__main__':
     # Ensure data files directory exists

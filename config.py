@@ -1,5 +1,16 @@
 import os
 
+# Tự động đọc file .env nếu có để tải các API Key bí mật khi chạy local
+env_path = os.path.join(os.path.dirname(__file__), '.env')
+if os.path.exists(env_path):
+    with open(env_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('#'):
+                parts = line.split('=', 1)
+                if len(parts) == 2:
+                    os.environ[parts[0].strip()] = parts[1].strip()
+
 class Config:
     # Secure by default: generate a random key if none is provided via environment variables
     SECRET_KEY = os.environ.get('SECRET_KEY') or os.urandom(24).hex()
@@ -8,11 +19,6 @@ class Config:
     # Use __file__ to get the config.py location, then go to parent directory to get project root
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
     DATA_DIR = os.path.join(BASE_DIR, 'data')
-    
-    # DEBUG: Print paths for troubleshooting (remove in production if needed)
-    # print(f"[CONFIG] BASE_DIR: {BASE_DIR}")
-    # print(f"[CONFIG] DATA_DIR: {DATA_DIR}")
-    # print(f"[CONFIG] DATA_DIR exists: {os.path.exists(DATA_DIR)}")
     
     # CSV file paths
     CLINICS_CSV = os.path.join(DATA_DIR, 'clinics.csv')
@@ -45,3 +51,9 @@ class Config:
         'NOMINATIM_USER_AGENT',
         'MedBooking/1.0 (dat-lich-kham-online; contact@medbooking.local)',
     )
+
+    # Gemini AI API Key — Lấy tại https://aistudio.google.com/apikey
+    GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
+
+    # Groq Cloud API Key — Lấy tại https://console.groq.com/
+    GROQ_API_KEY = os.environ.get('GROQ_API_KEY', '')

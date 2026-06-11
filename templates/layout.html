@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Đặt Lịch Khám Online{% endblock %}</title>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=2">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=4">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -105,6 +105,478 @@
             card.style.boxShadow = '';
         });
     });
+    // ── Floating AI Chatbot Widget Logic ───────────────────
+    let widgetInitialized = false;
+
+    function toggleChatbotWidget() {
+        const chatbotWidget = document.getElementById('chatbot-widget');
+        if (!chatbotWidget) return;
+        chatbotWidget.classList.toggle('active');
+        if (chatbotWidget.classList.contains('active') && !widgetInitialized) {
+            initWidgetChat();
+        }
+    }
+
+    function renderSmartSuggestions() {
+        const repliesContainer = document.getElementById('widget-quick-replies');
+        if (!repliesContainer) return;
+
+        const date = new Date();
+        const month = date.getMonth() + 1; // 1-12
+        const hour = date.getHours(); // 0-23
+
+        let suggestions = [];
+        let timeIcon = "";
+        let timeText = "";
+        
+        if (hour >= 5 && hour < 11) {
+            timeIcon = "☀️";
+            timeText = "Chào buổi sáng";
+            suggestions.push({
+                text: "Tôi bị đau dạ dày cồn cào lúc sáng sớm",
+                label: "🤢 Đau dạ dày sáng sớm"
+            });
+            suggestions.push({
+                text: "Tôi bị cứng các khớp tay và chân khi thức dậy",
+                label: "🦴 Cứng khớp buổi sáng"
+            });
+        } else if (hour >= 18 || hour < 5) {
+            timeIcon = "🌙";
+            timeText = "Buổi tối & Đêm";
+            suggestions.push({
+                text: "Tôi bị mất ngủ kéo dài và khó đi vào giấc ngủ",
+                label: "😴 Mất ngủ, khó ngủ"
+            });
+            suggestions.push({
+                text: "Tôi bị ho khan dữ dội và khò khè về đêm",
+                label: "😷 Ho nhiều về đêm"
+            });
+        }
+
+        let seasonIcon = "";
+        let seasonText = "";
+        if (month >= 5 && month <= 8) {
+            seasonIcon = "🥵";
+            seasonText = "Thời tiết mùa hè";
+            suggestions.push({
+                text: "Tôi bị sốt cao đột ngột kèm đau nhức hốc mắt và phát ban (nghi sốt xuất huyết)",
+                label: "🦟 Sốt xuất huyết"
+            });
+            suggestions.push({
+                text: "Tôi bị đau đầu, chóng mặt, buồn nôn do đi ngoài nắng nóng",
+                label: "☀️ Say nắng, kiệt sức"
+            });
+            suggestions.push({
+                text: "Tôi bị đau bụng, tiêu chảy và nôn mửa sau khi ăn thức ăn ngoài",
+                label: "🤢 Ngộ độc thực phẩm"
+            });
+        } else if (month >= 9 || month <= 1) {
+            seasonIcon = "🥶";
+            seasonText = "Thời tiết thu đông";
+            suggestions.push({
+                text: "Tôi bị ho, nghẹt mũi, sốt và đau họng khi trời lạnh",
+                label: "🤧 Cảm cúm mùa lạnh"
+            });
+            suggestions.push({
+                text: "Tôi bị đau nhức ê ẩm các khớp xương khi thời tiết thay đổi",
+                label: "🦴 Đau khớp khi lạnh"
+            });
+            suggestions.push({
+                text: "Tôi bị khó thở, khò khè và lên cơn hen suyễn khi trời lạnh",
+                label: "🫁 Hen suyễn"
+            });
+        } else {
+            seasonIcon = "🌸";
+            seasonText = "Thời tiết mùa xuân";
+            suggestions.push({
+                text: "Tôi bị phát ban, nổi mẩn đỏ ngứa ngáy khắp người",
+                label: "🧪 Dị ứng, mề đay"
+            });
+            suggestions.push({
+                text: "Tôi bị ngứa mắt, chảy nước mũi liên tục do phấn hoa/bụi mịn",
+                label: "🤧 Viêm mũi dị ứng"
+            });
+            suggestions.push({
+                text: "Tôi bị sốt nhẹ, nổi các mụn nước nhỏ lây lan toàn thân",
+                label: "💧 Nghi thủy đậu, sởi"
+            });
+        }
+
+        suggestions.push({
+            text: "Tôi bị đau ngực trái âm ỉ và khó thở khi vận động mạnh",
+            label: "❤️ Đau ngực, khó thở"
+        });
+        suggestions.push({
+            text: "Tôi bị chóng mặt, mất thăng bằng và tê bì tay chân",
+            label: "🧠 Chóng mặt, tê tay chân"
+        });
+
+        repliesContainer.innerHTML = suggestions.map(s => `
+            <button class="widget-quick-reply" onclick="sendWidgetQuick('${s.text.replace(/'/g, "\\'")}')">${s.label}</button>
+        `).join('');
+    }
+
+    async function initWidgetChat() {
+        const widgetChatBody = document.getElementById('widget-chat-body');
+        if (!widgetChatBody) return;
+        widgetChatBody.innerHTML = '';
+        appendWidgetBotMessage("Xin chào! Tôi là trợ lý y tế AI 🏥\n\nTôi có thể giúp bạn nhận định sơ bộ về các triệu chứng và gợi ý chuyên khoa phù hợp để đặt lịch khám.\n\nBạn đang gặp phải vấn đề sức khỏe gì? Hãy mô tả triệu chứng của bạn nhé! 😊");
+        widgetInitialized = true;
+        renderSmartSuggestions();
+        
+        // Đồng bộ reset session phía backend khi khởi tạo giao diện mới
+        try {
+            await fetch('/api/chat/reset', { method: 'POST' });
+        } catch (err) {
+            console.error("Failed to reset backend chat session:", err);
+        }
+    }
+
+    function handleWidgetKey(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendWidgetMessage();
+        }
+    }
+
+    function autoResizeWidget(el) {
+        el.style.height = 'auto';
+        el.style.height = Math.min(el.scrollHeight, 80) + 'px';
+    }
+
+    function sendWidgetQuick(text) {
+        const widgetUserInput = document.getElementById('widget-user-input');
+        if (widgetUserInput) {
+            widgetUserInput.value = text;
+        }
+        sendWidgetMessage();
+        const replies = document.getElementById('widget-quick-replies');
+        if (replies) {
+            replies.style.display = 'none';
+        }
+    }
+
+    async function sendWidgetMessage() {
+        const widgetUserInput = document.getElementById('widget-user-input');
+        const widgetBtnSend = document.getElementById('widget-btn-send');
+        if (!widgetUserInput || !widgetBtnSend) return;
+
+        const msg = widgetUserInput.value.trim();
+        if (!msg) return;
+
+        appendWidgetUserMessage(msg);
+        widgetUserInput.value = '';
+        widgetUserInput.style.height = 'auto';
+        widgetBtnSend.disabled = true;
+
+        const typingId = showWidgetTyping();
+
+        const locationData = getLocationFromSession();
+        if (typeof userLocation !== 'undefined') {
+            if (userLocation.lat) locationData.lat = userLocation.lat;
+            if (userLocation.lon) locationData.lon = userLocation.lon;
+            if (userLocation.province) locationData.province = userLocation.province;
+            if (userLocation.district) locationData.district = userLocation.district;
+            if (userLocation.source) locationData.source = userLocation.source;
+        }
+
+        try {
+            const res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: msg,
+                    lat: locationData.lat,
+                    lon: locationData.lon,
+                    province: locationData.province,
+                    district: locationData.district,
+                    location_source: locationData.source
+                })
+            });
+            const data = await res.json();
+
+            removeWidgetTyping(typingId);
+            appendWidgetBotMessage(data.reply, data.doctors, data.options || [], data.advice || '');
+        } catch (err) {
+            removeWidgetTyping(typingId);
+            appendWidgetBotMessage('❌ Lỗi kết nối. Vui lòng thử lại.');
+        }
+
+        widgetBtnSend.disabled = false;
+    }
+
+    async function resetWidgetChat() {
+        await fetch('/api/chat/reset', { method: 'POST' });
+        initWidgetChat();
+        const replies = document.getElementById('widget-quick-replies');
+        if (replies) {
+            replies.style.display = 'flex';
+        }
+    }
+
+    function appendWidgetUserMessage(text) {
+        const widgetChatBody = document.getElementById('widget-chat-body');
+        if (!widgetChatBody) return;
+        const div = document.createElement('div');
+        div.className = 'chat-msg user';
+        div.innerHTML = `
+            <div class="chat-msg-avatar">👤</div>
+            <div class="chat-msg-bubble">${escapeHtml(text)}</div>
+        `;
+        widgetChatBody.appendChild(div);
+        scrollWidgetToBottom();
+    }
+
+    function appendWidgetBotMessage(text, doctors = [], options = [], advice = '') {
+        const widgetChatBody = document.getElementById('widget-chat-body');
+        if (!widgetChatBody) return;
+        const div = document.createElement('div');
+        div.className = 'chat-msg bot';
+        
+        const formatted = escapeHtml(text)
+            .replace(/\n/g, '<br>')
+            .replace(/•/g, '&bull;')
+            .replace(/(Trợ lý [yY] tế AI|trợ lý [yY] tế AI)/g, '<span class="highlight-ai">$1</span>');
+
+        let doctorHtml = '';
+        if (doctors && doctors.length > 0) {
+            doctorHtml = `
+                <div class="widget-doctor-cards">
+                    <small style="color:var(--text-muted); font-size:11.5px; margin-top:8px; margin-bottom:6px; display:block; font-weight: 600; line-height: 1.4;">
+                        🩺 Dựa trên thông tin bạn cung cấp, dưới đây là vài bác sĩ phù hợp với nhu cầu của bạn:
+                    </small>
+                    ${doctors.map(d => {
+                        const spec = (d.specialty || '').replace(/Chuyên khoa/g, 'CK').replace(/Phòng khám/g, 'PK');
+                        const clinic = (d.clinic_name || 'Phòng khám')
+                            .replace(/Phòng khám Đa khoa/g, 'PKĐK')
+                            .replace(/Phòng khám Chuyên khoa/g, 'PKCK')
+                            .replace(/Phòng khám/g, 'PK')
+                            .replace(/Bệnh viện/g, 'BV');
+                        const distText = (d.distance_km && d.distance_km < 9990) ? ` • 📍 ${d.distance_km}km` : '';
+                        const metaText = `${spec} • ${clinic}${distText}`;
+                        const fullTooltip = `${d.specialty || ''} • ${d.clinic_name || 'Phòng khám'}${ (d.distance_km && d.distance_km < 9990) ? ` • Cách ${d.distance_km} km` : '' }`;
+                        
+                        return `
+                        <a href="/doctor/${d.id}${buildLocationQuery()}" class="widget-doctor-card" title="${escapeHtml(fullTooltip)}">
+                            <div class="widget-doctor-card-avatar">👨‍⚕️</div>
+                            <div class="widget-doctor-card-info">
+                                <div class="widget-doctor-card-name">${escapeHtml(d.name || '')}</div>
+                                <div class="widget-doctor-card-meta">${escapeHtml(metaText)}</div>
+                            </div>
+                            <div class="widget-doctor-card-action">Đặt lịch →</div>
+                        </a>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        let optionsHtml = '';
+        if (options && options.length > 0) {
+            optionsHtml = `
+                <div class="widget-options">
+                    ${options.map(o => `<button class="widget-option-btn" onclick="sendOptionReply(this, '${escapeHtml(o).replace(/'/g, "\\'")}')"><span>${escapeHtml(o)}</span></button>`).join('')}
+                </div>
+            `;
+        }
+
+        div.innerHTML = `
+            <div class="chat-msg-avatar">🤖</div>
+            <div class="chat-msg-bubble">${formatted}${doctorHtml}${optionsHtml}</div>
+        `;
+        widgetChatBody.appendChild(div);
+        scrollWidgetToBottom();
+    }
+
+    function sendOptionReply(btnEl, text) {
+        // Disable all option buttons in the same group
+        const group = btnEl.closest('.widget-options');
+        if (group) {
+            group.querySelectorAll('.widget-option-btn').forEach(b => {
+                b.disabled = true;
+                b.style.opacity = '0.5';
+                b.style.cursor = 'default';
+            });
+            btnEl.style.opacity = '1';
+            btnEl.style.background = 'var(--primary)';
+            btnEl.style.color = '#fff';
+            btnEl.style.borderColor = 'var(--primary)';
+        }
+        // Send the option text as user message
+        const widgetUserInput = document.getElementById('widget-user-input');
+        if (widgetUserInput) {
+            widgetUserInput.value = text;
+        }
+        sendWidgetMessage();
+    }
+
+    function showWidgetTyping() {
+        const widgetChatBody = document.getElementById('widget-chat-body');
+        if (!widgetChatBody) return;
+        const id = 'widget-typing-' + Date.now();
+        const div = document.createElement('div');
+        div.className = 'chat-msg bot';
+        div.id = id;
+        div.innerHTML = `
+            <div class="chat-msg-avatar">🤖</div>
+            <div class="chat-msg-bubble">
+                <div class="widget-typing">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        `;
+        widgetChatBody.appendChild(div);
+        scrollWidgetToBottom();
+        return id;
+    }
+
+    function removeWidgetTyping(id) {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+    }
+
+    function scrollWidgetToBottom() {
+        const widgetChatBody = document.getElementById('widget-chat-body');
+        if (widgetChatBody) {
+            widgetChatBody.scrollTop = widgetChatBody.scrollHeight;
+        }
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    function saveLocationToSession(lat, lon, province, district, source) {
+        if (lat) sessionStorage.setItem('user_lat', lat);
+        if (lon) sessionStorage.setItem('user_lon', lon);
+        if (province) sessionStorage.setItem('user_province', province);
+        if (district) sessionStorage.setItem('user_district', district);
+        if (source) sessionStorage.setItem('user_location_source', source);
+    }
+
+    function getLocationFromSession() {
+        return {
+            lat: sessionStorage.getItem('user_lat') || null,
+            lon: sessionStorage.getItem('user_lon') || null,
+            province: sessionStorage.getItem('user_province') || null,
+            district: sessionStorage.getItem('user_district') || null,
+            source: sessionStorage.getItem('user_location_source') || null
+        };
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const params = new URLSearchParams(window.location.search);
+        const lat = params.get('lat');
+        const lon = params.get('lon');
+        const province = params.get('province');
+        const district = params.get('district');
+        const source = params.get('location_source');
+        if (lat && lon) {
+            saveLocationToSession(lat, lon, province, district, source);
+        }
+
+        // Drag-to-scroll logic for quick replies
+        const quickReplies = document.getElementById('widget-quick-replies');
+        if (quickReplies) {
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            quickReplies.addEventListener('mousedown', (e) => {
+                isDown = true;
+                quickReplies.style.cursor = 'grabbing';
+                startX = e.pageX - quickReplies.offsetLeft;
+                scrollLeft = quickReplies.scrollLeft;
+            });
+            quickReplies.addEventListener('mouseleave', () => {
+                isDown = false;
+                quickReplies.style.cursor = 'grab';
+            });
+            quickReplies.addEventListener('mouseup', () => {
+                isDown = false;
+                quickReplies.style.cursor = 'grab';
+            });
+            quickReplies.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - quickReplies.offsetLeft;
+                const walk = (x - startX) * 1.5; // Tốc độ kéo
+                quickReplies.scrollLeft = scrollLeft - walk;
+            });
+        }
+
+        // ── Mobile Keyboard Handling ────────────────────────
+        // When virtual keyboard opens on iOS/Android, scroll chat to bottom
+        // so the input area stays visible.
+        const widgetInput = document.getElementById('widget-user-input');
+        if (widgetInput && window.visualViewport) {
+            window.visualViewport.addEventListener('resize', () => {
+                const widget = document.getElementById('chatbot-widget');
+                if (widget && widget.classList.contains('active')) {
+                    // Small delay so layout has updated first
+                    setTimeout(() => scrollWidgetToBottom(), 100);
+                }
+            });
+        }
+
+        // On mobile, focus textarea scrolls to bottom automatically
+        if (widgetInput) {
+            widgetInput.addEventListener('focus', () => {
+                const widget = document.getElementById('chatbot-widget');
+                if (widget && widget.classList.contains('active')) {
+                    setTimeout(() => scrollWidgetToBottom(), 300);
+                }
+            });
+        }
+    });
+
+    function buildLocationQuery() {
+        const params = new URLSearchParams(window.location.search);
+        let lat = params.get('lat');
+        let lon = params.get('lon');
+        if (!lat || !lon) {
+            const loc = getLocationFromSession();
+            lat = loc.lat;
+            lon = loc.lon;
+        }
+        if (lat && lon) return `?lat=${lat}&lon=${lon}`;
+        return '';
+    }
     </script>
+
+    <!-- Floating AI Chatbot Widget HTML -->
+    <button class="chatbot-fab" id="chatbot-fab-btn" onclick="toggleChatbotWidget()" title="Trợ lý Y tế AI">
+        <span class="fab-icon">🤖</span>
+    </button>
+
+    <div class="chatbot-widget-window" id="chatbot-widget">
+        <div class="chatbot-widget-header">
+            <span class="status-dot"></span>
+            <h3>Trợ lý Y tế AI</h3>
+            <div class="header-actions">
+                <button onclick="resetWidgetChat()" title="Làm mới cuộc trò chuyện">🔄</button>
+                <button onclick="toggleChatbotWidget()" title="Đóng">✕</button>
+            </div>
+        </div>
+        <div class="chatbot-widget-body" id="widget-chat-body">
+            <!-- Messages go here -->
+        </div>
+        
+        <!-- Quick replies -->
+        <div class="widget-quick-replies" id="widget-quick-replies">
+            <!-- Được tải động bởi JavaScript -->
+        </div>
+
+        <div class="chatbot-widget-input">
+            <textarea id="widget-user-input" rows="1" placeholder="Nhập triệu chứng của bạn..." 
+                      onkeydown="handleWidgetKey(event)" oninput="autoResizeWidget(this)"></textarea>
+            <button id="widget-btn-send" onclick="sendWidgetMessage()">➤</button>
+        </div>
+    </div>
 </body>
 </html>

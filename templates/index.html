@@ -29,11 +29,6 @@
                         <option value="Hà Nội">Hà Nội</option>
                         <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
                     </select>
-                    <select id="manual-province" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 0.25rem; font-size: 0.95rem;">
-                        <option value="">-- Chọn thành phố --</option>
-                        <option value="Hà Nội">Hà Nội</option>
-                        <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
-                    </select>
                 </div>
                 <div>
                     <select id="manual-district" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border); border-radius: 0.25rem; font-size: 0.95rem;">
@@ -99,7 +94,15 @@
 
 {% block extra_js %}
 <script>
-    var userLocation = { lat: null, lon: null, source: null };
+    var userLocation = { lat: null, lon: null, source: null, province: null, district: null };
+
+    function syncUserLocationToSession() {
+        if (userLocation.lat) sessionStorage.setItem('user_lat', userLocation.lat);
+        if (userLocation.lon) sessionStorage.setItem('user_lon', userLocation.lon);
+        if (userLocation.province) sessionStorage.setItem('user_province', userLocation.province);
+        if (userLocation.district) sessionStorage.setItem('user_district', userLocation.district);
+        if (userLocation.source) sessionStorage.setItem('user_location_source', userLocation.source);
+    }
 
     function formatReverseAddress(result) {
         if (!result) return null;
@@ -173,6 +176,7 @@
                     userLocation.province = inferred.province;
                     userLocation.district = inferred.district || '';
                 }
+                syncUserLocationToSession();
                 addressElement.textContent = formatted ? 'Địa chỉ của bạn: ' + formatted : 'Không xác định được địa chỉ từ tọa độ GPS.';
                 if (inferred && inferred.district) {
                     document.getElementById('gps-status').textContent =
@@ -249,6 +253,7 @@
                 districtSelect.appendChild(option);
             });
             userLocation.province = province;
+            syncUserLocationToSession();
             document.getElementById('gps-address').textContent = 'Vị trí: ' + province;
         }
     }
@@ -264,6 +269,7 @@
             userLocation.province = province;
             userLocation.district = district;
             userLocation.source = 'manual';
+            syncUserLocationToSession();
             
             document.getElementById('gps-address').textContent = 'Vị trí: ' + district + ', ' + province;
             document.getElementById('gps-status').textContent = '✓ Đã chọn vị trí. Vui lòng chọn bệnh để xem phòng khám gần nhất.';
@@ -298,6 +304,7 @@
                 }
                 userLocation.source = 'debug';
             }
+            syncUserLocationToSession();
             
             // Debug info tắt
             // const debugInfo = document.createElement('div');
@@ -332,6 +339,7 @@
                 userLocation.lat = data.latitude;
                 userLocation.lon = data.longitude;
                 userLocation.source = 'ip';
+                syncUserLocationToSession();
                 const btn = document.getElementById('btnLocateMe');
                 btn.textContent = '✓ Xác định qua IP';
                 btn.classList.remove('btn-primary');
@@ -370,6 +378,7 @@
             userLocation.lat = position.coords.latitude;
             userLocation.lon = position.coords.longitude;
             userLocation.source = 'gps';
+            syncUserLocationToSession();
             btn.textContent = '✓ Đã xác định vị trí';
             btn.classList.remove('btn-primary');
             btn.classList.add('btn-success');
