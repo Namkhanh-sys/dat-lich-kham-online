@@ -129,7 +129,7 @@ class GeminiChatbot:
             active_prompt = SYSTEM_PROMPT
             user_msg_count = sum(1 for m in history if m["role"] == "user")
             if user_msg_count >= 3:
-                active_prompt += "\n\n⚠️ YÊU CẦU BẮT BUỘC: Bạn đã thu thập đủ thông tin (qua 3 tin nhắn của người dùng). KHÔNG ĐƯỢC HỎI THÊM NỮA. Hãy đưa ra kết luận phân tích triệu chứng chi tiết và gợi ý chuyên khoa phù hợp dưới dạng DOCTOR_SUGGESTION ngay trong tin nhắn này. Tuyệt đối KHÔNG xuất hiện OPTIONS."
+                active_prompt += '\n\n⚠️ YÊU CẦU BẮT BUỘC: Bạn đã thu thập đủ thông tin (qua 3 tin nhắn của người dùng). KHÔNG ĐƯỢC HỎI THÊM NỮA. Hãy đưa ra kết luận phân tích triệu chứng chi tiết và gợi ý chuyên khoa phù hợp dưới dạng định dạng JSON sau ở cuối tin nhắn:\nDOCTOR_SUGGESTION: {"specialty": "tên chuyên khoa phù hợp (ví dụ: Tiêu hóa, Tai Mũi Họng, Da liễu, Tim mạch...)", "keywords": "các từ khóa triệu chứng phân tách bằng dấu chấm phẩy (ví dụ: đau dạ dày;chán ăn)", "advice": "Lời khuyên ngắn gọn dành cho người dùng."}\nTuyệt đối KHÔNG xuất hiện OPTIONS.'
 
             full_reply = None
 
@@ -150,7 +150,7 @@ class GeminiChatbot:
                             config=types.GenerateContentConfig(
                                 system_instruction=active_prompt,
                                 temperature=0.85,
-                                max_output_tokens=400,
+                                max_output_tokens=1000,
                             )
                         )
                         full_reply = resp.text
@@ -172,7 +172,7 @@ class GeminiChatbot:
                             "model": "llama-3.3-70b-versatile",
                             "messages": messages,
                             "temperature": 0.85,
-                            "max_tokens": 400
+                            "max_tokens": 600
                         }
                         response = requests.post(
                             "https://api.groq.com/openai/v1/chat/completions",
@@ -190,6 +190,8 @@ class GeminiChatbot:
 
             if full_reply is None:
                 raise Exception("Tất cả API đều không khả dụng. Vui lòng thử lại sau.")
+
+            print("[DEBUG] RAW REPLY:", repr(full_reply))
 
             # Tách OPTIONS, DOCTOR_SUGGESTION khỏi nội dung hiển thị trước khi lưu vào lịch sử
             display_reply, options = self._extract_options(full_reply)
