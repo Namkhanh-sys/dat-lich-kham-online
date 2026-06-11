@@ -49,7 +49,7 @@ class GeminiChatbot:
             return
         try:
             self.client = genai.Client(api_key=Config.GEMINI_API_KEY)
-            self.model_name = 'gemini-2.5-flash'  # Succeeded in testing
+            self.model_name = 'gemini-flash-lite-latest'  # High quota (1500 RPD), no thinking tokens delay
         except Exception as e:
             print(f"[CHATBOT] Gemini init error: {e}")
             self.client = None
@@ -150,7 +150,7 @@ class GeminiChatbot:
                             config=types.GenerateContentConfig(
                                 system_instruction=active_prompt,
                                 temperature=0.85,
-                                max_output_tokens=1000,
+                                max_output_tokens=600,
                             )
                         )
                         full_reply = resp.text
