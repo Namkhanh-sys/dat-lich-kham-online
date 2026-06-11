@@ -49,7 +49,7 @@ class GeminiChatbot:
             return
         try:
             self.client = genai.Client(api_key=Config.GEMINI_API_KEY)
-            self.model_name = 'gemini-1.5-flash'  # 1500 RPD free tier
+            self.model_name = 'gemini-2.5-flash'  # Succeeded in testing
         except Exception as e:
             print(f"[CHATBOT] Gemini init error: {e}")
             self.client = None
