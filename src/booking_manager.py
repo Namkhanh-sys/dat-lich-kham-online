@@ -1,16 +1,17 @@
 import uuid
-import pandas as pd
 from datetime import datetime, timedelta
+from typing import Any, Dict, List, Optional, Tuple, Union
+import pandas as pd
 from src.csv_helper import CSVHelper
 
 class BookingManager:
-    STANDARD_SLOTS = [
+    STANDARD_SLOTS: List[str] = [
         '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
         '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00'
     ]
 
     @classmethod
-    def get_doctor_appointments_on_date(cls, doctor_id, date_str):
+    def get_doctor_appointments_on_date(cls, doctor_id: str, date_str: str) -> List[str]:
         """Get all appointments for a doctor on a specific date."""
         df = CSVHelper.get_appointments()
         if df.empty:
@@ -25,13 +26,13 @@ class BookingManager:
         return active_appointments['time'].tolist()
 
     @classmethod
-    def check_collision(cls, doctor_id, date_str, time_str):
+    def check_collision(cls, doctor_id: str, date_str: str, time_str: str) -> bool:
         """Check if the doctor is already booked at this date and time."""
         booked_slots = cls.get_doctor_appointments_on_date(doctor_id, date_str)
         return time_str in booked_slots
 
     @classmethod
-    def _available_slots(cls, booked_slots, date_str, limit=None):
+    def _available_slots(cls, booked_slots: List[str], date_str: str, limit: Optional[int] = None) -> List[str]:
         """Return standard slots not in booked_slots, excluding past times for today."""
         available_slots = [slot for slot in cls.STANDARD_SLOTS if slot not in booked_slots]
         today_str = datetime.today().strftime('%Y-%m-%d')
@@ -43,7 +44,7 @@ class BookingManager:
         return available_slots
 
     @classmethod
-    def suggest_alternative_slots(cls, doctor_id, date_str, limit=3, days_checked=1):
+    def suggest_alternative_slots(cls, doctor_id: str, date_str: str, limit: int = 3, days_checked: int = 1) -> List[str]:
         """Suggest available alternative time slots for a doctor on a specific date."""
         booked_slots = cls.get_doctor_appointments_on_date(doctor_id, date_str)
         available_slots = cls._available_slots(booked_slots, date_str)
@@ -63,7 +64,7 @@ class BookingManager:
         return available_slots[:limit]
 
     @classmethod
-    def create_booking(cls, user_id, doctor_id, date_str, time_str):
+    def create_booking(cls, user_id: str, doctor_id: str, date_str: str, time_str: str) -> Tuple[bool, Union[Dict[str, Any], str]]:
         """Create a new booking if no collision. Returns (success, message_or_appointment_dict)."""
         print(f"[BookingManager.create_booking] START: user={user_id}, doctor={doctor_id}, date={date_str}, time={time_str}")
         
@@ -126,7 +127,7 @@ class BookingManager:
         return False, "Lỗi hệ thống khi lưu lịch hẹn."
 
     @classmethod
-    def get_user_appointments(cls, user_id):
+    def get_user_appointments(cls, user_id: str) -> List[Dict[str, Any]]:
         """Get all appointments for a user, joined with doctor and clinic details."""
         df_app = CSVHelper.get_appointments()
         if df_app.empty:
@@ -161,7 +162,7 @@ class BookingManager:
         return merged.to_dict('records')
 
     @classmethod
-    def cancel_booking(cls, appointment_id, user_id):
+    def cancel_booking(cls, appointment_id: str, user_id: str) -> Tuple[bool, str]:
         """Cancel an existing booking."""
         df = CSVHelper.get_appointments()
         if df.empty:
@@ -182,7 +183,7 @@ class BookingManager:
         return False, "Lỗi hệ thống khi cập nhật lịch hẹn."
 
     @classmethod
-    def confirm_payment(cls, appointment_id, user_id):
+    def confirm_payment(cls, appointment_id: str, user_id: str) -> Tuple[bool, str]:
         """Confirm payment for an existing booking, changing its status."""
         df = CSVHelper.get_appointments()
         if df.empty:
@@ -204,7 +205,7 @@ class BookingManager:
         return False, "Lỗi hệ thống khi cập nhật lịch hẹn."
 
     @classmethod
-    def update_booking_time(cls, appointment_id, user_id, new_date, new_time):
+    def update_booking_time(cls, appointment_id: str, user_id: str, new_date: str, new_time: str) -> Tuple[bool, str]:
         """Update date/time of a booking (reschedule)."""
         # BUG FIX #2: Validate that the new date/time is not in the past
         try:
@@ -257,3 +258,4 @@ class BookingManager:
         if CSVHelper.save_appointments(df):
             return True, "Đổi lịch hẹn thành công."
         return False, "Lỗi hệ thống khi cập nhật lịch hẹn."
+

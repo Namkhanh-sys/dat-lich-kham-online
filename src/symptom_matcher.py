@@ -1,20 +1,21 @@
 import re
+from typing import Any, Dict, List, Optional
 from src.csv_helper import CSVHelper
 
 class SymptomMatcher:
     @staticmethod
-    def clean_text(text):
+    def clean_text(text: Optional[str]) -> str:
         """Clean and lowercase text for better matching."""
         if not text:
             return ""
         # Lowercase and strip whitespace
-        text = text.lower().strip()
+        cleaned = text.lower().strip()
         # Remove common punctuation
-        text = re.sub(r'[.,\/#!$%\^&\*;:{}=\-_`~()?]', ' ', text)
-        return text.strip()
+        cleaned = re.sub(r'[.,\/#!$%\^&\*;:{}=\-_`~()?]', ' ', cleaned)
+        return cleaned.strip()
 
     @classmethod
-    def match_doctors_by_symptom(cls, query_text):
+    def match_doctors_by_symptom(cls, query_text: str) -> List[Dict[str, Any]]:
         """
         Analyze user's query text for symptoms, and match doctors.
         Returns a list of matched doctor dicts with matching metadata.
@@ -24,7 +25,7 @@ class SymptomMatcher:
             return []
 
         cleaned_query = cls.clean_text(query_text)
-        matched_doctors = []
+        matched_doctors: List[Dict[str, Any]] = []
 
         doctors_list = df_doctors.to_dict('records')
         for doctor in doctors_list:
@@ -71,3 +72,4 @@ class SymptomMatcher:
                     
         # If no doctor was matched and no doctors exist at all, return empty, otherwise we now have at least 3
         return matched_doctors
+

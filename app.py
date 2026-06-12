@@ -11,6 +11,8 @@ import datetime as dt
 from urllib.parse import urlparse, urljoin
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from config import Config
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from src.auth_service import AuthService
 from src.csv_helper import CSVHelper
 from src.distance_calculator import DistanceCalculator
@@ -25,6 +27,23 @@ from src.debug_routes import debug_bp
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+# Cấu hình giới hạn tần suất (Rate Limiting)
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"]
+)
+limiter.init_app(app)
+
+@app.errorhandler(429)
+def ratelimit_handler(e):
+    if request.path.startswith('/api/'):
+        return jsonify({'ok': False, 'error': 'Yêu cầu quá nhanh! Vui lòng thử lại sau.'}), 429
+    flash("Yêu cầu quá nhanh! Vui lòng đợi trước khi thử lại.", "error")
+    ref = request.referrer
+    if ref and is_safe_url(ref):
+        return redirect(ref)
+    return redirect(url_for('login'))
 
 # Register debug routes only when explicitly enabled.
 if app.debug or Config.ENABLE_DEBUG_ROUTES:
@@ -370,6 +389,7 @@ def disease_detail(disease_id):
     )
 
 @app.route('/login', methods=['GET', 'POST'])
+@limiter.limit("5 per minute", methods=["POST"])
 def login():
     if is_logged_in():
         return redirect(url_for('dashboard'))
@@ -396,6 +416,7 @@ def login():
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
+@limiter.limit("3 per minute", methods=["POST"])
 def register():
     if is_logged_in():
         return redirect(url_for('dashboard'))

@@ -1,9 +1,10 @@
 import math
 import re
+from typing import Any, Dict, List, Optional, Tuple, Union
 from src.csv_helper import CSVHelper
 
 # Vùng địa lý (bounding box) để suy ra thành phố từ GPS khi không chọn tỉnh
-CITY_BOUNDS = {
+CITY_BOUNDS: Dict[str, Dict[str, float]] = {
     'Hà Nội': {'lat_min': 20.85, 'lat_max': 21.25, 'lon_min': 105.65, 'lon_max': 106.05},
     'TP. Hồ Chí Minh': {'lat_min': 10.55, 'lat_max': 11.05, 'lon_min': 106.35, 'lon_max': 106.95},
     'Đà Nẵng': {'lat_min': 15.95, 'lat_max': 16.20, 'lon_min': 108.10, 'lon_max': 108.35},
@@ -11,7 +12,7 @@ CITY_BOUNDS = {
 }
 
 # Chuẩn hóa tên tỉnh/thành từ dropdown hoặc Nominatim → city trong clinics.csv
-PROVINCE_ALIASES = {
+PROVINCE_ALIASES: Dict[str, str] = {
     'ha noi': 'Hà Nội',
     'thanh pho ha noi': 'Hà Nội',
     'hanoi': 'Hà Nội',
@@ -27,8 +28,8 @@ PROVINCE_ALIASES = {
 
 class DistanceCalculator:
     @staticmethod
-    def _parse_user_coords(user_lat, user_lon):
-        """Return (lat, lon) floats or (None, None) when coordinates are missing/invalid."""
+    def _parse_user_coords(user_lat: Any, user_lon: Any) -> Tuple[Optional[float], Optional[float]]:
+        """Return (lat, lon) floats or (None, None) when coordinates are missing/invalid/out of bounds."""
         if user_lat is None or user_lon is None:
             return None, None
         if isinstance(user_lat, str) and not user_lat.strip():
@@ -36,12 +37,16 @@ class DistanceCalculator:
         if isinstance(user_lon, str) and not user_lon.strip():
             return None, None
         try:
-            return float(user_lat), float(user_lon)
+            lat_f = float(user_lat)
+            lon_f = float(user_lon)
+            if not (-90.0 <= lat_f <= 90.0) or not (-180.0 <= lon_f <= 180.0):
+                return None, None
+            return lat_f, lon_f
         except (ValueError, TypeError):
             return None, None
 
     @classmethod
-    def _normalize_text(cls, text):
+    def _normalize_text(cls, text: Optional[str]) -> str:
         if not text:
             return ''
         text = text.lower().strip()
@@ -50,7 +55,7 @@ class DistanceCalculator:
         return re.sub(r'\s+', ' ', text).strip()
 
     @classmethod
-    def resolve_user_city(cls, user_lat, user_lon, province=None):
+    def resolve_user_city(cls, user_lat: Any, user_lon: Any, province: Optional[str] = None) -> Optional[str]:
         """Xác định thành phố/khu vực của người dùng từ tỉnh chọn hoặc tọa độ GPS."""
         if province:
             key = cls._normalize_text(province)
@@ -62,7 +67,7 @@ class DistanceCalculator:
                     return city
 
         parsed_lat, parsed_lon = cls._parse_user_coords(user_lat, user_lon)
-        if parsed_lat is None:
+        if parsed_lat is None or parsed_lon is None:
             return None
 
         for city, bounds in CITY_BOUNDS.items():
@@ -72,39 +77,39 @@ class DistanceCalculator:
         return None
 
     @staticmethod
-    def haversine(lat1, lon1, lat2, lon2):
+    def haversine(lat1: Any, lon1: Any, lat2: Any, lon2: Any) -> float:
         """Khoảng cách đường chim bay (km) giữa hai điểm GPS."""
         try:
-            lat1, lon1, lat2, lon2 = map(float, [lat1, lon1, lat2, lon2])
+            lat1_f, lon1_f, lat2_f, lon2_f = map(float, [lat1, lon1, lat2, lon2])
         except (ValueError, TypeError):
             return 9999.0
 
-        lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
-        dlon = lon2 - lon1
-        dlat = lat2 - lat1
-        a = math.sin(dlat / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) ** 2
+        lat1_rad, lon1_rad, lat2_rad, lon2_rad = map(math.radians, [lat1_f, lon1_f, lat2_f, lon2_f])
+        dlon = lon2_rad - lon1_rad
+        dlat = lat2_rad - lat1_rad
+        a = math.sin(dlat / 2) ** 2 + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(dlon / 2) ** 2
         c = 2 * math.asin(math.sqrt(a))
         return round(c * 6371.0, 2)
 
     @classmethod
-    def _enrich_clinic(cls, clinic, parsed_lat, parsed_lon):
+    def _enrich_clinic(cls, clinic: Dict[str, Any], parsed_lat: Optional[float], parsed_lon: Optional[float]) -> Dict[str, Any]:
         """Gắn khoảng cách thật từ tọa độ người dùng đến phòng khám (tọa độ CSV)."""
-        clinic = dict(clinic)
-        clinic['lat'] = float(clinic.get('lat', 0))
-        clinic['lon'] = float(clinic.get('lon', 0))
-        clinic['city'] = clinic.get('city', '').strip() or cls._city_from_address(clinic.get('address', ''))
-        clinic['district'] = clinic.get('district', '').strip()  # Add district field
+        enriched = dict(clinic)
+        enriched['lat'] = float(enriched.get('lat', 0) or 0)
+        enriched['lon'] = float(enriched.get('lon', 0) or 0)
+        enriched['city'] = str(enriched.get('city', '')).strip() or cls._city_from_address(str(enriched.get('address', '')))
+        enriched['district'] = str(enriched.get('district', '')).strip()  # Add district field
 
         if parsed_lat is not None and parsed_lon is not None:
-            clinic['distance_km'] = cls.haversine(
-                parsed_lat, parsed_lon, clinic['lat'], clinic['lon']
+            enriched['distance_km'] = cls.haversine(
+                parsed_lat, parsed_lon, enriched['lat'], enriched['lon']
             )
         else:
-            clinic['distance_km'] = 9999.0
-        return clinic
+            enriched['distance_km'] = 9999.0
+        return enriched
 
     @classmethod
-    def _city_from_address(cls, address):
+    def _city_from_address(cls, address: str) -> str:
         """Suy ra thành phố từ địa chỉ phòng khám nếu thiếu cột city."""
         addr = cls._normalize_text(address)
         if 'ha noi' in addr or 'hanoi' in addr:
@@ -118,8 +123,9 @@ class DistanceCalculator:
         return ''
 
     @classmethod
-    def get_clinics_with_distance(cls, user_lat, user_lon, province=None, district=None, ward=None,
-                                  prefer_city=None, max_radius_km=None):
+    def get_clinics_with_distance(cls, user_lat: Any, user_lon: Any, province: Optional[str] = None,
+                                  district: Optional[str] = None, ward: Optional[str] = None,
+                                  prefer_city: Optional[str] = None, max_radius_km: Optional[float] = None) -> List[Dict[str, Any]]:
         """
         Trả về danh sách phòng khám với địa chỉ/tọa độ THẬT từ CSV và khoảng cách Haversine thật.
         district/ward giữ để tương thích API; không ghi đè địa chỉ phòng khám.
@@ -131,17 +137,16 @@ class DistanceCalculator:
         parsed_lat, parsed_lon = cls._parse_user_coords(user_lat, user_lon)
         user_city = prefer_city or cls.resolve_user_city(user_lat, user_lon, province)
 
-        clinics_list = []
+        clinics_list: List[Dict[str, Any]] = []
         for row in df_clinics.to_dict('records'):
             clinic = cls._enrich_clinic(row, parsed_lat, parsed_lon)
             clinic['in_user_city'] = bool(user_city and clinic.get('city') == user_city)
             clinics_list.append(clinic)
 
+        pool = clinics_list
         if user_city:
             in_city = [c for c in clinics_list if c['in_user_city']]
             pool = in_city if in_city else clinics_list
-        else:
-            pool = clinics_list
 
         if district:
             district_pool = [c for c in pool if c.get('district', '') == district]
@@ -154,7 +159,8 @@ class DistanceCalculator:
         return sorted(pool, key=lambda x: x['distance_km'])
 
     @classmethod
-    def get_clinic_details(cls, clinic_id, user_lat=None, user_lon=None, province=None, district=None, ward=None):
+    def get_clinic_details(cls, clinic_id: Any, user_lat: Any = None, user_lon: Any = None,
+                           province: Optional[str] = None, district: Optional[str] = None, ward: Optional[str] = None) -> Dict[str, Any]:
         """Chi tiết một phòng khám — địa chỉ và tọa độ thật, khoảng cách tính từ vị trí người dùng."""
         df_clinics = CSVHelper.get_clinics()
         cid_str = str(clinic_id).strip()
@@ -174,29 +180,30 @@ class DistanceCalculator:
         return cls._enrich_clinic(clinic_row.iloc[0].to_dict(), parsed_lat, parsed_lon)
 
     @classmethod
-    def filter_doctors_by_region(cls, doctors, clinics_dict, user_lat, user_lon, province=None,
-                               max_distance_km=150):
+    def filter_doctors_by_region(cls, doctors: List[Dict[str, Any]], clinics_dict: Dict[str, Dict[str, Any]],
+                                 user_lat: Any, user_lon: Any, province: Optional[str] = None,
+                                 max_distance_km: float = 150.0) -> Tuple[List[Dict[str, Any]], Optional[str], Optional[str]]:
         """
         Ưu tiên bác sĩ thuộc phòng khám cùng thành phố hoặc trong bán kính hợp lý.
         Trả về (doctors_filtered, user_city, region_note).
         """
         user_city = cls.resolve_user_city(user_lat, user_lon, province)
-        note = None
+        note: Optional[str] = None
 
-        def attach_and_check(doc):
+        def attach_and_check(doc: Dict[str, Any]) -> Dict[str, Any]:
             cid = str(doc.get('clinic_id', '')).strip()
             clinic = clinics_dict.get(cid, {})
-            doc = dict(doc)
-            doc['clinic_name'] = clinic.get('name', 'Phòng khám chưa xác định')
-            doc['clinic_address'] = clinic.get('address', 'Chưa có địa chỉ')
-            doc['distance_km'] = clinic.get('distance_km', 9999.0)
-            doc['clinic_city'] = clinic.get('city', '')
-            return doc
+            enriched_doc = dict(doc)
+            enriched_doc['clinic_name'] = clinic.get('name', 'Phòng khám chưa xác định')
+            enriched_doc['clinic_address'] = clinic.get('address', 'Chưa có địa chỉ')
+            enriched_doc['distance_km'] = clinic.get('distance_km', 9999.0)
+            enriched_doc['clinic_city'] = clinic.get('city', '')
+            return enriched_doc
 
         enriched = [attach_and_check(d) for d in doctors]
 
         if user_city:
-            same_city = [d for d in enriched if d.get('clinic_city') == user_city and d.get('distance_km', 9999) <= max_distance_km]
+            same_city = [d for d in enriched if d.get('clinic_city') == user_city and d.get('distance_km', 9999.0) <= max_distance_km]
             if same_city:
                 return same_city, user_city, None
             note = (
@@ -204,8 +211,9 @@ class DistanceCalculator:
                 f"Hiển thị phòng khám gần nhất theo khoảng cách thực tế."
             )
 
-        nearby = [d for d in enriched if d.get('distance_km', 9999) <= max_distance_km]
+        nearby = [d for d in enriched if d.get('distance_km', 9999.0) <= max_distance_km]
         if nearby:
             return nearby, user_city, note
 
         return [], user_city, note or f"Không có phòng khám trong vòng {max_distance_km} km từ vị trí của bạn."
+

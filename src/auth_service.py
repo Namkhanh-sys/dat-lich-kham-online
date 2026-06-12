@@ -1,16 +1,17 @@
 import hashlib
 import uuid
+from typing import Any, Dict, Optional, Tuple
 import pandas as pd
 from src.csv_helper import CSVHelper
 
 class AuthService:
     @staticmethod
-    def hash_password(password):
+    def hash_password(password: str) -> str:
         """Hash a password using SHA-256."""
         return hashlib.sha256(password.encode('utf-8')).hexdigest()
 
     @classmethod
-    def register_user(cls, name, email, password, phone):
+    def register_user(cls, name: str, email: str, password: str, phone: str) -> Tuple[bool, str]:
         """Register a new user. Returns (success, message)."""
         df = CSVHelper.get_users()
         
@@ -41,7 +42,7 @@ class AuthService:
         return False, "Lỗi hệ thống khi lưu thông tin người dùng."
 
     @classmethod
-    def login_user(cls, email, password):
+    def login_user(cls, email: str, password: str) -> Optional[Dict[str, Any]]:
         """Verify user login credentials. Returns user dict or None."""
         df = CSVHelper.get_users()
         if df.empty:
@@ -53,11 +54,13 @@ class AuthService:
         user_row = df[(df['email'].str.lower() == email.strip().lower()) & (df['password_hash'] == hashed_input)]
         
         if not user_row.empty:
-            return user_row.iloc[0].to_dict()
+            user_dict = user_row.iloc[0].to_dict()
+            if isinstance(user_dict, dict):
+                return user_dict
         return None
 
     @classmethod
-    def update_profile(cls, user_id, name, phone):
+    def update_profile(cls, user_id: str, name: str, phone: str) -> Tuple[bool, str]:
         """Update user profile info. Returns (success, message)."""
         df = CSVHelper.get_users()
         if df.empty:
@@ -75,7 +78,7 @@ class AuthService:
         return False, "Lỗi lưu thông tin cập nhật."
 
     @classmethod
-    def change_password(cls, user_id, old_password, new_password):
+    def change_password(cls, user_id: str, old_password: str, new_password: str) -> Tuple[bool, str]:
         """Change user password. Returns (success, message)."""
         df = CSVHelper.get_users()
         if df.empty:
@@ -94,3 +97,4 @@ class AuthService:
         if CSVHelper.save_users(df):
             return True, "Đổi mật khẩu thành công!"
         return False, "Lỗi lưu mật khẩu mới."
+
