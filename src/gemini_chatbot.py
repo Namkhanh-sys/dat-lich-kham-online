@@ -9,24 +9,28 @@ from src.symptom_matcher import SymptomMatcher
 from src.distance_calculator import DistanceCalculator
 from src.csv_helper import CSVHelper
 
-# Prompt hệ thống — rút gọn tối đa để tiết kiệm token
+# Prompt hệ thống
 SYSTEM_PROMPT = """Bạn là trợ lý y tế AI đặt lịch khám Việt Nam. Trả lời tiếng Việt, ngắn gọn (≤4 câu/tin).
 
-QUY TRÌNH (bắt buộc):
-1. Nhận triệu chứng → hỏi 1 câu làm rõ + OPTIONS.["...","..."]
-2. Hỏi thêm ít nhất 2 lần (mỗi lần chỉ 1 câu + OPTIONS).
-3. Sau ≥2 lượt hỏi–đáp → đưa kết luận + DOCTOR_SUGGESTION (không kèm OPTIONS).
+QUY TRÌNH BẮT BUỘC (tuân thủ nghiêm ngặt theo số lượt hỏi):
+- Lượt 1 (tin nhắn người dùng đầu tiên): Hỏi 1 câu làm rõ triệu chứng, PHẢI kèm OPTIONS
+- Lượt 2 (tin nhắn người dùng thứ hai): Hỏi thêm 1 câu cụ thể hơn, PHẢI kèm OPTIONS
+- Lượt 3+ (tin nhắn người dùng thứ ba trở đi): TUYỆT ĐỐI KHÔNG hỏi thêm, PHẢI đưa ra kết luận + DOCTOR_SUGGESTION
 
-FORMAT:
-Câu hỏi của bạn.
+FORMAT BẮT BUỘC khi hỏi (lượt 1 và 2):
+<câu hỏi của bạn>
 OPTIONS:["lựa chọn 1","lựa chọn 2","lựa chọn 3"]
 
-QUY TẮC KHÁC:
-- Mỗi tin nhắn tối đa 4 câu, ngắn gọn, không dài dòng
-- Không dùng OPTIONS lẫn DOCTOR_SUGGESTION trong cùng một tin nhắn
+FORMAT BẮT BUỘC khi kết luận (lượt 3+):
+<lời nhận xét và lời khuyên>
+DOCTOR_SUGGESTION:{"specialty": "tên chuyên khoa", "keywords": "từ khóa 1;từ khóa 2", "advice": "lời khuyên ngắn"}
+
+QUY TẮC:
+- Mỗi tin nhắn tối đa 4 câu, ngắn gọn
+- KHÔNG xuất cả OPTIONS lẫn DOCTOR_SUGGESTION trong cùng một tin nhắn
 - Không chẩn đoán bệnh cụ thể, chỉ gợi ý chuyên khoa
-- Dùng tiếng Việt đơn giản, thân thiện, ân cần
-- Hệ thống sẽ tự hiển thị danh sách bác sĩ, chatbot KHÔNG cần liệt kê"""
+- Dùng tiếng Việt đơn giản, thân thiện
+- Hệ thống sẽ tự hiển thị danh sách bác sĩ phù hợp"""
 
 GREETING = "Xin chào! Tôi là trợ lý y tế AI 🏥\n\nTôi có thể giúp bạn nhận định sơ bộ về các triệu chứng và gợi ý chuyên khoa phù hợp để đặt lịch khám.\n\nBạn đang gặp phải vấn đề sức khỏe gì? Hãy mô tả triệu chứng của bạn nhé! 😊"
 
@@ -125,11 +129,31 @@ class GeminiChatbot:
                     history = [history[0]] + history[-(self.max_history_len - 1):]
                     self.chat_sessions[session_id] = history
 
-            # Di chuyển cấu hình động hoặc tính toán số câu hỏi đã hỏi
+            # Đếm số tin nhắn của người dùng để kiểm soát số lượt hỏi
             active_prompt = SYSTEM_PROMPT
             user_msg_count = sum(1 for m in history if m["role"] == "user")
+            
             if user_msg_count >= 3:
-                active_prompt += '\n\n⚠️ YÊU CẦU BẮT BUỘC: Bạn đã thu thập đủ thông tin (qua 3 tin nhắn của người dùng). KHÔNG ĐƯỢC HỎI THÊM NỮA. Hãy đưa ra kết luận phân tích triệu chứng chi tiết và gợi ý chuyên khoa phù hợp dưới dạng định dạng JSON sau ở cuối tin nhắn:\nDOCTOR_SUGGESTION: {"specialty": "tên chuyên khoa phù hợp (ví dụ: Tiêu hóa, Tai Mũi Họng, Da liễu, Tim mạch...)", "keywords": "các từ khóa triệu chứng phân tách bằng dấu chấm phẩy (ví dụ: đau dạ dày;chán ăn)", "advice": "Lời khuyên ngắn gọn dành cho người dùng."}\nTuyệt đối KHÔNG xuất hiện OPTIONS.'
+                # Lượt 3+: BẮT BUỘC kết luận, KHÔNG hỏi thêm
+                active_prompt += (
+                    '\n\n🚨 LỆNH BẮT BUỘC: Đây là tin nhắn thứ ' + str(user_msg_count) + ' của người dùng. '
+                    'Bạn ĐÃ đặt đủ câu hỏi. TUYỆT ĐỐI KHÔNG được hỏi thêm. '
+                    'Hãy ngay lập tức: (1) Tóm tắt triệu chứng người dùng mô tả, (2) Đưa ra lời khuyên, '
+                    '(3) Xuất DOCTOR_SUGGESTION theo đúng format JSON dưới đây ở cuối tin nhắn:\n'
+                    'DOCTOR_SUGGESTION:{"specialty":"<tên chuyên khoa>","keywords":"<từ khóa 1;từ khóa 2>","advice":"<lời khuyên>"}\n'
+                    'TUYỆT ĐỐI KHÔNG có OPTIONS trong tin nhắn này.'
+                )
+            elif user_msg_count == 2:
+                # Lượt 2: Hỏi câu cuối cùng, phải có OPTIONS
+                active_prompt += (
+                    '\n\n📌 Đây là tin nhắn thứ 2. Hỏi ĐÚNG 1 câu làm rõ cuối cùng và PHẢI kèm OPTIONS. '
+                    'Đây là câu hỏi CUỐI CÙNG, sau đó bạn sẽ phải kết luận.'
+                )
+            else:
+                # Lượt 1: Hỏi câu đầu tiên, phải có OPTIONS
+                active_prompt += (
+                    '\n\n📌 Đây là tin nhắn đầu tiên. Hỏi ĐÚNG 1 câu làm rõ triệu chứng và PHẢI kèm OPTIONS.'
+                )
 
             full_reply = None
 
@@ -297,54 +321,77 @@ class GeminiChatbot:
     def _extract_options(self, text: str):
         """
         Tách OPTIONS:[...] ra khỏi text hiển thị.
+        Hỗ trợ nhiều dạng format: OPTIONS:[...], OPTIONS: [...], v.v.
         Trả về (display_text, options_list).
         """
-        # Match OPTIONS:[...
-        pattern = r'OPTIONS:\s*\[(.*)'
-        match = re.search(pattern, text)
+        # Match OPTIONS: [ ... ] — cho phép xuống dòng và khoảng trắng linh hoạt
+        pattern = r'OPTIONS\s*:\s*\[([^\]]+)\]'
+        match = re.search(pattern, text, re.IGNORECASE | re.DOTALL)
         if match:
             content = match.group(1).strip()
-            # Cleanly remove the match portion from the text
-            display_text = text[:match.start()].strip()
+            # Xóa phần OPTIONS ra khỏi text hiển thị
+            display_text = (text[:match.start()] + text[match.end():]).strip()
             
-            # If there was text after the closing bracket of options, we keep it
-            idx = content.find(']')
-            after_text = ""
-            if idx != -1:
-                after_text = content[idx+1:].strip()
-                content = content[:idx+1]
-            
-            # Find all quoted items inside brackets
-            items = re.findall(r'["\'](.*?)["\']', content)
+            # Tách các option trong ngoặc vuông
+            items = re.findall(r'["\u201c\u201d](.*?)["\u201c\u201d]', content)
             if not items:
-                # Fallback to comma-separated values if no quotes found
-                cleaned_content = content.replace('[', '').replace(']', '').strip()
-                items = [item.strip() for item in cleaned_content.split(',') if item.strip()]
+                # Fallback: tách theo dấu phẩy nếu không có ngoặc kép
+                cleaned = content.replace('[', '').replace(']', '').strip()
+                items = [item.strip() for item in cleaned.split(',') if item.strip()]
             
-            # Combine display text with any text that was after the options block
-            if after_text:
-                display_text = f"{display_text}\n{after_text}".strip()
-                
-            return display_text, items
+            # Loại bỏ option rỗng
+            items = [i for i in items if i.strip()]
+            if items:
+                return display_text, items
             
         return text, []
 
     def _extract_suggestion(self, text: str):
         """
         Tách JSON DOCTOR_SUGGESTION ra khỏi text hiển thị.
+        Hỗ trợ cả format có và không có khoảng trắng sau dấu hai chấm.
         Trả về (display_text, suggestion_dict hoặc None).
         """
-        pattern = r'DOCTOR_SUGGESTION:\s*(\{.*?\})'
-        match = re.search(pattern, text, re.DOTALL)
+        # Thử match JSON đầy đủ với dấu ngoặc nhọn
+        pattern = r'DOCTOR_SUGGESTION\s*:\s*(\{[^}]+\})'
+        match = re.search(pattern, text, re.DOTALL | re.IGNORECASE)
         if match:
-            json_str = match.group(1)
-            # Remove the DOCTOR_SUGGESTION portion from the text, keeping text before and after it
+            json_str = match.group(1).strip()
             display_text = (text[:match.start()] + text[match.end():]).strip()
             try:
                 suggestion = json.loads(json_str)
-                return display_text, suggestion
+                # Đảm bảo các trường cần thiết
+                if 'specialty' in suggestion or 'keywords' in suggestion:
+                    return display_text, suggestion
             except json.JSONDecodeError:
-                pass
+                # Thử sửa JSON bị lỗi (thiếu ngoặc đóng, v.v.)
+                try:
+                    fixed = json_str.rstrip('}').strip() + '}'
+                    suggestion = json.loads(fixed)
+                    if 'specialty' in suggestion or 'keywords' in suggestion:
+                        return display_text, suggestion
+                except Exception:
+                    pass
+        
+        # Fallback: tách thủ công các trường nếu JSON bị lỗi
+        specialty_match = re.search(r'["\']?specialty["\']?\s*:\s*["\u201c\u201d]([^"\u201d]+)["\u201d]', text, re.IGNORECASE)
+        keywords_match = re.search(r'["\']?keywords["\']?\s*:\s*["\u201c\u201d]([^"\u201d]+)["\u201d]', text, re.IGNORECASE)
+        advice_match = re.search(r'["\']?advice["\']?\s*:\s*["\u201c\u201d]([^"\u201d]+)["\u201d]', text, re.IGNORECASE)
+        
+        if specialty_match or keywords_match:
+            suggestion = {
+                'specialty': specialty_match.group(1).strip() if specialty_match else '',
+                'keywords': keywords_match.group(1).strip() if keywords_match else '',
+                'advice': advice_match.group(1).strip() if advice_match else ''
+            }
+            # Xóa phần DOCTOR_SUGGESTION khỏi text
+            ds_start = re.search(r'DOCTOR_SUGGESTION', text, re.IGNORECASE)
+            if ds_start:
+                display_text = text[:ds_start.start()].strip()
+            else:
+                display_text = text
+            return display_text, suggestion
+        
         return text, None
 
     def reset_session(self, session_id: str):
