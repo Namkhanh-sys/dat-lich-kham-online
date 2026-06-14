@@ -41,6 +41,7 @@
                 <h3 style="margin-bottom: 1.25rem; color: var(--secondary);">Cập Nhật Thông Tin Cá Nhân</h3>
                 
                 <form action="{{ url_for('profile_update') }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
                         <div class="form-group">
                             <label for="name" class="form-label">Họ và Tên</label>
@@ -67,6 +68,7 @@
                 <h3 style="margin-bottom: 1.25rem; color: var(--danger);">Đổi Mật Khẩu</h3>
                 
                 <form action="{{ url_for('change_password') }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="form-group">
                         <label for="old_password" class="form-label">Mật khẩu hiện tại</label>
                         <input type="password" id="old_password" name="old_password" class="form-control" placeholder="••••••••" required>

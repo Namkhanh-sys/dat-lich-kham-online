@@ -38,7 +38,7 @@ def test_resolve_user_city_and_region_filter():
 
 def test_get_clinics_with_distance_filters_by_district():
     clinics = DistanceCalculator.get_clinics_with_distance(
-        21.0285, 105.8542, province='HÃ  Ná»™i', district='Quáº­n HoÃ n Kiáº¿m'
+        21.0285, 105.8542, province='Hà Nội', district='Quận Hoàn Kiếm'
     )
 
     assert len(clinics) == 1

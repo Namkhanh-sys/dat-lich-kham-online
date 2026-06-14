@@ -27,16 +27,48 @@ def test_suggest_alternative_slots():
     assert alternatives[0] == '08:00'
 
 def test_create_booking():
-    # Create booking for d1 at free slot on tomorrow
+    # Create booking for d1 at free slot on TOMORROW (conftest has 1 booking for u1 there)
     success, app_dict = BookingManager.create_booking('u1', 'd1', TOMORROW_STR, '10:00')
     assert success is True
     assert app_dict['doctor_id'] == 'd1'
     assert app_dict['time'] == '10:00'
 
-    # Try creating booking on a collision slot (09:00)
-    success_col, msg = BookingManager.create_booking('u1', 'd1', TOMORROW_STR, '09:00')
+    # Try creating booking on a collision slot (09:00) — use a fresh date to avoid daily limit
+    success_col, msg = BookingManager.create_booking('u2', 'd1', TOMORROW_STR, '09:00')
     assert success_col is False
     assert "bác sĩ đã có lịch hẹn" in msg.lower()
+
+def test_user_collision_check():
+    """Ensure that a user cannot book another appointment at the same time with a different doctor."""
+    fresh_date = (TODAY + timedelta(days=80)).strftime('%Y-%m-%d')
+    # Book first doctor at 10:00
+    success1, _ = BookingManager.create_booking('u1', 'd1', fresh_date, '10:00')
+    assert success1 is True
+
+    # Attempt to book second doctor at 10:00 (should fail due to user collision)
+    success2, msg = BookingManager.create_booking('u1', 'd2', fresh_date, '10:00')
+    assert success2 is False
+    assert "đã có lịch khám" in msg.lower()
+
+def test_daily_booking_limit():
+    """User cannot book more than MAX_BOOKINGS_PER_DAY appointments on the same day."""
+    limit = BookingManager.MAX_BOOKINGS_PER_DAY
+    # FUTURE_DATE_STR_3 (60 days ahead) has no pre-existing bookings
+    fresh_date = FUTURE_DATE_STR_3
+    booked = 0
+    for i, slot in enumerate(BookingManager.STANDARD_SLOTS[:limit]):
+        ok, _ = BookingManager.create_booking('u1', 'd1', fresh_date, slot)
+        if ok:
+            booked += 1
+
+    assert booked == limit, f"Expected {limit} bookings to succeed, got {booked}"
+
+    # The next booking on the same day must be rejected
+    extra_slot = BookingManager.STANDARD_SLOTS[limit]
+    ok_extra, msg_extra = BookingManager.create_booking('u1', 'd2', fresh_date, extra_slot)
+    assert ok_extra is False
+    assert "giới hạn" in msg_extra.lower()
+
 
 def test_get_user_appointments():
     # User u1 has appointments
@@ -130,16 +162,19 @@ def test_cancel_already_cancelled_booking():
 
 def test_reschedule_cancelled_booking_rejected():
     """Cannot reschedule an appointment that has already been cancelled."""
-    success, app_dict = BookingManager.create_booking('u1', 'd2', FUTURE_DATE_STR_3, '09:00')
+    # Use a distinct date not shared with other tests
+    unique_date = (TODAY + timedelta(days=70)).strftime('%Y-%m-%d')
+    success, app_dict = BookingManager.create_booking('u1', 'd2', unique_date, '09:00')
     assert success is True
     app_id = app_dict['id']
 
     ok_cancel, _ = BookingManager.cancel_booking(app_id, 'u1')
     assert ok_cancel is True
 
-    ok_res, msg_res = BookingManager.update_booking_time(app_id, 'u1', FUTURE_DATE_STR_3, '14:00')
+    ok_res, msg_res = BookingManager.update_booking_time(app_id, 'u1', unique_date, '14:00')
     assert ok_res is False
     assert "đã hủy" in msg_res.lower()
+
 
 from unittest.mock import patch
 
@@ -163,3 +198,28 @@ def test_suggest_alternative_slots_excludes_past_times_today():
         alternatives = BookingManager.suggest_alternative_slots('d1', today_str)
         for slot in alternatives:
             assert slot > now_time, f"Slot {slot} should be in the future (now={now_time})"
+
+def test_create_booking_collision_with_paid_appointment():
+    """Ensure that checking collision works with paid appointments ('Đã thanh toán')."""
+    # 1. Create a successful booking
+    success, app_dict = BookingManager.create_booking('u1', 'd2', FUTURE_DATE_STR_2, '08:00')
+    assert success is True
+    app_id = app_dict['id']
+    
+    # 2. Confirm payment to change status to 'Đã thanh toán'
+    pay_ok, msg = BookingManager.confirm_payment(app_id, 'u1')
+    assert pay_ok is True
+    
+    # 3. Try creating another booking for the same doctor, date, and time slot
+    success_col, msg_col = BookingManager.create_booking('u1', 'd2', FUTURE_DATE_STR_2, '08:00')
+    assert success_col is False
+    assert "bác sĩ đã có lịch hẹn" in msg_col.lower()
+
+    # 4. Try rescheduling another appointment to that paid slot
+    success_other, other_app = BookingManager.create_booking('u1', 'd2', FUTURE_DATE_STR_2, '10:00')
+    assert success_other is True
+    other_app_id = other_app['id']
+    
+    success_res, msg_res = BookingManager.update_booking_time(other_app_id, 'u1', FUTURE_DATE_STR_2, '08:00')
+    assert success_res is False
+    assert "bận vào khung giờ mới" in msg_res.lower()

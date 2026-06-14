@@ -27,8 +27,8 @@ class ReminderService:
                     target_from = now
                     target_to = now + timedelta(hours=24)
 
-                    # Pre-filter: status = confirmed, reminder not sent
-                    mask = (df_app['status'].str.strip() == 'Đã xác nhận') & \
+                    # Pre-filter: status is not cancelled, reminder not sent
+                    mask = (df_app['status'].str.strip() != 'Đã hủy') & \
                            (df_app['reminder_sent'] != 'True')
 
                     appointments_to_remind = df_app[mask]

@@ -66,8 +66,9 @@ class EmailService:
             msg['From'] = Config.SMTP_USER
             msg['To'] = to_email
             
-            # Attach body
-            msg.attach(MIMEText(body, 'html'))
+            # Attach body — convert plain text to HTML to prevent collapsed lines
+            html_body = cls._build_html_body(body)
+            msg.attach(MIMEText(html_body, 'html'))
             
             # Connect to Gmail SMTP server and send
             with smtplib.SMTP(Config.SMTP_SERVER, Config.SMTP_PORT, timeout=10) as server:
@@ -98,13 +99,60 @@ class EmailService:
             return False, error_msg
 
     @classmethod
+    def _build_html_body(cls, plain_body: str) -> str:
+        """Convert plain text email body to a well-formatted HTML email.
+        
+        This prevents email clients from collapsing all newlines into a single line.
+        Lines starting with '-' are rendered as bold info rows.
+        """
+        lines = plain_body.strip().split('\n')
+        html_lines = []
+        for line in lines:
+            stripped = line.strip()
+            if not stripped:
+                html_lines.append('<br>')
+            elif stripped.startswith('- '):
+                # Bold the label before ':' for info lines like "- Bác sĩ: ..."
+                content = stripped[2:]
+                if ':' in content:
+                    label, value = content.split(':', 1)
+                    html_lines.append(
+                        f'<p style="margin:4px 0;"><strong>{label.strip()}:</strong> {value.strip()}</p>'
+                    )
+                else:
+                    html_lines.append(f'<p style="margin:4px 0;">&bull; {content}</p>')
+            else:
+                html_lines.append(f'<p style="margin:6px 0;">{stripped}</p>')
+
+        content_html = '\n'.join(html_lines)
+
+        return f"""<!DOCTYPE html>
+<html lang="vi">
+<head><meta charset="UTF-8"></head>
+<body style="font-family:Arial,sans-serif;background:#f4f4f4;margin:0;padding:20px;">
+  <div style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.12);">
+    <div style="background:linear-gradient(135deg,#1e40af,#3b82f6);padding:24px 28px;">
+      <h2 style="margin:0;color:#ffffff;font-size:18px;">🏥 Hệ Thống Đặt Lịch Khám Online</h2>
+    </div>
+    <div style="padding:28px 28px 20px;line-height:1.7;color:#333333;">
+      {content_html}
+    </div>
+    <div style="background:#f8fafc;padding:14px 28px;text-align:center;font-size:12px;color:#888888;border-top:1px solid #e5e7eb;">
+      Đây là email tự động từ hệ thống. Vui lòng không reply trực tiếp vào email này.
+    </div>
+  </div>
+</body>
+</html>"""
+
+    @classmethod
     def _send_via_emailjs(cls, to_email, subject, body, template_params=None):
         """Send email through EmailJS over HTTPS."""
+        html_body = cls._build_html_body(body)
         params = dict(template_params or {})
         params.update({
             "to_email": to_email,
             "subject": subject,
-            "message": body,
+            "message": html_body,
         })
 
         try:

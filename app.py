@@ -10,6 +10,7 @@ if sys.stdout.encoding.lower() != 'utf-8':
 import datetime as dt
 from urllib.parse import urlparse, urljoin
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from flask_wtf.csrf import CSRFProtect, CSRFError
 from config import Config
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -27,6 +28,22 @@ from src.debug_routes import debug_bp
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+# ── Bảo vệ CSRF cho toàn bộ form HTML ──────────────────────────────────────
+csrf = CSRFProtect(app)
+
+# Miễn CSRF cho các API endpoint dùng JSON (không phải HTML form)
+@csrf.exempt
+def exempt_api_routes():
+    pass  # placeholder — xem decorator @csrf.exempt ở từng route bên dưới
+
+# Xử lý lỗi CSRF — trả về thông báo thân thiện thay vì 400 mặc định
+@app.errorhandler(CSRFError)
+def handle_csrf_error(e):
+    if request.path.startswith('/api/'):
+        return jsonify({'ok': False, 'error': 'Phiên làm việc hết hạn. Vui lòng tải lại trang.'}), 400
+    flash('Phiên làm việc hết hạn hoặc yêu cầu không hợp lệ. Vui lòng thử lại.', 'error')
+    return redirect(request.referrer or url_for('index')), 302
 
 # Cấu hình giới hạn tần suất (Rate Limiting)
 limiter = Limiter(
@@ -433,8 +450,15 @@ def register():
         if '@' not in email or '.' not in email:
             flash("Email không hợp lệ.", "error")
             return render_template('register.html')
-        if len(password) < 6:
-            flash("Mật khẩu phải dài tối thiểu 6 ký tự.", "error")
+        if not (phone.isdigit() and len(phone) == 10):
+            flash("Số điện thoại phải chứa đúng 10 chữ số.", "error")
+            return render_template('register.html')
+        if len(password) < 8:
+            flash("Mật khẩu phải dài tối thiểu 8 ký tự.", "error")
+            return render_template('register.html')
+        special_chars = '!@#$%^&*(),.?":{}|<>'
+        if not any(char in special_chars for char in password):
+            flash("Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt (!@#$%^&*(),.?\":{}|<>).", "error")
             return render_template('register.html')
             
         success, message = AuthService.register_user(name, email, password, phone)
@@ -908,16 +932,19 @@ def reschedule_appointment(appointment_id):
         clinic_name = clinic.get('name', 'Phòng khám')
         clinic_address = clinic.get('address', 'Địa chỉ')
         
-        # Send update email notification
-        EmailService.send_booking_update(
-            user_email=session['user_email'],
-            user_name=session['user_name'],
-            doctor_name=doc_name,
-            date_str=date,
-            time_str=time,
-            clinic_name=clinic_name,
-            address=clinic_address
-        )
+        # Send update email notification (non-blocking)
+        try:
+            EmailService.send_booking_update(
+                user_email=session['user_email'],
+                user_name=session['user_name'],
+                doctor_name=doc_name,
+                date_str=date,
+                time_str=time,
+                clinic_name=clinic_name,
+                address=clinic_address
+            )
+        except Exception as email_err:
+            print(f"[RESCHEDULE] Email notification error (non-blocking): {email_err}")
         flash(message, "success")
     else:
         flash(message, "error")
@@ -932,6 +959,7 @@ def chatbot_page():
 
 
 @app.route('/api/chat', methods=['POST'])
+@csrf.exempt
 def api_chat():
     """API endpoint nhận tin nhắn và trả lời từ Gemini AI."""
     data = request.get_json(force=True)
@@ -960,6 +988,7 @@ def api_chat():
 
 
 @app.route('/api/chat/reset', methods=['POST'])
+@csrf.exempt
 def api_chat_reset():
     """Reset phiên hội thoại chatbot."""
     session_id = session.get('user_id') or request.remote_addr or 'anonymous'

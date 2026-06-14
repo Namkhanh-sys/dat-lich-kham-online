@@ -59,9 +59,20 @@
         </div>
     {% endif %}
 
+    <!-- Banner khôi phục dữ liệu từ localStorage (ẩn mặc định, JS sẽ hiện nếu cần) -->
+    <div id="restored-banner" style="display:none; align-items:center; gap:0.75rem; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.35); border-radius:10px; padding:0.85rem 1.25rem; margin-bottom:1.25rem;">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style="color:#10b981;flex-shrink:0;"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+        <span style="font-size:0.9rem;color:var(--text-main);flex:1;">
+            ✅ Đã khôi phục thông tin bạn đã điền trước đó. Kiểm tra lại và xác nhận đặt lịch.
+        </span>
+        <button onclick="dismissBanner()" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:1.1rem;padding:0 0.25rem;" title="Đóng và xóa bản nháp">✕</button>
+    </div>
+
     <!-- Booking Form -->
     <div class="glass-panel" style="padding: 2rem;">
+
         <form action="{{ url_for('book_appointment', doctor_id=doctor.id) }}" method="POST" id="bookingForm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <input type="hidden" name="lat" value="{{ user_lat }}">
             <input type="hidden" name="lon" value="{{ user_lon }}">
             <input type="hidden" name="province" value="{{ province }}">
@@ -120,13 +131,101 @@
 
 {% block extra_js %}
 <script>
+    // ── LocalStorage key riêng theo bác sĩ để không nhầm lẫn giữa các form ──
+    var STORAGE_KEY = 'booking_draft_{{ doctor.id }}';
+
+    // ── Khôi phục dữ liệu đã lưu khi tải trang ──────────────────────────────
+    function restoreFormDraft() {
+        try {
+            var raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return;
+            var draft = JSON.parse(raw);
+
+            var dateInput = document.getElementById('date');
+            var timeSelect = document.getElementById('time');
+            var checkbox = document.getElementById('pay_after_exam');
+
+            // Chỉ khôi phục nếu ngày còn hợp lệ (không phải quá khứ)
+            if (draft.date && draft.date >= '{{ today_str }}') {
+                // Chỉ điền nếu server chưa pre-fill (tức là không có collision_error)
+                {% if not selected_date %}
+                if (draft.date) dateInput.value = draft.date;
+                {% endif %}
+                {% if not selected_time %}
+                if (draft.time) {
+                    // Đợi updateTimeOptions chạy xong trước khi set giờ
+                    setTimeout(function() { timeSelect.value = draft.time; }, 50);
+                }
+                {% endif %}
+            }
+            if (draft.pay_after_exam) checkbox.checked = true;
+
+            // Hiện banner thông báo khôi phục
+            if (draft.date || draft.time) {
+                showRestoredBanner();
+            }
+        } catch(e) {}
+    }
+
+    // ── Lưu dữ liệu mỗi khi người dùng thay đổi ─────────────────────────────
+    function saveFormDraft() {
+        try {
+            var draft = {
+                date: document.getElementById('date').value,
+                time: document.getElementById('time').value,
+                pay_after_exam: document.getElementById('pay_after_exam').checked,
+                saved_at: new Date().toISOString()
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+        } catch(e) {}
+    }
+
+    // ── Xóa draft sau khi đặt thành công ─────────────────────────────────────
+    function clearFormDraft() {
+        try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+    }
+
+    // ── Banner thông báo khôi phục dữ liệu ───────────────────────────────────
+    function showRestoredBanner() {
+        var banner = document.getElementById('restored-banner');
+        if (banner) {
+            banner.style.display = 'flex';
+            setTimeout(function() {
+                banner.style.opacity = '0';
+                banner.style.transition = 'opacity 0.5s';
+                setTimeout(function() { banner.style.display = 'none'; }, 500);
+            }, 5000);
+        }
+    }
+
+    function dismissBanner() {
+        var banner = document.getElementById('restored-banner');
+        if (banner) banner.style.display = 'none';
+        clearFormDraft();
+    }
+
+    // ── Lắng nghe sự kiện thay đổi ───────────────────────────────────────────
+    document.getElementById('date').addEventListener('change', function() {
+        updateTimeOptions();
+        saveFormDraft();
+    });
+    document.getElementById('time').addEventListener('change', saveFormDraft);
+    document.getElementById('pay_after_exam').addEventListener('change', saveFormDraft);
+
+    // ── Xóa draft khi submit form thành công ─────────────────────────────────
+    document.getElementById('bookingForm').addEventListener('submit', function() {
+        clearFormDraft();
+    });
+
+    // ── Hàm chọn giờ gợi ý từ collision alert ────────────────────────────────
     function selectAlternativeSlot(slot) {
         var timeSelect = document.getElementById('time');
         timeSelect.value = slot;
         timeSelect.focus();
+        saveFormDraft();
     }
 
-    // Template Bug Fix: Disable past time slots when today is selected
+    // ── Disable giờ đã qua khi chọn hôm nay ─────────────────────────────────
     var todayStr = "{{ today_str }}";
 
     function updateTimeOptions() {
@@ -141,13 +240,11 @@
 
         for (var i = 0; i < timeSelect.options.length; i++) {
             var opt = timeSelect.options[i];
-            if (!opt.value) continue; // skip placeholder
+            if (!opt.value) continue;
             if (selectedDate === todayStr && opt.value <= nowTime) {
                 opt.disabled = true;
                 opt.title = 'Giờ này đã qua';
-                if (opt.selected) {
-                    timeSelect.value = ''; // reset if selected was disabled
-                }
+                if (opt.selected) timeSelect.value = '';
             } else {
                 opt.disabled = false;
                 opt.title = '';
@@ -155,8 +252,9 @@
         }
     }
 
-    document.getElementById('date').addEventListener('change', updateTimeOptions);
-    // Run once on load in case date is pre-filled
+    // ── Khởi động ─────────────────────────────────────────────────────────────
     updateTimeOptions();
+    restoreFormDraft();
 </script>
 {% endblock %}
+

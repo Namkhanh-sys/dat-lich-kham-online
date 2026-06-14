@@ -81,6 +81,7 @@
                                     Đổi lịch
                                 </button>
                                 <form action="{{ url_for('cancel_appointment', appointment_id=app.id) }}" method="POST" id="cancel-form-{{ app.id }}" style="margin: 0;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <button type="button" class="btn btn-danger" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;" onclick="submitCancelForm('{{ app.id }}')">
                                         Hủy lịch
                                     </button>
@@ -91,6 +92,7 @@
                             <div id="reschedule-form-{{ app.id }}" class="reschedule-form" style="display: none;">
                                 <h4 style="margin-bottom: 1rem; color: #ffffff;">Chọn Thời Gian Khám Mới</h4>
                                 <form action="{{ url_for('reschedule_appointment', appointment_id=app.id) }}" method="POST">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                                         <div class="form-group" style="margin-bottom: 0;">
                                             <label class="form-label">Chọn ngày mới</label>

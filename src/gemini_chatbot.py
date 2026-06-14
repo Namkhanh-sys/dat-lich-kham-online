@@ -10,18 +10,20 @@ from src.distance_calculator import DistanceCalculator
 from src.csv_helper import CSVHelper
 
 # Prompt hệ thống
-SYSTEM_PROMPT = """Bạn là trợ lý y tế AI đặt lịch khám Việt Nam. Trả lời tiếng Việt, ngắn gọn (≤4 câu/tin).
+SYSTEM_PROMPT = """Bạn là trợ lý y tế AI đặt lịch khám Việt Nam mang tên DocBot. Trả lời tiếng Việt, ngắn gọn (≤4 câu/tin).
 
 QUY TRÌNH BẮT BUỘC (tuân thủ nghiêm ngặt theo số lượt hỏi):
 - Lượt 1 (tin nhắn người dùng đầu tiên): Hỏi 1 câu làm rõ triệu chứng, PHẢI kèm OPTIONS
-- Lượt 2 (tin nhắn người dùng thứ hai): Hỏi thêm 1 câu cụ thể hơn, PHẢI kèm OPTIONS
-- Lượt 3+ (tin nhắn người dùng thứ ba trở đi): TUYỆT ĐỐI KHÔNG hỏi thêm, PHẢI đưa ra kết luận + DOCTOR_SUGGESTION
+- Lượt 2 (tin nhắn thứ hai): Hỏi thêm 1 câu cụ thể hơn, PHẢI kèm OPTIONS
+- Lượt 3 (tin nhắn thứ ba): Hỏi thêm 1 câu nữa để khoanh vùng nguyên nhân, PHẢI kèm OPTIONS
+- Lượt 4 (tin nhắn thứ tư): Hỏi thêm 1 câu chót để xác nhận tình trạng, PHẢI kèm OPTIONS
+- Lượt 5+ (tin nhắn người dùng thứ năm trở đi): TUYỆT ĐỐI KHÔNG hỏi thêm, PHẢI đưa ra kết luận + DOCTOR_SUGGESTION
 
-FORMAT BẮT BUỘC khi hỏi (lượt 1 và 2):
+FORMAT BẮT BUỘC khi hỏi (lượt 1 đến 4):
 <câu hỏi của bạn>
 OPTIONS:["lựa chọn 1","lựa chọn 2","lựa chọn 3"]
 
-FORMAT BẮT BUỘC khi kết luận (lượt 3+):
+FORMAT BẮT BUỘC khi kết luận (lượt 5+):
 <lời nhận xét và lời khuyên>
 DOCTOR_SUGGESTION:{"specialty": "tên chuyên khoa", "keywords": "từ khóa 1;từ khóa 2", "advice": "lời khuyên ngắn"}
 
@@ -32,7 +34,7 @@ QUY TẮC:
 - Dùng tiếng Việt đơn giản, thân thiện
 - Hệ thống sẽ tự hiển thị danh sách bác sĩ phù hợp"""
 
-GREETING = "Xin chào! Tôi là trợ lý y tế AI 🏥\n\nTôi có thể giúp bạn nhận định sơ bộ về các triệu chứng và gợi ý chuyên khoa phù hợp để đặt lịch khám.\n\nBạn đang gặp phải vấn đề sức khỏe gì? Hãy mô tả triệu chứng của bạn nhé! 😊"
+GREETING = "Xin chào! Tôi là DocBot - trợ lý y tế AI\n\nTôi có thể giúp bạn nhận định sơ bộ về các triệu chứng và gợi ý chuyên khoa phù hợp để đặt lịch khám.\n\nBạn đang gặp phải vấn đề sức khỏe gì? Hãy mô tả triệu chứng của bạn nhé! 😊"
 
 
 class GeminiChatbot:
@@ -133,8 +135,8 @@ class GeminiChatbot:
             active_prompt = SYSTEM_PROMPT
             user_msg_count = sum(1 for m in history if m["role"] == "user")
             
-            if user_msg_count >= 3:
-                # Lượt 3+: BẮT BUỘC kết luận, KHÔNG hỏi thêm
+            if user_msg_count >= 5:
+                # Lượt 5+: BẮT BUỘC kết luận, KHÔNG hỏi thêm
                 active_prompt += (
                     '\n\n🚨 LỆNH BẮT BUỘC: Đây là tin nhắn thứ ' + str(user_msg_count) + ' của người dùng. '
                     'Bạn ĐÃ đặt đủ câu hỏi. TUYỆT ĐỐI KHÔNG được hỏi thêm. '
@@ -143,11 +145,21 @@ class GeminiChatbot:
                     'DOCTOR_SUGGESTION:{"specialty":"<tên chuyên khoa>","keywords":"<từ khóa 1;từ khóa 2>","advice":"<lời khuyên>"}\n'
                     'TUYỆT ĐỐI KHÔNG có OPTIONS trong tin nhắn này.'
                 )
-            elif user_msg_count == 2:
-                # Lượt 2: Hỏi câu cuối cùng, phải có OPTIONS
+            elif user_msg_count == 4:
+                # Lượt 4: Hỏi câu chót trước khi kết luận, phải có OPTIONS
                 active_prompt += (
-                    '\n\n📌 Đây là tin nhắn thứ 2. Hỏi ĐÚNG 1 câu làm rõ cuối cùng và PHẢI kèm OPTIONS. '
+                    '\n\n📌 Đây là tin nhắn thứ 4. Hỏi ĐÚNG 1 câu làm rõ cuối cùng và PHẢI kèm OPTIONS. '
                     'Đây là câu hỏi CUỐI CÙNG, sau đó bạn sẽ phải kết luận.'
+                )
+            elif user_msg_count == 3:
+                # Lượt 3: Hỏi câu thứ ba, phải có OPTIONS
+                active_prompt += (
+                    '\n\n📌 Đây là tin nhắn thứ 3. Hỏi ĐÚNG 1 câu để khoanh vùng nguyên nhân và PHẢI kèm OPTIONS.'
+                )
+            elif user_msg_count == 2:
+                # Lượt 2: Hỏi câu cụ thể hơn, phải có OPTIONS
+                active_prompt += (
+                    '\n\n📌 Đây là tin nhắn thứ 2. Hỏi ĐÚNG 1 câu cụ thể hơn và PHẢI kèm OPTIONS.'
                 )
             else:
                 # Lượt 1: Hỏi câu đầu tiên, phải có OPTIONS

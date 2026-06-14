@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Đặt Lịch Khám Online{% endblock %}</title>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=4">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=6">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -220,7 +220,7 @@
         const widgetChatBody = document.getElementById('widget-chat-body');
         if (!widgetChatBody) return;
         widgetChatBody.innerHTML = '';
-        appendWidgetBotMessage("Xin chào! Tôi là trợ lý y tế AI 🏥\n\nTôi có thể giúp bạn nhận định sơ bộ về các triệu chứng và gợi ý chuyên khoa phù hợp để đặt lịch khám.\n\nBạn đang gặp phải vấn đề sức khỏe gì? Hãy mô tả triệu chứng của bạn nhé! 😊");
+        appendWidgetBotMessage("Xin chào! Tôi là DocBot - trợ lý y tế AI\n\nTôi có thể giúp bạn nhận định sơ bộ về các triệu chứng và gợi ý chuyên khoa phù hợp để đặt lịch khám.\n\nBạn đang gặp phải vấn đề sức khỏe gì? Hãy mô tả triệu chứng của bạn nhé! 😊");
         widgetInitialized = true;
         renderSmartSuggestions();
         
@@ -320,7 +320,6 @@
         const div = document.createElement('div');
         div.className = 'chat-msg user';
         div.innerHTML = `
-            <div class="chat-msg-avatar">👤</div>
             <div class="chat-msg-bubble">${escapeHtml(text)}</div>
         `;
         widgetChatBody.appendChild(div);
@@ -336,7 +335,7 @@
         const formatted = escapeHtml(text)
             .replace(/\n/g, '<br>')
             .replace(/•/g, '&bull;')
-            .replace(/(Trợ lý [yY] tế AI|trợ lý [yY] tế AI)/g, '<span class="highlight-ai">$1</span>');
+            .replace(/(Trợ lý [yY] tế AI|trợ lý [yY] tế AI|DocBot)/g, '<span class="highlight-ai">$1</span>');
 
         let doctorHtml = '';
         if (doctors && doctors.length > 0) {
@@ -358,7 +357,7 @@
                         
                         return `
                         <a href="/doctor/${d.id}${buildLocationQuery()}" class="widget-doctor-card" title="${escapeHtml(fullTooltip)}">
-                            <div class="widget-doctor-card-avatar">👨‍⚕️</div>
+                             <div class="widget-doctor-card-avatar">👨‍⚕️</div>
                             <div class="widget-doctor-card-info">
                                 <div class="widget-doctor-card-name">${escapeHtml(d.name || '')}</div>
                                 <div class="widget-doctor-card-meta">${escapeHtml(metaText)}</div>
@@ -381,7 +380,6 @@
         }
 
         div.innerHTML = `
-            <div class="chat-msg-avatar">🤖</div>
             <div class="chat-msg-bubble">${formatted}${doctorHtml}${optionsHtml}</div>
         `;
         widgetChatBody.appendChild(div);
@@ -418,7 +416,6 @@
         div.className = 'chat-msg bot';
         div.id = id;
         div.innerHTML = `
-            <div class="chat-msg-avatar">🤖</div>
             <div class="chat-msg-bubble">
                 <div class="widget-typing">
                     <span></span><span></span><span></span>
@@ -550,14 +547,19 @@
     </script>
 
     <!-- Floating AI Chatbot Widget HTML -->
-    <button class="chatbot-fab" id="chatbot-fab-btn" onclick="toggleChatbotWidget()" title="Trợ lý Y tế AI">
-        <span class="fab-icon">🤖</span>
+    {% if request.endpoint not in ['login', 'register'] %}
+    <button class="chatbot-fab" id="chatbot-fab-btn" onclick="toggleChatbotWidget()" title="DocBot - Trợ lý Y tế AI">
+        <span class="fab-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--primary)" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 2H14V10H22V14H14V22H10V14H2V10H10V2Z" />
+            </svg>
+        </span>
     </button>
 
     <div class="chatbot-widget-window" id="chatbot-widget">
         <div class="chatbot-widget-header">
             <span class="status-dot"></span>
-            <h3>Trợ lý Y tế AI</h3>
+            <h3>DocBot</h3>
             <div class="header-actions">
                 <button onclick="resetWidgetChat()" title="Làm mới cuộc trò chuyện">🔄</button>
                 <button onclick="toggleChatbotWidget()" title="Đóng">✕</button>
@@ -578,5 +580,6 @@
             <button id="widget-btn-send" onclick="sendWidgetMessage()">➤</button>
         </div>
     </div>
+    {% endif %}
 </body>
 </html>

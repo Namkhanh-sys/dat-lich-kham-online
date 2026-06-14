@@ -19,6 +19,19 @@ class AuthService:
         if not df.empty and email.strip().lower() in df['email'].str.lower().values:
             return False, "Email này đã được đăng ký sử dụng."
         
+        # Phone validation: must be exactly 10 digits
+        clean_phone = phone.strip()
+        if not (clean_phone.isdigit() and len(clean_phone) == 10):
+            return False, "Số điện thoại phải chứa đúng 10 chữ số."
+            
+        # Password validation: must be at least 8 characters and contain at least 1 special character
+        if len(password) < 8:
+            return False, "Mật khẩu phải dài tối thiểu 8 ký tự."
+            
+        special_chars = '!@#$%^&*(),.?":{}|<>'
+        if not any(char in special_chars for char in password):
+            return False, "Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt (!@#$%^&*(),.?\":{}|<>)."
+        
         # Generate new unique user id
         user_id = f"u_{uuid.uuid4().hex[:8]}"
         password_hash = cls.hash_password(password)
@@ -28,7 +41,7 @@ class AuthService:
             'name': name.strip(),
             'email': email.strip().lower(),
             'password_hash': password_hash,
-            'phone': phone.strip()
+            'phone': clean_phone
         }
         
         # Append and save

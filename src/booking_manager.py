@@ -1,4 +1,5 @@
 import uuid
+import threading
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Tuple, Union
 import pandas as pd
@@ -9,6 +10,10 @@ class BookingManager:
         '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
         '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00'
     ]
+    # Giới hạn số lịch khám tối đa một người dùng có thể đặt trong cùng 1 ngày
+    MAX_BOOKINGS_PER_DAY: int = 2
+    # Lock bảo vệ toàn bộ chuỗi kiểm tra trùng lịch → ghi file khỏi race condition
+    _booking_lock: threading.Lock = threading.Lock()
 
     @classmethod
     def get_doctor_appointments_on_date(cls, doctor_id: str, date_str: str) -> List[str]:
@@ -17,11 +22,11 @@ class BookingManager:
         if df.empty:
             return []
         
-        # Filter by doctor_id, date, and make sure it is confirmed
+        # Filter by doctor_id, date, and make sure it is not cancelled
         active_appointments = df[
             (df['doctor_id'] == doctor_id) & 
             (df['date'] == date_str) & 
-            (df['status'].str.strip() == 'Đã xác nhận')
+            (df['status'].str.strip() != 'Đã hủy')
         ]
         return active_appointments['time'].tolist()
 
@@ -30,6 +35,40 @@ class BookingManager:
         """Check if the doctor is already booked at this date and time."""
         booked_slots = cls.get_doctor_appointments_on_date(doctor_id, date_str)
         return time_str in booked_slots
+
+    @classmethod
+    def check_user_collision(cls, user_id: str, date_str: str, time_str: str, exclude_appointment_id: Optional[str] = None) -> bool:
+        """Check if a user already has an active appointment at this exact date and time (with any doctor)."""
+        df = CSVHelper.get_appointments()
+        if df.empty:
+            return False
+        mask = (
+            (df['user_id'] == user_id) &
+            (df['date'] == date_str) &
+            (df['time'] == time_str) &
+            (df['status'].str.strip() != 'Đã hủy')
+        )
+        if exclude_appointment_id:
+            mask = mask & (df['id'] != exclude_appointment_id)
+        return mask.any()
+
+    @classmethod
+    def count_user_bookings_on_date(cls, user_id: str, date_str: str, df: Optional[pd.DataFrame] = None) -> int:
+        """Count how many active (non-cancelled) appointments the user has on a specific date.
+        
+        Accepts an optional pre-loaded DataFrame so callers inside the lock can
+        reuse the same snapshot instead of re-reading the CSV.
+        """
+        if df is None:
+            df = CSVHelper.get_appointments()
+        if df.empty:
+            return 0
+        mask = (
+            (df['user_id'] == user_id) &
+            (df['date'] == date_str) &
+            (df['status'].str.strip() != 'Đã hủy')
+        )
+        return int(mask.sum())
 
     @classmethod
     def _available_slots(cls, booked_slots: List[str], date_str: str, limit: Optional[int] = None) -> List[str]:
@@ -65,10 +104,15 @@ class BookingManager:
 
     @classmethod
     def create_booking(cls, user_id: str, doctor_id: str, date_str: str, time_str: str) -> Tuple[bool, Union[Dict[str, Any], str]]:
-        """Create a new booking if no collision. Returns (success, message_or_appointment_dict)."""
+        """Create a new booking if no collision. Returns (success, message_or_appointment_dict).
+        
+        Uses _booking_lock to make the entire check→write sequence atomic,
+        preventing two concurrent requests from both passing the collision check
+        for the same doctor+date+time slot (race condition).
+        """
         print(f"[BookingManager.create_booking] START: user={user_id}, doctor={doctor_id}, date={date_str}, time={time_str}")
         
-        # Validate date and time format
+        # Validate date and time format BEFORE acquiring the lock (no I/O needed)
         try:
             appt_date = datetime.strptime(date_str, "%Y-%m-%d").date()
             if appt_date < datetime.today().date():
@@ -85,46 +129,73 @@ class BookingManager:
             print(f"[BookingManager.create_booking] Date format error: {e}")
             return False, "Định dạng ngày khám không hợp lệ (hãy dùng YYYY-MM-DD)."
 
-        # Check collision
-        print(f"[BookingManager.create_booking] Checking collision...")
-        if cls.check_collision(doctor_id, date_str, time_str):
-            alternatives = cls.suggest_alternative_slots(doctor_id, date_str)
-            alt_str = ", ".join(alternatives)
-            print(f"[BookingManager.create_booking] Collision detected, suggesting alternatives")
-            return False, f"Bác sĩ đã có lịch hẹn vào giờ này. Vui lòng chọn giờ khác. Gợi ý giờ trống: {alt_str}."
+        # ──── CRITICAL SECTION: chỉ 1 request được chạy qua đây tại một thời điểm ────
+        with cls._booking_lock:
+            # — Tải dữ liệu 1 lần duy nhất trong lock để đảm bảo snapshot nhất quán
+            df_appointments = CSVHelper.get_appointments()
 
-        print(f"[BookingManager.create_booking] No collision, creating appointment...")
-        df_appointments = CSVHelper.get_appointments()
-        print(f"[BookingManager.create_booking] Loaded appointments, shape: {df_appointments.shape}")
-        
-        appointment_id = f"a_{uuid.uuid4().hex[:8]}"
-        
-        new_appointment = {
-            'id': appointment_id,
-            'user_id': user_id,
-            'doctor_id': doctor_id,
-            'date': date_str,
-            'time': time_str,
-            'status': 'Đã xác nhận'
-        }
-        print(f"[BookingManager.create_booking] Created appointment dict: {new_appointment}")
+            # Check giới hạn số lịch trong ngày — ngăn spam đặt nhiều lịch
+            booking_count = cls.count_user_bookings_on_date(user_id, date_str, df=df_appointments)
+            if booking_count >= cls.MAX_BOOKINGS_PER_DAY:
+                print(f"[BookingManager.create_booking] [LOCKED] User {user_id} exceeded daily limit ({booking_count}/{cls.MAX_BOOKINGS_PER_DAY}) on {date_str}")
+                return False, (
+                    f"Bạn đã đặt {booking_count} lịch khám trong ngày {date_str}. "
+                    f"Giới hạn tối đa là {cls.MAX_BOOKINGS_PER_DAY} lịch/ngày. "
+                    "Vui lòng chọn ngày khác hoặc hủy một lịch đã đặt."
+                )
 
-        if df_appointments.empty:
-            print(f"[BookingManager.create_booking] Appointments empty, creating new dataframe")
-            df_appointments = pd.DataFrame([new_appointment])
-        else:
-            print(f"[BookingManager.create_booking] Concatenating with existing appointments")
-            df_appointments = pd.concat([df_appointments, pd.DataFrame([new_appointment])], ignore_index=True)
-        
-        print(f"[BookingManager.create_booking] New appointments shape: {df_appointments.shape}")
-        print(f"[BookingManager.create_booking] Saving to CSV...")
-        
-        if CSVHelper.save_appointments(df_appointments):
-            print(f"[BookingManager.create_booking] SUCCESS: Appointment saved with id={appointment_id}")
-            return True, new_appointment
-        
-        print(f"[BookingManager.create_booking] FAILED: Could not save appointment")
-        return False, "Lỗi hệ thống khi lưu lịch hẹn."
+            # Check collision — bác sĩ đã có lịch giờ này
+            print(f"[BookingManager.create_booking] [LOCKED] Checking doctor collision...")
+            booked_slots = df_appointments[
+                (df_appointments['doctor_id'] == doctor_id) &
+                (df_appointments['date'] == date_str) &
+                (df_appointments['status'].str.strip() != 'Đã hủy')
+            ]['time'].tolist()
+            if time_str in booked_slots:
+                alternatives = cls.suggest_alternative_slots(doctor_id, date_str)
+                alt_str = ", ".join(alternatives)
+                print(f"[BookingManager.create_booking] Doctor collision detected")
+                return False, f"Bác sĩ đã có lịch hẹn vào giờ này. Vui lòng chọn giờ khác. Gợi ý giờ trống: {alt_str}."
+
+            # Check user collision — người dùng đã có lịch khám cùng giờ với bác sĩ khác
+            print(f"[BookingManager.create_booking] [LOCKED] Checking user collision...")
+            user_same_time = (
+                (df_appointments['user_id'] == user_id) &
+                (df_appointments['date'] == date_str) &
+                (df_appointments['time'] == time_str) &
+                (df_appointments['status'].str.strip() != 'Đã hủy')
+            )
+            if user_same_time.any():
+                print(f"[BookingManager.create_booking] User already has appointment at this time")
+                return False, f"Bạn đã có lịch khám vào {time_str} ngày {date_str} với một bác sĩ khác. Vui lòng chọn khung giờ khác."
+
+            print(f"[BookingManager.create_booking] [LOCKED] No collision, creating appointment...")
+            print(f"[BookingManager.create_booking] Current appointments count: {len(df_appointments)}")
+            
+            appointment_id = f"a_{uuid.uuid4().hex[:8]}"
+            
+            new_appointment = {
+                'id': appointment_id,
+                'user_id': user_id,
+                'doctor_id': doctor_id,
+                'date': date_str,
+                'time': time_str,
+                'status': 'Đã xác nhận'
+            }
+            print(f"[BookingManager.create_booking] Created appointment dict: {new_appointment}")
+
+            if df_appointments.empty:
+                df_appointments = pd.DataFrame([new_appointment])
+            else:
+                df_appointments = pd.concat([df_appointments, pd.DataFrame([new_appointment])], ignore_index=True)
+            
+            print(f"[BookingManager.create_booking] Saving to CSV...")
+            if CSVHelper.save_appointments(df_appointments):
+                print(f"[BookingManager.create_booking] SUCCESS: Appointment saved with id={appointment_id}")
+                return True, new_appointment
+            
+            print(f"[BookingManager.create_booking] FAILED: Could not save appointment")
+            return False, "Lỗi hệ thống khi lưu lịch hẹn."
 
     @classmethod
     def get_user_appointments(cls, user_id: str) -> List[Dict[str, Any]]:
@@ -206,7 +277,11 @@ class BookingManager:
 
     @classmethod
     def update_booking_time(cls, appointment_id: str, user_id: str, new_date: str, new_time: str) -> Tuple[bool, str]:
-        """Update date/time of a booking (reschedule)."""
+        """Update date/time of a booking (reschedule).
+        
+        Uses _booking_lock to prevent two concurrent reschedules from both
+        grabbing the same slot at the same time.
+        """
         # BUG FIX #2: Validate that the new date/time is not in the past
         try:
             new_date_obj = datetime.strptime(new_date, "%Y-%m-%d").date()
@@ -219,43 +294,49 @@ class BookingManager:
         except ValueError:
             return False, "Định dạng ngày không hợp lệ (hãy dùng YYYY-MM-DD)."
 
-        df = CSVHelper.get_appointments()
-        if df.empty:
-            return False, "Không tìm thấy dữ liệu lịch hẹn."
+        # ──── CRITICAL SECTION ────
+        with cls._booking_lock:
+            df = CSVHelper.get_appointments()
+            if df.empty:
+                return False, "Không tìm thấy dữ liệu lịch hẹn."
 
-        mask = (df['id'] == appointment_id) & (df['user_id'] == user_id)
-        if not mask.any():
-            return False, "Lịch hẹn không tồn tại."
+            mask = (df['id'] == appointment_id) & (df['user_id'] == user_id)
+            if not mask.any():
+                return False, "Lịch hẹn không tồn tại."
 
-        current_status = df.loc[mask, 'status'].values[0].strip()
-        if current_status == 'Đã hủy':
-            return False, "Không thể đổi lịch cho lịch hẹn đã hủy."
+            current_status = df.loc[mask, 'status'].values[0].strip()
+            if current_status == 'Đã hủy':
+                return False, "Không thể đổi lịch cho lịch hẹn đã hủy."
 
-        doctor_id = df.loc[mask, 'doctor_id'].values[0]
+            doctor_id = df.loc[mask, 'doctor_id'].values[0]
 
-        # Check collision for new slot (excluding current appointment itself)
-        df_others = df[df['id'] != appointment_id]
-        active_others = df_others[
-            (df_others['doctor_id'] == doctor_id) & 
-            (df_others['date'] == new_date) & 
-            (df_others['status'].str.strip() == 'Đã xác nhận')
-        ]
-        
-        if new_time in active_others['time'].tolist():
-            booked_slots = cls.get_doctor_appointments_on_date(doctor_id, new_date)
-            if df.loc[mask, 'date'].values[0] == new_date:
-                current_time = df.loc[mask, 'time'].values[0]
-                if current_time in booked_slots:
-                    booked_slots.remove(current_time)
+            # Check collision for new slot (excluding current appointment itself)
+            df_others = df[df['id'] != appointment_id]
+            active_others = df_others[
+                (df_others['doctor_id'] == doctor_id) & 
+                (df_others['date'] == new_date) &
+                (df_others['status'].str.strip() != 'Đã hủy')
+            ]
             
-            available_slots = cls._available_slots(booked_slots, new_date, limit=3)
-            alt_str = ", ".join(available_slots)
-            return False, f"Bác sĩ đã bận vào khung giờ mới này. Gợi ý giờ trống: {alt_str}."
+            if new_time in active_others['time'].tolist():
+                booked_slots = cls.get_doctor_appointments_on_date(doctor_id, new_date)
+                if df.loc[mask, 'date'].values[0] == new_date:
+                    current_time = df.loc[mask, 'time'].values[0]
+                    if current_time in booked_slots:
+                        booked_slots.remove(current_time)
+                
+                available_slots = cls._available_slots(booked_slots, new_date, limit=3)
+                alt_str = ", ".join(available_slots)
+                return False, f"Bác sĩ đã bận vào khung giờ mới này. Gợi ý giờ trống: {alt_str}."
 
-        df.loc[mask, 'date'] = new_date
-        df.loc[mask, 'time'] = new_time
+            # Check user collision — người dùng đã có lịch khám cùng giờ với bác sĩ khác (loại trừ lịch hiện tại)
+            if cls.check_user_collision(user_id, new_date, new_time, exclude_appointment_id=appointment_id):
+                return False, f"Bạn đã có lịch khám vào {new_time} ngày {new_date} với một bác sĩ khác. Vui lòng chọn khung giờ khác."
 
-        if CSVHelper.save_appointments(df):
-            return True, "Đổi lịch hẹn thành công."
-        return False, "Lỗi hệ thống khi cập nhật lịch hẹn."
+            df.loc[mask, 'date'] = new_date
+            df.loc[mask, 'time'] = new_time
+
+            if CSVHelper.save_appointments(df):
+                return True, "Đổi lịch hẹn thành công."
+            return False, "Lỗi hệ thống khi cập nhật lịch hẹn."
 

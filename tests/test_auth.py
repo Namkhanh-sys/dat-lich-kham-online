@@ -27,7 +27,7 @@ def test_login_user():
 
 def test_register_user():
     # Successful registration
-    success, msg = AuthService.register_user("User New", "new@example.com", "secure123", "0123456789")
+    success, msg = AuthService.register_user("User New", "new@example.com", "secure123!", "0123456789")
     assert success is True
     assert "thành công" in msg.lower()
 
@@ -36,9 +36,24 @@ def test_register_user():
     assert "new@example.com" in df['email'].values
 
     # Duplicate registration
-    success2, msg2 = AuthService.register_user("User Duplicate", "new@example.com", "secure123", "0123456789")
+    success2, msg2 = AuthService.register_user("User Duplicate", "new@example.com", "secure123!", "0123456789")
     assert success2 is False
     assert "đã được đăng ký" in msg2
+
+    # Phone validation failure (not 10 digits)
+    success3, msg3 = AuthService.register_user("User Phone Fail", "phonefail@example.com", "secure123!", "01234")
+    assert success3 is False
+    assert "10 chữ số" in msg3
+
+    # Password validation failure (less than 8 chars)
+    success4, msg4 = AuthService.register_user("User Pass Fail", "passfail@example.com", "sec!", "0123456789")
+    assert success4 is False
+    assert "tối thiểu 8 ký tự" in msg4
+
+    # Password validation failure (no special character)
+    success5, msg5 = AuthService.register_user("User Spec Fail", "specfail@example.com", "secure123", "0123456789")
+    assert success5 is False
+    assert "ký tự đặc biệt" in msg5
 
 def test_update_profile():
     # Find test user ID

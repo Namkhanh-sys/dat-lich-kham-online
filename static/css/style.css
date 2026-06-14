@@ -1215,9 +1215,10 @@ textarea.form-control {
     right: max(24px, env(safe-area-inset-right, 0px) + 16px);
     width: 60px;
     height: 60px;
-    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    background: #ffffff;
+    border: 2px solid var(--primary);
     border-radius: 50%;
-    box-shadow: 0 4px 16px rgba(220, 38, 38, 0.4);
+    box-shadow: 0 4px 16px rgba(220, 38, 38, 0.2);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1233,7 +1234,8 @@ textarea.form-control {
 
 .chatbot-fab:hover {
     transform: scale(1.1) rotate(5deg);
-    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5);
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.35);
+    background: var(--primary-light);
 }
 
 .chatbot-fab:active {
@@ -1242,7 +1244,7 @@ textarea.form-control {
 
 .chatbot-fab .fab-icon {
     font-size: 28px;
-    color: #ffffff;
+    color: var(--primary);
     line-height: 1;
     pointer-events: none;
 }
@@ -1397,7 +1399,10 @@ textarea.form-control {
 }
 
 .chat-msg.bot .chat-msg-avatar {
-    background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+    background: #ffffff;
+    border: 1.5px solid var(--primary);
+    color: var(--primary);
+    font-weight: bold;
 }
 
 .chat-msg.user .chat-msg-avatar {
