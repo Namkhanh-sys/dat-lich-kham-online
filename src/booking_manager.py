@@ -134,16 +134,6 @@ class BookingManager:
             # — Tải dữ liệu 1 lần duy nhất trong lock để đảm bảo snapshot nhất quán
             df_appointments = CSVHelper.get_appointments()
 
-            # Check giới hạn số lịch trong ngày — ngăn spam đặt nhiều lịch
-            booking_count = cls.count_user_bookings_on_date(user_id, date_str, df=df_appointments)
-            if booking_count >= cls.MAX_BOOKINGS_PER_DAY:
-                print(f"[BookingManager.create_booking] [LOCKED] User {user_id} exceeded daily limit ({booking_count}/{cls.MAX_BOOKINGS_PER_DAY}) on {date_str}")
-                return False, (
-                    f"Bạn đã đặt {booking_count} lịch khám trong ngày {date_str}. "
-                    f"Giới hạn tối đa là {cls.MAX_BOOKINGS_PER_DAY} lịch/ngày. "
-                    "Vui lòng chọn ngày khác hoặc hủy một lịch đã đặt."
-                )
-
             # Check collision — bác sĩ đã có lịch giờ này
             print(f"[BookingManager.create_booking] [LOCKED] Checking doctor collision...")
             booked_slots = df_appointments[

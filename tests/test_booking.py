@@ -50,24 +50,7 @@ def test_user_collision_check():
     assert success2 is False
     assert "đã có lịch khám" in msg.lower()
 
-def test_daily_booking_limit():
-    """User cannot book more than MAX_BOOKINGS_PER_DAY appointments on the same day."""
-    limit = BookingManager.MAX_BOOKINGS_PER_DAY
-    # FUTURE_DATE_STR_3 (60 days ahead) has no pre-existing bookings
-    fresh_date = FUTURE_DATE_STR_3
-    booked = 0
-    for i, slot in enumerate(BookingManager.STANDARD_SLOTS[:limit]):
-        ok, _ = BookingManager.create_booking('u1', 'd1', fresh_date, slot)
-        if ok:
-            booked += 1
 
-    assert booked == limit, f"Expected {limit} bookings to succeed, got {booked}"
-
-    # The next booking on the same day must be rejected
-    extra_slot = BookingManager.STANDARD_SLOTS[limit]
-    ok_extra, msg_extra = BookingManager.create_booking('u1', 'd2', fresh_date, extra_slot)
-    assert ok_extra is False
-    assert "giới hạn" in msg_extra.lower()
 
 
 def test_get_user_appointments():
