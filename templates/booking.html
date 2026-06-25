@@ -148,15 +148,13 @@
             // Chỉ khôi phục nếu ngày còn hợp lệ (không phải quá khứ)
             if (draft.date && draft.date >= '{{ today_str }}') {
                 // Chỉ điền nếu server chưa pre-fill (tức là không có collision_error)
-                {% if not selected_date %}
-                if (draft.date) dateInput.value = draft.date;
-                {% endif %}
-                {% if not selected_time %}
-                if (draft.time) {
+                if (!dateInput.value && draft.date) {
+                    dateInput.value = draft.date;
+                }
+                if (!timeSelect.value && draft.time) {
                     // Đợi updateTimeOptions chạy xong trước khi set giờ
                     setTimeout(function() { timeSelect.value = draft.time; }, 50);
                 }
-                {% endif %}
             }
             if (draft.pay_after_exam) checkbox.checked = true;
 
