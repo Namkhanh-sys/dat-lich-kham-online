@@ -48,7 +48,8 @@ def handle_csrf_error(e):
 # Cấu hình giới hạn tần suất (Rate Limiting)
 limiter = Limiter(
     key_func=get_remote_address,
-    default_limits=["200 per day", "50 per hour"]
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri="memory://"
 )
 limiter.init_app(app)
 
@@ -994,6 +995,12 @@ def api_chat_reset():
     session_id = session.get('user_id') or request.remote_addr or 'anonymous'
     chatbot_instance.reset_session(str(session_id))
     return jsonify({'ok': True})
+
+
+@app.route('/favicon.ico')
+def favicon():
+    """Silence favicon 404s by returning 204 No Content."""
+    return '', 204
 
 
 if __name__ == '__main__':

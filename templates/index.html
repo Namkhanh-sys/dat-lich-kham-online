@@ -417,7 +417,7 @@
             if (showManual) {
                 showManualLocationPicker();
             }
-        }, { enableHighAccuracy: false, timeout: 20000, maximumAge: 300000 });
+        }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 });
     }
 
     function goToDisease(diseaseId) {
