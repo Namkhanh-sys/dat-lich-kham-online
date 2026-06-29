@@ -241,11 +241,17 @@ class EmailService:
 
     @classmethod
     def send_email_async(cls, to_email, subject, body, template_id=None, template_params=None):
-        """Queue email sending so user-facing requests do not wait on SMTP."""
+        """Queue email sending so user-facing requests do not wait on SMTP.
+        
+        Always returns (bool, str) — callers can safely unpack the result.
+        When async mode is on, the actual send runs in background; this call
+        returns (True, 'queued') immediately so the request is not blocked.
+        """
         if not Config.SEND_EMAIL_ASYNC:
             return cls.send_email(to_email, subject, body, template_id, template_params)
         cls._log_email(to_email, subject, body, status="queued")
-        return cls._executor.submit(cls.send_email, to_email, subject, body, template_id, template_params)
+        cls._executor.submit(cls.send_email, to_email, subject, body, template_id, template_params)
+        return True, "Email queued for background delivery."
 
     @classmethod
     def send_booking_confirmation(cls, user_email, user_name, doctor_name, date_str, time_str, clinic_name, address, consultation_fee=None, payment_note=None, **kwargs):
@@ -284,10 +290,9 @@ Hệ thống Đặt Lịch Khám Online.
             "message": body
         }
         
-        sender = cls.send_email_async if Config.SEND_EMAIL_ASYNC else cls.send_email
-        return sender(
-            user_email, 
-            subject, 
+        return cls.send_email_async(
+            user_email,
+            subject,
             body,
             template_params=template_params
         )
@@ -322,8 +327,7 @@ Hệ thống Đặt Lịch Khám Online.
             "message": body,
         }
 
-        sender = cls.send_email_async if Config.SEND_EMAIL_ASYNC else cls.send_email
-        return sender(
+        return cls.send_email_async(
             user_email,
             subject,
             body,
@@ -355,8 +359,7 @@ Hệ thống Đặt Lịch Khám Online.
             "message": body,
         }
 
-        sender = cls.send_email_async if Config.SEND_EMAIL_ASYNC else cls.send_email
-        return sender(
+        return cls.send_email_async(
             user_email,
             subject,
             body,
