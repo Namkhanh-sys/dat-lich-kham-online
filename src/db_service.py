@@ -151,7 +151,9 @@ class DatabaseService:
     @classmethod
     def get_users(cls) -> pd.DataFrame:
         df = cls._fetch("SELECT * FROM users ORDER BY id")
-        return df[cls.USER_COLS] if not df.empty and all(c in df.columns for c in cls.USER_COLS) else df
+        if df.empty:
+            return pd.DataFrame(columns=cls.USER_COLS)
+        return df[cls.USER_COLS] if all(c in df.columns for c in cls.USER_COLS) else df
 
     @classmethod
     def save_users(cls, df: pd.DataFrame) -> bool:
@@ -160,7 +162,9 @@ class DatabaseService:
     @classmethod
     def get_clinics(cls) -> pd.DataFrame:
         df = cls._fetch("SELECT * FROM clinics ORDER BY id")
-        return df[cls.CLINIC_COLS] if not df.empty and all(c in df.columns for c in cls.CLINIC_COLS) else df
+        if df.empty:
+            return pd.DataFrame(columns=cls.CLINIC_COLS)
+        return df[cls.CLINIC_COLS] if all(c in df.columns for c in cls.CLINIC_COLS) else df
 
     @classmethod
     def save_clinics(cls, df: pd.DataFrame) -> bool:
@@ -169,7 +173,9 @@ class DatabaseService:
     @classmethod
     def get_doctors(cls) -> pd.DataFrame:
         df = cls._fetch("SELECT * FROM doctors ORDER BY id")
-        return df[cls.DOCTOR_COLS] if not df.empty and all(c in df.columns for c in cls.DOCTOR_COLS) else df
+        if df.empty:
+            return pd.DataFrame(columns=cls.DOCTOR_COLS)
+        return df[cls.DOCTOR_COLS] if all(c in df.columns for c in cls.DOCTOR_COLS) else df
 
     @classmethod
     def save_doctors(cls, df: pd.DataFrame) -> bool:
@@ -178,8 +184,11 @@ class DatabaseService:
     @classmethod
     def get_appointments(cls) -> pd.DataFrame:
         df = cls._fetch("SELECT * FROM appointments ORDER BY date, time")
-        return df[cls.APPOINTMENT_COLS] if not df.empty and all(c in df.columns for c in cls.APPOINTMENT_COLS) else df
+        if df.empty:
+            return pd.DataFrame(columns=cls.APPOINTMENT_COLS)
+        return df[cls.APPOINTMENT_COLS] if all(c in df.columns for c in cls.APPOINTMENT_COLS) else df
 
     @classmethod
     def save_appointments(cls, df: pd.DataFrame) -> bool:
         return cls._upsert_table('appointments', df)
+
