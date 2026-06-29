@@ -29,7 +29,7 @@ class EmailService:
             return False
 
     @classmethod
-    def send_email(cls, to_email, subject, body, template_id=None, template_params=None):
+    def send_email(cls, to_email, subject, body, template_id=None, template_params=None, bypass_emailjs=False):
         """
         Send an email via EmailJS when configured, then Resend, then SMTP Gmail.
         
@@ -39,8 +39,9 @@ class EmailService:
             body: Email body (plain text or HTML)
             template_id: Unused (for compatibility)
             template_params: Unused (for compatibility)
+            bypass_emailjs: If True, skips EmailJS and uses Resend/SMTP directly.
         """
-        if Config.EMAILJS_SERVICE_ID and Config.EMAILJS_PUBLIC_KEY and Config.EMAILJS_TEMPLATE_ID:
+        if not bypass_emailjs and Config.EMAILJS_SERVICE_ID and Config.EMAILJS_PUBLIC_KEY and Config.EMAILJS_TEMPLATE_ID:
             ok, message = cls._send_via_emailjs(to_email, subject, body, template_params)
             if ok:
                 return ok, message
@@ -51,6 +52,7 @@ class EmailService:
             if ok:
                 return ok, message
             print(f"[EmailService] Resend failed fallback: {message}")
+
 
 
         # Check if SMTP is configured
@@ -243,7 +245,7 @@ class EmailService:
             return False, error_msg
 
     @classmethod
-    def send_email_async(cls, to_email, subject, body, template_id=None, template_params=None):
+    def send_email_async(cls, to_email, subject, body, template_id=None, template_params=None, bypass_emailjs=False):
         """Queue email sending so user-facing requests do not wait on SMTP.
         
         Always returns (bool, str) — callers can safely unpack the result.
@@ -251,9 +253,9 @@ class EmailService:
         returns (True, 'queued') immediately so the request is not blocked.
         """
         if not Config.SEND_EMAIL_ASYNC:
-            return cls.send_email(to_email, subject, body, template_id, template_params)
+            return cls.send_email(to_email, subject, body, template_id, template_params, bypass_emailjs=bypass_emailjs)
         cls._log_email(to_email, subject, body, status="queued")
-        cls._executor.submit(cls.send_email, to_email, subject, body, template_id, template_params)
+        cls._executor.submit(cls.send_email, to_email, subject, body, template_id, template_params, bypass_emailjs)
         return True, "Email queued for background delivery."
 
     @classmethod
@@ -435,5 +437,7 @@ He thong Dat Lich Kham Online.
             "user_name": user_name,
             "message": body,
         }
-        return cls.send_email_async(user_email, subject, body, template_params=template_params)
+        # bypass_emailjs=True because the EmailJS template is designed for booking confirmations,
+        # not welcome emails. Sending directly via SMTP/Resend ensures the correct content.
+        return cls.send_email(user_email, subject, body, template_params=template_params, bypass_emailjs=True)
 
