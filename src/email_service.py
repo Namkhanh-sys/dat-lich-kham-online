@@ -295,12 +295,14 @@ Hệ thống Đặt Lịch Khám Online.
             "message": body
         }
         
-        # Send synchronously so Render Free tier doesn't kill the thread before email is sent
+        # bypass_emailjs=True: EmailJS Free Plan only reliably delivers to the account owner's
+        # email. SMTP Gmail sends to any user email correctly.
         return cls.send_email(
             user_email,
             subject,
             body,
-            template_params=template_params
+            template_params=template_params,
+            bypass_emailjs=True
         )
 
     @classmethod
@@ -333,11 +335,12 @@ Hệ thống Đặt Lịch Khám Online.
             "message": body,
         }
 
-        return cls.send_email_async(
+        return cls.send_email(
             user_email,
             subject,
             body,
-            template_params=template_params
+            template_params=template_params,
+            bypass_emailjs=True
         )
 
     @classmethod
@@ -365,12 +368,12 @@ Hệ thống Đặt Lịch Khám Online.
             "message": body,
         }
 
-        # Send synchronously so Render Free tier doesn't kill the thread before email is sent
         return cls.send_email(
             user_email,
             subject,
             body,
-            template_params=template_params
+            template_params=template_params,
+            bypass_emailjs=True
         )
 
     @classmethod
@@ -407,7 +410,8 @@ Hệ thống Đặt Lịch Khám Online."""
             user_email,
             subject,
             body,
-            template_params=template_params
+            template_params=template_params,
+            bypass_emailjs=True
         )
 
     @classmethod
