@@ -311,7 +311,7 @@ Hệ thống Đặt Lịch Khám Online.
             subject,
             body,
             template_params=template_params,
-            bypass_emailjs=True
+            bypass_emailjs=False
         )
 
     @classmethod
@@ -349,7 +349,7 @@ Hệ thống Đặt Lịch Khám Online.
             subject,
             body,
             template_params=template_params,
-            bypass_emailjs=True
+            bypass_emailjs=False
         )
 
     @classmethod
@@ -382,7 +382,7 @@ Hệ thống Đặt Lịch Khám Online.
             subject,
             body,
             template_params=template_params,
-            bypass_emailjs=True
+            bypass_emailjs=False
         )
 
     @classmethod
@@ -420,7 +420,7 @@ Hệ thống Đặt Lịch Khám Online."""
             subject,
             body,
             template_params=template_params,
-            bypass_emailjs=True
+            bypass_emailjs=False
         )
 
     @classmethod
@@ -454,5 +454,5 @@ He thong Dat Lich Kham Online.
         }
         # bypass_emailjs=True because the EmailJS template is designed for booking confirmations,
         # not welcome emails. Sending directly via SMTP/Resend ensures the correct content.
-        return cls.send_email_async(user_email, subject, body, template_params=template_params, bypass_emailjs=True)
+        return cls.send_email_async(user_email, subject, body, template_params=template_params, bypass_emailjs=False)
 
