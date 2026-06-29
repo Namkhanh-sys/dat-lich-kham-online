@@ -44,11 +44,14 @@ class EmailService:
             ok, message = cls._send_via_emailjs(to_email, subject, body, template_params)
             if ok:
                 return ok, message
-            if not Config.RESEND_API_KEY and not Config.SMTP_PASSWORD:
-                return ok, message
+            print(f"[EmailService] EmailJS failed fallback: {message}")
 
         if Config.RESEND_API_KEY:
-            return cls._send_via_resend(to_email, subject, body)
+            ok, message = cls._send_via_resend(to_email, subject, body)
+            if ok:
+                return ok, message
+            print(f"[EmailService] Resend failed fallback: {message}")
+
 
         # Check if SMTP is configured
         if not Config.SMTP_PASSWORD:
