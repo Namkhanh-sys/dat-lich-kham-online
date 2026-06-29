@@ -5,6 +5,26 @@ from typing import Any, Dict, List, Optional, Union
 import pandas as pd
 from config import Config
 
+# Import DatabaseService lazily to avoid hard dependency on psycopg2
+_db_service = None
+
+def _get_db():
+    """Return initialized DatabaseService if DATABASE_URL is configured."""
+    global _db_service
+    if not Config.DATABASE_URL:
+        return None
+    if _db_service is None:
+        try:
+            from src.db_service import DatabaseService
+            DatabaseService.init(Config.DATABASE_URL)
+            _db_service = DatabaseService
+            print(f"[CSVHelper] Using Supabase PostgreSQL for persistence.")
+        except Exception as e:
+            print(f"[CSVHelper] DB init failed, falling back to CSV: {e}")
+            return None
+    return _db_service
+
+
 class CSVHelper:
     _cache: Dict[str, Dict[str, Any]] = {}
     _lock: threading.RLock = threading.RLock()
@@ -54,11 +74,18 @@ class CSVHelper:
 
     @classmethod
     def get_users(cls) -> pd.DataFrame:
+        db = _get_db()
+        if db:
+            return db.get_users()
         return cls.read_csv(Config.USERS_CSV)
 
     @classmethod
     def save_users(cls, df: pd.DataFrame) -> bool:
+        db = _get_db()
+        if db:
+            return db.save_users(df)
         return cls.write_csv(df, Config.USERS_CSV)
+
 
     @classmethod
     def get_clinics(cls) -> pd.DataFrame:
@@ -78,11 +105,18 @@ class CSVHelper:
 
     @classmethod
     def get_appointments(cls) -> pd.DataFrame:
+        db = _get_db()
+        if db:
+            return db.get_appointments()
         return cls.read_csv(Config.APPOINTMENTS_CSV)
 
     @classmethod
     def save_appointments(cls, df: pd.DataFrame) -> bool:
+        db = _get_db()
+        if db:
+            return db.save_appointments(df)
         return cls.write_csv(df, Config.APPOINTMENTS_CSV)
+
 
     @staticmethod
     def get_diseases() -> List[Dict[str, Any]]:

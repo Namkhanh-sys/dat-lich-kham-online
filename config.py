@@ -42,6 +42,11 @@ class Config:
     SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL', 'namkanhkanh@gmail.com')
     ENABLE_DEBUG_ROUTES = os.environ.get('ENABLE_DEBUG_ROUTES', 'false').lower() == 'true'
     SEND_EMAIL_ASYNC = os.environ.get('SEND_EMAIL_ASYNC', 'true').lower() == 'true'
+
+    # Database — Supabase PostgreSQL (để trống = dùng CSV local)
+    # Lấy connection string từ: Supabase Dashboard → Settings → Database → URI
+    DATABASE_URL = os.environ.get('DATABASE_URL', '')
+
     
     # Session options
     SESSION_COOKIE_NAME = 'medical_booking_session'

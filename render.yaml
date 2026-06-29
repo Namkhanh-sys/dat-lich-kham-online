@@ -11,3 +11,23 @@ services:
         value: 3.9
       - key: FLASK_DEBUG
         value: false
+      - key: SEND_EMAIL_ASYNC
+        value: true
+      # ── Supabase PostgreSQL (bat buoc neu muon luu du lieu ben vung) ──
+      # Lay gia tri tai: Supabase Dashboard -> Settings -> Database -> URI
+      - key: DATABASE_URL
+        sync: false   # Khong commit gia tri that vao git
+      # ── Email (EmailJS) ──
+      - key: EMAILJS_SERVICE_ID
+        value: service_qdlw3em
+      - key: EMAILJS_PUBLIC_KEY
+        value: 3AknfTh_9nfeelswy
+      - key: EMAILJS_TEMPLATE_ID
+        value: template_1mv18ta
+      - key: EMAILJS_PRIVATE_KEY
+        sync: false   # Nhap thu cong tren Render Dashboard
+      # ── Email (Gmail SMTP fallback) ──
+      - key: SMTP_USER
+        value: namkanhkanh@gmail.com
+      - key: SMTP_PASSWORD
+        sync: false   # Gmail App Password - nhap thu cong tren Render Dashboard

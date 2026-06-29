@@ -402,3 +402,35 @@ Hệ thống Đặt Lịch Khám Online."""
             body,
             template_params=template_params
         )
+
+    @classmethod
+    def send_welcome_email(cls, user_email: str, user_name: str):
+        """Send a welcome email immediately after successful registration."""
+        subject = "[MedBooking] Chao mung ban den voi Dat Lich Kham Online!"
+        body = f"""Chao {user_name},
+
+Tai khoan cua ban da duoc tao thanh cong tren he thong Dat Lich Kham Online!
+
+Thong tin tai khoan:
+- Ho ten: {user_name}
+- Email dang nhap: {user_email}
+
+Voi tai khoan nay, ban co the:
+- Tim kiem bac si theo trieu chung hoac chuyen khoa
+- Dat lich kham truc tuyen nhanh chong
+- Quan ly lich hen tren trang ca nhan (Dashboard)
+- Nhan email nhac nho truoc lich kham
+
+Luu y: Day la email tu dong. Vui long khong reply truc tiep vao email nay.
+Neu can ho tro, vui long lien he qua email: {Config.SUPPORT_EMAIL}
+
+Cam on ban da tin tuong su dung dich vu cua chung toi!
+He thong Dat Lich Kham Online.
+"""
+        template_params = {
+            "to_email": user_email,
+            "user_name": user_name,
+            "message": body,
+        }
+        return cls.send_email_async(user_email, subject, body, template_params=template_params)
+

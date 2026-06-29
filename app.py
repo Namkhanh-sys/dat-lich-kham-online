@@ -464,8 +464,15 @@ def register():
             
         success, message = AuthService.register_user(name, email, password, phone)
         if success:
+            # Send welcome email (non-blocking background task)
+            try:
+                EmailService.send_welcome_email(user_email=email, user_name=name)
+                print(f"[REGISTER] Welcome email queued for {email}")
+            except Exception as e:
+                print(f"[REGISTER] Welcome email error (non-blocking): {e}")
             flash(message + " Vui lòng đăng nhập.", "success")
             return redirect(url_for('login'))
+
         else:
             flash(message, "error")
             
