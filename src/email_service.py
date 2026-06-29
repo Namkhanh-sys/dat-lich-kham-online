@@ -295,7 +295,8 @@ Hệ thống Đặt Lịch Khám Online.
             "message": body
         }
         
-        return cls.send_email_async(
+        # Send synchronously so Render Free tier doesn't kill the thread before email is sent
+        return cls.send_email(
             user_email,
             subject,
             body,
@@ -364,7 +365,8 @@ Hệ thống Đặt Lịch Khám Online.
             "message": body,
         }
 
-        return cls.send_email_async(
+        # Send synchronously so Render Free tier doesn't kill the thread before email is sent
+        return cls.send_email(
             user_email,
             subject,
             body,
