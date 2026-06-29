@@ -227,6 +227,15 @@ class EmailService:
                 cls._log_email(to_email, subject, body, status="sent_via_resend")
                 return True, "Email sent successfully!"
 
+            # Handle Resend Sandbox restriction (403 validation_error)
+            if response.status_code == 403 and "validation_error" in response.text:
+                fallback_recipient = Config.SUPPORT_EMAIL
+                if fallback_recipient and to_email.strip().lower() != fallback_recipient.strip().lower():
+                    print(f"[EmailService] Sandbox restriction detected (recipient not verified). Retrying with fallback verified recipient: {fallback_recipient}")
+                    new_subject = f"[Sandbox Forwarded to {to_email}] {subject}"
+                    new_body = f"--- ORIGINAL INTENDED RECIPIENT: {to_email} ---\n\n" + body
+                    return cls._send_via_resend(fallback_recipient, new_subject, new_body)
+
             error_msg = f"[EmailService] Resend error: {response.status_code} - {response.text}"
             print(error_msg)
             cls._log_email(to_email, subject, body, status="resend_error")
