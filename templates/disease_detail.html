@@ -19,13 +19,53 @@
 
 
     <h3>Danh sách Bác sĩ điều trị chuyên môn</h3>
-    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+    <p style="color: var(--text-muted); margin-bottom: 1rem;">
         {% if location_label %}
         <span style="color: var(--primary);">📍 Gần khu vực: {{ location_label }}</span>
         {% else %}
         Danh sách được đề xuất dựa trên chuyên môn và từ khóa liên quan.
         {% endif %}
     </p>
+
+    <!-- ===== THANH TÌM KIẾM TÊN BÁC SĨ ===== -->
+    <div id="doctorSearchWrap" style="position: relative; margin-bottom: 1.5rem; max-width: 480px;">
+        <span style="position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none;">
+            <svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2">
+                <circle cx="9" cy="9" r="6"/><path stroke-linecap="round" d="M15 15l-3.5-3.5"/>
+            </svg>
+        </span>
+        <input
+            id="doctorSearchInput"
+            type="text"
+            placeholder="Tìm tên bác sĩ... (vd: Dinh, Nguyen)"
+            autocomplete="off"
+            style="
+                width: 100%; padding: 0.65rem 2.6rem 0.65rem 2.5rem;
+                border: 1.5px solid var(--border-strong); border-radius: 10px;
+                font-size: 0.97rem; background: var(--bg-secondary);
+                color: var(--text-main); outline: none;
+                transition: border-color 0.2s, box-shadow 0.2s;
+                box-sizing: border-box;
+            "
+            onfocus="this.style.borderColor='var(--primary)';this.style.boxShadow='0 0 0 3px rgba(220,38,38,0.12)';"
+            onblur="this.style.borderColor='var(--border-strong)';this.style.boxShadow='none';"
+        >
+        <button
+            id="doctorSearchClear"
+            onclick="clearDoctorSearch()"
+            title="Xóa tìm kiếm"
+            style="
+                display: none; position: absolute; right: 0.7rem; top: 50%; transform: translateY(-50%);
+                background: none; border: none; cursor: pointer; color: var(--text-muted);
+                padding: 0.2rem; line-height: 1;
+            "
+        >
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+            </svg>
+        </button>
+    </div>
+    <!-- ======================================= -->
 </div>
 
 {% if doctors %}
@@ -72,6 +112,16 @@
                 </div>
             </div>
         {% endfor %}
+    </div>
+
+    <!-- Empty search result message -->
+    <div id="noSearchResult" style="display:none; text-align:center; padding: 2.5rem 1rem; color: var(--text-muted);">
+        <svg width="40" height="40" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 0.75rem; opacity: 0.45;">
+            <circle cx="9" cy="9" r="6"/><path stroke-linecap="round" d="M15 15l-3.5-3.5"/>
+            <line x1="6" y1="9" x2="12" y2="9" stroke-linecap="round"/>
+        </svg>
+        <p style="font-size: 1rem; margin: 0;">Không tìm thấy bác sĩ khớp với từ khóa <strong id="noResultKeyword"></strong>.</p>
+        <button onclick="clearDoctorSearch()" style="margin-top: 0.75rem; background: none; border: none; color: var(--primary); font-weight: 600; cursor: pointer; font-size: 0.95rem;">Xóa tìm kiếm</button>
     </div>
 
     <!-- Pagination -->
@@ -197,37 +247,92 @@
     }
 
     /* ============================================================
-       Pagination — 9 cards per page
+       Chuẩn hóa chuỗi tiếng Việt — bỏ dấu, lowercase
+       Hỗ trợ: Đinh=Dinh=dinh, Nguyễn=Nguyen=nguyen, v.v.
+       ============================================================ */
+    function normalizeVN(str) {
+        if (!str) return '';
+        return str
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')   // bỏ dấu tổ hợp
+            .replace(/đ/g, 'd').replace(/Đ/g, 'd') // đ → d
+            .toLowerCase()
+            .trim();
+    }
+
+    /* ============================================================
+       Pagination + Search — 9 cards per page
        ============================================================ */
     (function() {
         const ITEMS_PER_PAGE = 9;
         const grid = document.getElementById('doctorGrid');
         const paginationNav = document.getElementById('pagination');
+        const searchInput = document.getElementById('doctorSearchInput');
+        const clearBtn = document.getElementById('doctorSearchClear');
+        const noResult = document.getElementById('noSearchResult');
+        const noResultKeyword = document.getElementById('noResultKeyword');
         if (!grid || !paginationNav) return;
 
-        const cards = Array.from(grid.querySelectorAll('.doctor-card'));
-        const totalPages = Math.ceil(cards.length / ITEMS_PER_PAGE);
+        const allCards = Array.from(grid.querySelectorAll('.doctor-card'));
+        let filteredCards = allCards.slice(); // bản sao đang hiển thị
         let currentPage = 1;
 
-        if (totalPages <= 1) { paginationNav.style.display = 'none'; }
+        /* --- Lọc theo từ khóa tìm kiếm --- */
+        function applySearch(keyword) {
+            const q = normalizeVN(keyword);
+            if (!q) {
+                filteredCards = allCards.slice();
+            } else {
+                filteredCards = allCards.filter(function(card) {
+                    const h3 = card.querySelector('h3');
+                    return h3 && normalizeVN(h3.textContent).includes(q);
+                });
+            }
 
+            // Ẩn/hiện nút xóa
+            if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
+
+            // Hiện thông báo không tìm thấy
+            if (noResult) {
+                if (filteredCards.length === 0 && q) {
+                    noResult.style.display = 'block';
+                    if (noResultKeyword) noResultKeyword.textContent = '"' + keyword + '"';
+                    paginationNav.style.display = 'none';
+                } else {
+                    noResult.style.display = 'none';
+                }
+            }
+
+            showPage(1);
+        }
+
+        /* --- Hiển thị trang --- */
         function showPage(page) {
             currentPage = page;
             const start = (page - 1) * ITEMS_PER_PAGE;
             const end = start + ITEMS_PER_PAGE;
 
-            cards.forEach(function(card, i) {
-                card.style.display = (i >= start && i < end) ? '' : 'none';
+            // Ẩn tất cả trước
+            allCards.forEach(function(card) { card.style.display = 'none'; });
+
+            // Hiện các card trong trang của filteredCards
+            filteredCards.slice(start, end).forEach(function(card) {
+                card.style.display = '';
             });
 
-            renderPagination();
-
-            // Scroll to top of doctor list
-            var heading = document.querySelector('h3');
-            if (heading) heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            if (filteredCards.length > 0) {
+                paginationNav.style.display = 'flex';
+                renderPagination();
+            } else {
+                paginationNav.style.display = 'none';
+            }
         }
 
+        /* --- Render phân trang --- */
         function renderPagination() {
+            var totalPages = Math.ceil(filteredCards.length / ITEMS_PER_PAGE);
+            if (totalPages <= 1) { paginationNav.style.display = 'none'; return; }
+
             var html = '';
 
             // Prev button
@@ -250,18 +355,34 @@
 
             // Page info
             html += '<div class="page-info" style="width:100%">Trang ' + currentPage + ' / ' + totalPages +
-                    ' &nbsp;·&nbsp; Tổng ' + cards.length + ' bác sĩ</div>';
+                    ' &nbsp;·&nbsp; ' + filteredCards.length + ' bác sĩ</div>';
 
             paginationNav.innerHTML = html;
         }
 
         window._goPage = function(p) {
+            var totalPages = Math.ceil(filteredCards.length / ITEMS_PER_PAGE);
             if (p < 1 || p > totalPages) return;
             showPage(p);
+            var heading = document.querySelector('h3');
+            if (heading) heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
         };
 
-        // Init first page
+        /* --- Lắng nghe sự kiện gõ tìm kiếm --- */
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                applySearch(this.value);
+            });
+        }
+
+        // Init
         showPage(1);
     })();
+
+    /* Xóa tìm kiếm từ nút X hoặc nút "Xóa tìm kiếm" */
+    function clearDoctorSearch() {
+        var input = document.getElementById('doctorSearchInput');
+        if (input) { input.value = ''; input.dispatchEvent(new Event('input')); input.focus(); }
+    }
 </script>
 {% endblock %}

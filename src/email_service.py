@@ -267,18 +267,18 @@ class EmailService:
         payment_info = f"\n- Ghi chú: {payment_note}" if payment_note else ""
         
         body = f"""Chào {user_name},
-
+ 
 Chúc mừng bạn đã đặt lịch khám thành công qua hệ thống Đặt Lịch Khám Online!
-
+ 
 Chi tiết lịch hẹn của bạn:
 - Bác sĩ: {doctor_name}
 - Ngày khám: {date_str}
 - Khung giờ: {time_str}
 - Phòng khám: {clinic_name}
 - Địa chỉ: {address}{fee_info}{payment_info}
-
+ 
 Lưu ý: Vui lòng đến trước giờ hẹn 10-15 phút để làm thủ tục check-in. Nếu muốn thay đổi hoặc hủy lịch, vui lòng thực hiện trên Dashboard cá nhân trước ít nhất 2 tiếng.
-
+ 
 Cảm ơn bạn đã tin tưởng dịch vụ của chúng tôi!
 Hệ thống Đặt Lịch Khám Online.
 """
@@ -297,7 +297,7 @@ Hệ thống Đặt Lịch Khám Online.
         
         # bypass_emailjs=True: EmailJS Free Plan only reliably delivers to the account owner's
         # email. SMTP Gmail sends to any user email correctly.
-        return cls.send_email(
+        return cls.send_email_async(
             user_email,
             subject,
             body,
@@ -310,16 +310,16 @@ Hệ thống Đặt Lịch Khám Online.
         """Send booking rescheduling update email."""
         subject = f"[Đặt Lịch Khám] Thay đổi thời gian lịch hẹn thành công"
         body = f"""Chào {user_name},
-
+ 
 Lịch hẹn khám bệnh của bạn đã được cập nhật thành công thời gian mới.
-
+ 
 Chi tiết lịch hẹn mới:
 - Bác sĩ: {doctor_name}
 - Ngày khám: {date_str}
 - Khung giờ: {time_str}
 - Phòng khám: {clinic_name}
 - Địa chỉ: {address}
-
+ 
 Cảm ơn bạn đã tin tưởng dịch vụ của chúng tôi!
 Hệ thống Đặt Lịch Khám Online.
 """
@@ -335,7 +335,7 @@ Hệ thống Đặt Lịch Khám Online.
             "message": body,
         }
 
-        return cls.send_email(
+        return cls.send_email_async(
             user_email,
             subject,
             body,
@@ -348,14 +348,14 @@ Hệ thống Đặt Lịch Khám Online.
         """Send booking cancellation email."""
         subject = f"[Đặt Lịch Khám] Thông báo hủy lịch hẹn thành công"
         body = f"""Chào {user_name},
-
+ 
 Hệ thống xác nhận bạn đã hủy thành công lịch hẹn khám bệnh sau:
 - Bác sĩ: {doctor_name}
 - Ngày khám: {date_str}
 - Khung giờ: {time_str}
-
+ 
 Số tiền hoặc chi phí (nếu có) sẽ được giải quyết theo chính sách phòng khám. Rất tiếc vì chưa được phục vụ bạn lần này!
-
+ 
 Hệ thống Đặt Lịch Khám Online.
 """
         
@@ -368,7 +368,7 @@ Hệ thống Đặt Lịch Khám Online.
             "message": body,
         }
 
-        return cls.send_email(
+        return cls.send_email_async(
             user_email,
             subject,
             body,
@@ -381,17 +381,17 @@ Hệ thống Đặt Lịch Khám Online.
         """Send automated reminder email 24 hours before the appointment."""
         subject = f"[Nhắc Lịch Khám] Lịch khám của bạn vào ngày mai ({date_str})"
         body = f"""Chào {user_name},
-
+ 
 Hệ thống Đặt Lịch Khám Online xin nhắc nhở bạn về lịch hẹn khám bệnh sắp tới:
 - Bác sĩ: {doctor_name}
 - Ngày khám: {date_str}
 - Khung giờ: {time_str}
 - Phòng khám: {clinic_name}
 - Địa chỉ: {address}
-
+ 
 Vui lòng có mặt tại phòng khám trước giờ hẹn 10-15 phút để làm thủ tục. 
 Nếu bạn có thay đổi lịch trình, vui lòng truy cập Dashboard để đổi hoặc hủy lịch sớm nhất có thể.
-
+ 
 Chúc bạn nhiều sức khỏe,
 Hệ thống Đặt Lịch Khám Online."""
         
@@ -406,7 +406,7 @@ Hệ thống Đặt Lịch Khám Online."""
             "message": body,
         }
 
-        return cls.send_email(
+        return cls.send_email_async(
             user_email,
             subject,
             body,
@@ -419,22 +419,22 @@ Hệ thống Đặt Lịch Khám Online."""
         """Send a welcome email immediately after successful registration."""
         subject = "[MedBooking] Chao mung ban den voi Dat Lich Kham Online!"
         body = f"""Chao {user_name},
-
+ 
 Tai khoan cua ban da duoc tao thanh cong tren he thong Dat Lich Kham Online!
-
+ 
 Thong tin tai khoan:
 - Ho ten: {user_name}
 - Email dang nhap: {user_email}
-
+ 
 Voi tai khoan nay, ban co the:
 - Tim kiem bac si theo trieu chung hoac chuyen khoa
 - Dat lich kham truc tuyen nhanh chong
 - Quan ly lich hen tren trang ca nhan (Dashboard)
 - Nhan email nhac nho truoc lich kham
-
+ 
 Luu y: Day la email tu dong. Vui long khong reply truc tiep vao email nay.
 Neu can ho tro, vui long lien he qua email: {Config.SUPPORT_EMAIL}
-
+ 
 Cam on ban da tin tuong su dung dich vu cua chung toi!
 He thong Dat Lich Kham Online.
 """
@@ -445,5 +445,5 @@ He thong Dat Lich Kham Online.
         }
         # bypass_emailjs=True because the EmailJS template is designed for booking confirmations,
         # not welcome emails. Sending directly via SMTP/Resend ensures the correct content.
-        return cls.send_email(user_email, subject, body, template_params=template_params, bypass_emailjs=True)
+        return cls.send_email_async(user_email, subject, body, template_params=template_params, bypass_emailjs=True)
 
