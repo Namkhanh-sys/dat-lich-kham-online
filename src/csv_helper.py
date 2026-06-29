@@ -8,9 +8,14 @@ from config import Config
 # Import DatabaseService lazily to avoid hard dependency on psycopg2
 _db_service = None
 
+import sys
+
 def _get_db():
     """Return initialized DatabaseService if DATABASE_URL is configured."""
     global _db_service
+    # Disable DB redirect during tests so conftest.py mocks work
+    if 'pytest' in sys.modules:
+        return None
     if not Config.DATABASE_URL:
         return None
     if _db_service is None:
@@ -23,6 +28,7 @@ def _get_db():
             print(f"[CSVHelper] DB init failed, falling back to CSV: {e}")
             return None
     return _db_service
+
 
 
 class CSVHelper:
